@@ -1,0 +1,263 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Battle.gd" id="1_battle"]
+[ext_resource type="Texture2D" path="res://Assets/vita_forest_bg.png" id="2_bg"]
+
+[node name="Battle" type="Node2D"]
+script = ExtResource("1_battle")
+
+[node name="BattleCamera" type="Camera2D" parent="."]
+anchor_mode = 0
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="BackgroundTexture" type="TextureRect" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="UI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.235294)
+
+[node name="HeroSprite" type="TextureRect" parent="UI"]
+offset_left = 117.0
+offset_top = 221.0
+offset_right = 517.0
+offset_bottom = 621.0
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MonsterSprite" type="TextureRect" parent="UI"]
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -560.0
+offset_top = -200.0
+offset_right = -160.0
+offset_bottom = 200.0
+grow_horizontal = 0
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BattleLog" type="Label" parent="UI"]
+offset_left = 40.0
+offset_top = 40.0
+offset_right = 800.0
+offset_bottom = 100.0
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 24
+text = "เตรียมตัวต่อสู้!"
+
+[node name="Stats" type="VBoxContainer" parent="UI"]
+offset_left = 100.0
+offset_top = 610.0
+offset_right = 400.0
+offset_bottom = 700.0
+theme_override_constants/separation = 10
+
+[node name="PlayerHP" type="ProgressBar" parent="UI/Stats"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+value = 100.0
+
+[node name="PlayerMP" type="ProgressBar" parent="UI/Stats"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+value = 100.0
+
+[node name="EnemyHP" type="ProgressBar" parent="UI/Stats" index="2"]
+visible = false
+layout_mode = 2
+
+[node name="EnemyStatContainer" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -400.0
+offset_top = 100.0
+offset_right = -100.0
+offset_bottom = 140.0
+grow_horizontal = 0
+
+[node name="EnemyHP" type="ProgressBar" parent="UI/EnemyStatContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+value = 100.0
+
+[node name="Controls" type="HBoxContainer" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = -100.0
+offset_right = 200.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="AttackBtn" type="Button" parent="UI/Controls"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "โจมตีธรรมดา"
+
+[node name="SkillBtn" type="Button" parent="UI/Controls"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "ใช้สกิล"
+
+[node name="ItemBtn" type="Button" parent="UI/Controls"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "ไอเทม"
+
+[node name="QuestionBox" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -250.0
+offset_right = 400.0
+offset_bottom = 250.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/QuestionBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 40.0
+offset_top = 40.0
+offset_right = -40.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+[node name="QuestionLabel" type="Label" parent="UI/QuestionBox/VBox"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "คำถามปรากฏที่นี่"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Options" type="GridContainer" parent="UI/QuestionBox/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 2
+
+[node name="SkillMenu" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/SkillMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/SkillMenu/VBox"]
+layout_mode = 2
+text = "เลือกสกิล"
+horizontal_alignment = 1
+
+[node name="SkillList" type="VBoxContainer" parent="UI/SkillMenu/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CloseSkillBtn" type="Button" parent="UI/SkillMenu/VBox"]
+layout_mode = 2
+text = "ยกเลิก"
+
+[node name="ItemMenu" type="Panel" parent="UI"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="UI/ItemMenu"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/ItemMenu/VBox"]
+layout_mode = 2
+text = "เลือกไอเทม"
+horizontal_alignment = 1
+
+[node name="ItemList" type="VBoxContainer" parent="UI/ItemMenu/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CloseItemBtn" type="Button" parent="UI/ItemMenu/VBox"]
+layout_mode = 2
+text = "ยกเลิก"
+
+[connection signal="pressed" from="UI/Controls/AttackBtn" to="." method="_on_attack_pressed"]
+[connection signal="pressed" from="UI/Controls/SkillBtn" to="." method="_on_skill_btn_pressed"]
+[connection signal="pressed" from="UI/Controls/ItemBtn" to="." method="_on_item_btn_pressed"]
+[connection signal="pressed" from="UI/SkillMenu/VBox/CloseSkillBtn" to="." method="_on_close_skill_pressed"]
+[connection signal="pressed" from="UI/ItemMenu/VBox/CloseItemBtn" to="." method="_on_close_item_pressed"]

@@ -1,0 +1,5 @@
+[theme_resource]
+default_font = ExtResource("1_font")
+default_font_size = 18
+
+[ext_resource type="FontFile" uid="uid://df7k8x2n8w2xj" path="res://Assets/NotoSansThai_Regular.woff2" id="1_font"]

@@ -1,0 +1,148 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/CharacterSelection.gd" id="1_select"]
+[ext_resource type="Texture2D" path="res://Assets/vita_forest_bg.png" id="2_bg"]
+
+[node name="CharacterSelection" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_select")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.470588)
+
+[node name="HeroPreview" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 100.0
+offset_top = -250.0
+offset_right = 600.0
+offset_bottom = 250.0
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 110.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "เลือกผู้พิทักษ์ของคุณ"
+horizontal_alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -600.0
+offset_top = -200.0
+offset_right = -100.0
+offset_bottom = 250.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_constants/separation = 30
+
+theme_override_constants/separation = 30
+
+[node name="NameHBox" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/NameHBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "ชื่อของคุณ:"
+
+[node name="NameInput" type="LineEdit" parent="VBoxContainer/NameHBox"]
+custom_minimum_size = Vector2(250, 0)
+layout_mode = 2
+placeholder_text = "กรอกชื่อที่นี่..."
+alignment = 1
+
+[node name="GenderHBox" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/GenderHBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "เพศ:"
+
+[node name="GenderValue" type="Label" parent="VBoxContainer/GenderHBox"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "เด็กชาย"
+horizontal_alignment = 1
+
+[node name="NextGender" type="Button" parent="VBoxContainer/GenderHBox"]
+layout_mode = 2
+text = " เปลี่ยน "
+
+[node name="ClassHBox" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/ClassHBox"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+text = "อาชีพ:"
+
+[node name="ClassValue" type="Label" parent="VBoxContainer/ClassHBox"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+text = "อัศวิน"
+horizontal_alignment = 1
+
+[node name="NextClass" type="Button" parent="VBoxContainer/ClassHBox"]
+layout_mode = 2
+text = " เปลี่ยน "
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(400, 80)
+layout_mode = 2
+text = "คำอธิบายอาชีพ..."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="StartGame" type="Button" parent="VBoxContainer"]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "เข้าสู่ป่าแห่งชีวิต"
+
+[connection signal="pressed" from="VBoxContainer/GenderHBox/NextGender" to="." method="_on_next_gender_pressed"]
+[connection signal="pressed" from="VBoxContainer/ClassHBox/NextClass" to="." method="_on_next_class_pressed"]
+[connection signal="pressed" from="VBoxContainer/StartGame" to="." method="_on_start_game_pressed"]

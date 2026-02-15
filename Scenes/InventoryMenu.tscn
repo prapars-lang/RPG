@@ -1,0 +1,247 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Inventory/InventoryMenu.gd" id="1_inv"]
+
+[node name="InventoryMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_inv")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.784314)
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -580.0
+offset_top = -330.0
+offset_right = 580.0
+offset_bottom = 330.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="Panel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 10.0
+offset_bottom = 55.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 32
+text = "⚔️ อุปกรณ์ & กระเป๋า"
+horizontal_alignment = 1
+
+[node name="HBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -550.0
+offset_top = -260.0
+offset_right = 550.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="StatusContainer" type="Control" parent="HBox"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+
+[node name="VBox" type="VBoxContainer" parent="HBox/StatusContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 4
+
+[node name="NameLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "ชื่อ"
+horizontal_alignment = 1
+
+[node name="ClassLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "อาชีพ"
+horizontal_alignment = 1
+
+[node name="LevelLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+text = "Level"
+horizontal_alignment = 1
+
+[node name="HPBar" type="ProgressBar" parent="HBox/StatusContainer/VBox"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBox/StatusContainer/VBox/HPBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "HP: 100/100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MPBar" type="ProgressBar" parent="HBox/StatusContainer/VBox"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBox/StatusContainer/VBox/MPBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "MP: 30/30"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AtkValue" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.4, 0.3, 1)
+text = "ATK: 0"
+
+[node name="DefValue" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.6, 1, 1)
+text = "DEF: 0"
+
+[node name="GoldLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+text = "💰 0 G"
+
+[node name="Sep1" type="HSeparator" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+
+[node name="EquipTitle" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+text = "📦 สวมใส่อยู่"
+horizontal_alignment = 1
+
+[node name="Equip_weapon" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "อาวุธ: -ว่าง-"
+
+[node name="Equip_head" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "หมวก: -ว่าง-"
+
+[node name="Equip_body" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "เกราะ: -ว่าง-"
+
+[node name="Equip_hands" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "ถุงมือ: -ว่าง-"
+
+[node name="Equip_feet" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "รองเท้า: -ว่าง-"
+
+[node name="Equip_accessory" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "เครื่องประดับ: -ว่าง-"
+
+[node name="SetBonusLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
+text = ""
+
+[node name="VBox" type="VBoxContainer" parent="HBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TabBar" type="HBoxContainer" parent="HBox/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BagTab" type="Button" parent="HBox/VBox/TabBar"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "🎒 กระเป๋า"
+
+[node name="EnhanceTab" type="Button" parent="HBox/VBox/TabBar"]
+custom_minimum_size = Vector2(120, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "🔨 ตีบวก"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBox/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ItemGrid" type="GridContainer" parent="HBox/VBox/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 3
+
+[node name="MessageLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -80.0
+offset_right = 400.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.3, 1, 0.3, 1)
+horizontal_alignment = 1
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -80.0
+offset_top = 30.0
+offset_right = -30.0
+offset_bottom = 80.0
+grow_horizontal = 0
+theme_override_font_sizes/font_size = 24
+text = "✕"
+
+[connection signal="pressed" from="HBox/VBox/TabBar/BagTab" to="." method="_on_bag_tab_pressed"]
+[connection signal="pressed" from="HBox/VBox/TabBar/EnhanceTab" to="." method="_on_enhance_tab_pressed"]
+[connection signal="pressed" from="CloseButton" to="." method="_on_close_button_pressed"]

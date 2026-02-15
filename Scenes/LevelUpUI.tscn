@@ -1,0 +1,103 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/LevelUpUI.gd" id="1_lv"]
+
+[node name="LevelUpUI" type="CanvasLayer"]
+process_mode = 3
+layer = 10
+visible = false
+script = ExtResource("1_lv")
+
+[node name="Overlay" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.705882)
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.843137, 0, 1)
+theme_override_font_sizes/font_size = 48
+text = "LEVEL UP!"
+horizontal_alignment = 1
+
+[node name="LevelText" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "เลเวล 2"
+horizontal_alignment = 1
+
+[node name="Grid" type="GridContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 20
+columns = 2
+
+[node name="HPLabel" type="Label" parent="Panel/VBox/Grid"]
+layout_mode = 2
+text = "HP Max:"
+
+[node name="HPValue" type="Label" parent="Panel/VBox/Grid"]
+layout_mode = 2
+text = "100 -> 110"
+
+[node name="MPLabel" type="Label" parent="Panel/VBox/Grid"]
+layout_mode = 2
+text = "MP Max:"
+
+[node name="MPValue" type="Label" parent="Panel/VBox/Grid"]
+layout_mode = 2
+text = "30 -> 35"
+
+[node name="ATKLabel" type="Label" parent="Panel/VBox/Grid"]
+layout_mode = 2
+text = "ATK:"
+
+[node name="ATKValue" type="Label" parent="Panel/VBox/Grid"]
+layout_mode = 2
+text = "15 -> 17"
+
+[node name="DEFLabel" type="Label" parent="Panel/VBox/Grid"]
+layout_mode = 2
+text = "DEF:"
+
+[node name="DEFValue" type="Label" parent="Panel/VBox/Grid"]
+layout_mode = 2
+text = "10 -> 11"
+
+[node name="CloseBtn" type="Button" parent="Panel/VBox"]
+custom_minimum_size = Vector2(150, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "ตกลง"
+
+[connection signal="pressed" from="Panel/VBox/CloseBtn" to="." method="_on_close_pressed"]
