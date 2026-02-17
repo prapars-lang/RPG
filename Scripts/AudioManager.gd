@@ -15,6 +15,7 @@ const DEFAULT_SFX_VOLUME = 0.0
 
 # BGM Configuration
 var current_bgm: AudioStreamPlayer = null
+var current_bgm_key: String = ""
 var bgm_fade_tween: Tween = null
 var is_music_playing: bool = false
 
@@ -139,6 +140,7 @@ func play_bgm(bgm_key: String, fade_in_duration: float = 1.0) -> void:
 	add_child(current_bgm)
 	current_bgm.play()
 	is_music_playing = true
+	current_bgm_key = bgm_key
 	
 	# Fade in
 	_fade_music(0.0, get_music_volume(), fade_in_duration)
