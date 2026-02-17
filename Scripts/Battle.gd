@@ -338,12 +338,66 @@ func answer_question(answer):
 	
 	question_box.visible = false
 	if answer == current_question.a:
+		# Try to unlock a Knowledge Card (20% chance)
+		var unlocked_id = Global.try_unlock_random_card(Global.current_path, 0.20)
+		if unlocked_id != "":
+			_show_card_unlock_popup(unlocked_id)
 		execute_player_action(true)
 	else:
 		execute_player_action(false)
 	
 	update_ui()
 	check_battle_end()
+
+func _show_card_unlock_popup(card_id: String):
+	var card_data = Global.card_database.get(card_id, {})
+	if card_data.is_empty(): return
+	
+	var popup = Panel.new()
+	popup.custom_minimum_size = Vector2(420, 140)
+	popup.anchors_preset = Control.PRESET_CENTER
+	popup.anchor_left = 0.5; popup.anchor_top = 0.0
+	popup.anchor_right = 0.5; popup.anchor_bottom = 0.0
+	popup.offset_left = -210; popup.offset_top = 20
+	popup.offset_right = 210; popup.offset_bottom = 160
+	popup.z_index = 20
+	
+	var vbox = VBoxContainer.new()
+	vbox.anchors_preset = Control.PRESET_FULL_RECT
+	vbox.offset_left = 15; vbox.offset_top = 10
+	vbox.offset_right = -15; vbox.offset_bottom = -10
+	popup.add_child(vbox)
+	
+	var title = Label.new()
+	title.text = "✨ การ์ดความรู้ใหม่! ✨"
+	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_color_override("font_color", Color(1.0, 0.85, 0.2))
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(title)
+	
+	var rarity_colors = {"common": Color(0.7, 0.9, 1.0), "rare": Color(0.6, 0.4, 1.0)}
+	var name_label = Label.new()
+	name_label.text = card_data.get("name", card_id)
+	name_label.add_theme_font_size_override("font_size", 26)
+	name_label.add_theme_color_override("font_color", rarity_colors.get(card_data.get("rarity", "common"), Color.WHITE))
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(name_label)
+	
+	var desc_label = Label.new()
+	desc_label.text = card_data.get("description", "")
+	desc_label.add_theme_font_size_override("font_size", 16)
+	desc_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	desc_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(desc_label)
+	
+	$UI.add_child(popup)
+	popup.modulate.a = 0.0
+	
+	var tween = create_tween()
+	tween.tween_property(popup, "modulate:a", 1.0, 0.3)
+	tween.tween_interval(3.0)
+	tween.tween_property(popup, "modulate:a", 0.0, 0.5)
+	tween.tween_callback(popup.queue_free)
 
 func execute_player_action(success):
 	if success:

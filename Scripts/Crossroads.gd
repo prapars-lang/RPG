@@ -35,6 +35,9 @@ func _ready():
 	if Global.check_all_paths_completed():
 		_add_mastery_button()
 	
+	# Add Knowledge Codex button to sidebar
+	_add_codex_button()
+	
 	# Animate Appearance
 	UIThemeManager.animate_fade_in(self, 1.0)
 
@@ -116,3 +119,17 @@ func _on_return_to_town_pressed():
 	print("Returning to Vita Village...")
 	AudioManager.play_sfx("button_click")
 	get_tree().change_scene_to_file("res://Scenes/TownHub.tscn")
+
+func _add_codex_button():
+	"""Add Knowledge Codex button to sidebar"""
+	var codex_btn = Button.new()
+	var summary = Global.get_codex_summary()
+	codex_btn.text = "📖 สมุดความรู้ (%d/%d)" % [summary.unlocked, summary.total]
+	codex_btn.custom_minimum_size = Vector2(0, 50)
+	$Sidebar/VBox.add_child(codex_btn)
+	UIThemeManager.apply_button_theme(codex_btn, UIThemeManager.FONT_SIZE_SMALL)
+	codex_btn.pressed.connect(_on_codex_pressed)
+
+func _on_codex_pressed():
+	AudioManager.play_sfx("menu_open")
+	get_tree().change_scene_to_file("res://Scenes/CodexMenu.tscn")

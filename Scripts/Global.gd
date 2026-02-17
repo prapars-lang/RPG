@@ -35,6 +35,131 @@ var last_login_date = ""
 var login_streak = 0
 var learning_points = 0 # Reward currency for correct answers
 
+# --- Knowledge Codex (Collection & Badges) ---
+signal card_unlocked(card_id, card_data)
+
+var unlocked_cards: Array = [] # Card IDs the player has collected
+
+var card_database = {
+	# ===== Nutrition Cards =====
+	"vitamin_c": {"name": "วิตามินซี", "category": "nutrition", "set": "vitamins",
+		"description": "ช่วยเสริมสร้างภูมิคุ้มกัน พบมากในส้ม มะนาว ฝรั่ง", "rarity": "common"},
+	"vitamin_a": {"name": "วิตามินเอ", "category": "nutrition", "set": "vitamins",
+		"description": "บำรุงสายตาและผิวพรรณ พบในแครอท ฟักทอง ตับ", "rarity": "common"},
+	"vitamin_d": {"name": "วิตามินดี", "category": "nutrition", "set": "vitamins",
+		"description": "ช่วยดูดซึมแคลเซียม ร่างกายสร้างได้จากแสงแดด", "rarity": "rare"},
+	"protein": {"name": "โปรตีน", "category": "nutrition", "set": "nutrients",
+		"description": "สร้างกล้ามเนื้อและซ่อมแซมเซลล์ พบในไข่ เนื้อสัตว์ ถั่ว", "rarity": "common"},
+	"carbohydrate": {"name": "คาร์โบไฮเดรต", "category": "nutrition", "set": "nutrients",
+		"description": "แหล่งพลังงานหลักของร่างกาย พบในข้าว ขนมปัง เส้นก๋วยเตี๋ยว", "rarity": "common"},
+	# ===== Hygiene Cards =====
+	"hand_washing": {"name": "ล้างมือ 7 ขั้นตอน", "category": "hygiene", "set": "hygiene_basics",
+		"description": "ล้างมือด้วยสบู่อย่างน้อย 20 วินาที ลดเชื้อโรคได้กว่า 80%", "rarity": "common"},
+	"tooth_brushing": {"name": "แปรงฟันถูกวิธี", "category": "hygiene", "set": "hygiene_basics",
+		"description": "แปรงฟันวันละ 2 ครั้ง เช้า-ก่อนนอน อย่างน้อยครั้งละ 2 นาที", "rarity": "common"},
+	"bathing": {"name": "อาบน้ำให้สะอาด", "category": "hygiene", "set": "hygiene_basics",
+		"description": "อาบน้ำทุกวันเพื่อกำจัดเหงื่อ สิ่งสกปรก และเชื้อแบคทีเรีย", "rarity": "common"},
+	"food_safety": {"name": "อาหารปลอดภัย", "category": "hygiene", "set": "hygiene_advanced",
+		"description": "กินร้อน ช้อนกลาง ล้างมือ ลดความเสี่ยงโรคระบบทางเดินอาหาร", "rarity": "rare"},
+	"germ_defense": {"name": "ป้องกันเชื้อโรค", "category": "hygiene", "set": "hygiene_advanced",
+		"description": "สวมหน้ากากเมื่ออยู่ที่แออัด และเลี่ยงสัมผัสใบหน้า", "rarity": "rare"},
+	# ===== Exercise Cards =====
+	"cardio": {"name": "แอโรบิก", "category": "exercise", "set": "exercise_types",
+		"description": "วิ่ง ว่ายน้ำ ปั่นจักรยาน เสริมสร้างหัวใจและปอดให้แข็งแรง", "rarity": "common"},
+	"stretching": {"name": "ยืดเหยียดร่างกาย", "category": "exercise", "set": "exercise_types",
+		"description": "ยืดร่างกายก่อนและหลังออกกำลังกาย ป้องกันการบาดเจ็บ", "rarity": "common"},
+	"strength": {"name": "เสริมสร้างกล้ามเนื้อ", "category": "exercise", "set": "exercise_types",
+		"description": "วิดพื้น ซิทอัพ สร้างกล้ามเนื้อให้แข็งแรง", "rarity": "common"},
+	"sleep": {"name": "นอนหลับพักผ่อน", "category": "exercise", "set": "rest_recovery",
+		"description": "เด็กควรนอน 9-11 ชั่วโมง เพื่อให้ร่างกายเจริญเติบโต", "rarity": "rare"},
+	"hydration": {"name": "ดื่มน้ำเพียงพอ", "category": "exercise", "set": "rest_recovery",
+		"description": "ดื่มน้ำวันละ 6-8 แก้ว ช่วยให้ร่างกายทำงานได้เต็มประสิทธิภาพ", "rarity": "common"},
+}
+
+var card_sets = {
+	"vitamins": {"name": "ชุดวิตามิน", "cards": ["vitamin_c", "vitamin_a", "vitamin_d"],
+		"reward_type": "title", "reward_id": "นักโภชนาการน้อย"},
+	"nutrients": {"name": "ชุดสารอาหาร", "cards": ["protein", "carbohydrate"],
+		"reward_type": "gold", "reward_id": 200},
+	"hygiene_basics": {"name": "ชุดสุขอนามัยพื้นฐาน", "cards": ["hand_washing", "tooth_brushing", "bathing"],
+		"reward_type": "title", "reward_id": "ยอดนักสะอาด"},
+	"hygiene_advanced": {"name": "ชุดสุขอนามัยขั้นสูง", "cards": ["food_safety", "germ_defense"],
+		"reward_type": "gold", "reward_id": 300},
+	"exercise_types": {"name": "ชุดการออกกำลังกาย", "cards": ["cardio", "stretching", "strength"],
+		"reward_type": "title", "reward_id": "นักกีฬาแห่งอนาคต"},
+	"rest_recovery": {"name": "ชุดพักผ่อนฟื้นฟู", "cards": ["sleep", "hydration"],
+		"reward_type": "gold", "reward_id": 150},
+}
+
+# Map question categories to card categories
+var category_to_cards_map = {
+	"exercise": "exercise", "nutrition": "nutrition", "hygiene": "hygiene"
+}
+
+func unlock_card(card_id: String) -> bool:
+	if card_id in card_database and card_id not in unlocked_cards:
+		unlocked_cards.append(card_id)
+		card_unlocked.emit(card_id, card_database[card_id])
+		# Check if this completes a set
+		var card_set_id = card_database[card_id].get("set", "")
+		if card_set_id != "":
+			var progress = get_set_progress(card_set_id)
+			if progress.complete:
+				_claim_set_reward(card_set_id)
+		return true
+	return false
+
+func is_card_unlocked(card_id: String) -> bool:
+	return card_id in unlocked_cards
+
+func get_set_progress(set_id: String) -> Dictionary:
+	var set_data = card_sets.get(set_id, {})
+	var required = set_data.get("cards", [])
+	var count = 0
+	for c in required:
+		if is_card_unlocked(c):
+			count += 1
+	return {"unlocked": count, "total": required.size(), "complete": count >= required.size()}
+
+func get_cards_by_category(category: String) -> Array:
+	var result = []
+	for card_id in card_database:
+		if card_database[card_id].category == category:
+			result.append(card_id)
+	return result
+
+func try_unlock_random_card(path: String, chance: float = 0.20) -> String:
+	if randf() > chance:
+		return ""
+	var cat = category_to_cards_map.get(path, "nutrition")
+	var pool = get_cards_by_category(cat)
+	var locked = pool.filter(func(c): return not is_card_unlocked(c))
+	if locked.size() == 0:
+		return ""
+	var pick = locked[randi() % locked.size()]
+	unlock_card(pick)
+	return pick
+
+func _claim_set_reward(set_id: String):
+	var set_data = card_sets.get(set_id, {})
+	var rtype = set_data.get("reward_type", "")
+	var rid = set_data.get("reward_id", "")
+	if rtype == "gold" and rid is int:
+		add_gold(rid)
+	elif rtype == "title":
+		if rid not in achievements:
+			achievements.append(str(rid))
+			achievement_unlocked.emit(str(rid))
+
+func get_codex_summary() -> Dictionary:
+	var total = card_database.size()
+	var unlocked = unlocked_cards.size()
+	var sets_complete = 0
+	for s in card_sets:
+		if get_set_progress(s).complete:
+			sets_complete += 1
+	return {"unlocked": unlocked, "total": total, "sets_complete": sets_complete, "sets_total": card_sets.size()}
+
 # Quest State
 var active_quests = [] # IDs of active quests
 var completed_quests = [] # IDs of completed quests
@@ -823,7 +948,8 @@ func save_game():
 		"achievements": achievements,
 		"last_login_date": last_login_date,
 		"login_streak": login_streak,
-		"learning_points": learning_points
+		"learning_points": learning_points,
+		"unlocked_cards": unlocked_cards
 	}
 	var file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
 	file.store_line(JSON.stringify(save_data))
@@ -872,6 +998,7 @@ func load_game():
 		if "last_login_date" in data: last_login_date = data["last_login_date"]
 		if "login_streak" in data: login_streak = data["login_streak"]
 		if "learning_points" in data: learning_points = data["learning_points"]
+		if "unlocked_cards" in data: unlocked_cards = data["unlocked_cards"]
 		print("Game Loaded!")
 		return true
 	return false
