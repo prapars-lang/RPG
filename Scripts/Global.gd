@@ -1,6 +1,7 @@
 extends Node
 
 signal level_up_occurred(new_level, stats_before, stats_after, new_skills)
+signal achievement_unlocked(id)
 
 # --- Player Data ---
 var player_name = "ผู้กล้า"
@@ -27,6 +28,12 @@ var is_story_mode = false # If true, Battle returns to StoryScene
 var queued_story_enemy_id = "" # Override enemy for story battles
 var used_questions = [] # Track IDs of questions already asked this session
 var current_scene = "res://Scenes/MainMenu.tscn" # Track where player is for save/load
+
+# Gamification State
+var achievements = [] # ["first_battle", "health_expert", "streak_3"]
+var last_login_date = ""
+var login_streak = 0
+var learning_points = 0 # Reward currency for correct answers
 
 # Quest State
 var active_quests = [] # IDs of active quests
@@ -390,6 +397,53 @@ var monster_db = {
 
 func _ready():
 	load_questions()
+	check_login_streak()
+
+# --- Gamification Logic ---
+
+func check_login_streak():
+	var current_date = Time.get_date_string_from_system()
+	if last_login_date == "":
+		login_streak = 1
+		last_login_date = current_date
+	elif last_login_date != current_date:
+		# Use Time to parse and compare
+		var last_parts = last_login_date.split("-")
+		var curr_parts = current_date.split("-")
+		
+		# Simple day check (can be improved for month/year rollovers)
+		if int(curr_parts[2]) == int(last_parts[2]) + 1:
+			login_streak += 1
+			print("[Gamification] Streak increased! Day: ", login_streak)
+			if login_streak >= 3: unlock_achievement("streak_3")
+			if login_streak >= 7: unlock_achievement("streak_7")
+		else:
+			login_streak = 1 # Reset if missed a day
+			print("[Gamification] Streak reset.")
+		
+		last_login_date = current_date
+	save_game()
+
+func unlock_achievement(achievement_id: String):
+	if not achievement_id in achievements:
+		achievements.append(achievement_id)
+		print("[Gamification] UNLOCKED: ", achievement_id)
+		# Reward for unlocking
+		learning_points += 50
+		save_game()
+		# Notify UI if possible
+		_show_achievement_notification(achievement_id)
+
+func gain_learning_points(amount: int):
+	learning_points += amount
+	print("[Gamification] Gained ", amount, " Learning Points. Total: ", learning_points)
+	if learning_points >= 1000: unlock_achievement("master_scholar")
+	save_game()
+
+func _show_achievement_notification(id: String):
+	# Proactive: Broadcast signal for UI to catch
+	# (We can implement a UI listener later)
+	pass
 
 # --- Core Logic Functions ---
 
@@ -765,7 +819,11 @@ func save_game():
 		"equipped_items": equipped_items,
 		"enhancement_levels": enhancement_levels,
 		"active_quests": active_quests,
-		"completed_quests": completed_quests
+		"completed_quests": completed_quests,
+		"achievements": achievements,
+		"last_login_date": last_login_date,
+		"login_streak": login_streak,
+		"learning_points": learning_points
 	}
 	var file = FileAccess.open("user://savegame.save", FileAccess.WRITE)
 	file.store_line(JSON.stringify(save_data))
@@ -810,6 +868,10 @@ func load_game():
 					enhancement_levels[slot] = loaded_enh[slot]
 		if "active_quests" in data: active_quests = data["active_quests"]
 		if "completed_quests" in data: completed_quests = data["completed_quests"]
+		if "achievements" in data: achievements = data["achievements"]
+		if "last_login_date" in data: last_login_date = data["last_login_date"]
+		if "login_streak" in data: login_streak = data["login_streak"]
+		if "learning_points" in data: learning_points = data["learning_points"]
 		print("Game Loaded!")
 		return true
 	return false

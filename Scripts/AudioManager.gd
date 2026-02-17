@@ -10,7 +10,7 @@ const MUSIC_BUS = "Music"
 const SFX_BUS = "SFX"
 
 # Default volumes (in dB)
-const DEFAULT_MUSIC_VOLUME = -5.0  # Music slightly quieter by default
+const DEFAULT_MUSIC_VOLUME = 0.0  # Music volume increased for better web audibility
 const DEFAULT_SFX_VOLUME = 0.0
 
 # BGM Configuration
@@ -56,6 +56,9 @@ func _ready():
 	# Create audio buses if they don't exist
 	_setup_audio_buses()
 	
+	# Force-start audio context on input (Browser Workaround)
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	
 	# Create SFX player pool
 	_create_sfx_pool()
 	
@@ -67,6 +70,12 @@ func _ready():
 	print("  - SFX Bus Volume: %.1f dB" % get_sfx_volume())
 	print("  - BGM Paths: %d loaded" % bgm_paths.size())
 	print("  - SFX Paths: %d loaded" % sfx_paths.size())
+
+func _input(event):
+	# Web Audio Context Fix: Resume simple audio context on first click
+	if event is InputEventMouseButton and event.pressed:
+		if is_music_playing and current_bgm != null and not current_bgm.playing:
+			current_bgm.play()
 
 func _setup_audio_buses():
 	"""Create master, music, and sfx audio buses"""
