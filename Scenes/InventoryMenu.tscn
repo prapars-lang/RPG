@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene format=3 uid="uid://cfbtq25esqu34"]
 
-[ext_resource type="Script" path="res://Scripts/Inventory/InventoryMenu.gd" id="1_inv"]
+[ext_resource type="Script" uid="uid://l3uvmvg2glf4" path="res://Scripts/Inventory/InventoryMenu.gd" id="1_inv"]
 
-[node name="InventoryMenu" type="Control"]
+[node name="InventoryMenu" type="Control" unique_id=1463300783]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,7 +11,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_inv")
 
-[node name="Overlay" type="ColorRect" parent="."]
+[node name="Overlay" type="ColorRect" parent="." unique_id=190262627]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,7 +20,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.784314)
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="Panel" parent="." unique_id=2091161021]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -34,7 +34,7 @@ offset_bottom = 330.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Title" type="Label" parent="Panel"]
+[node name="Title" type="Label" parent="Panel" unique_id=1214529092]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -45,7 +45,7 @@ theme_override_font_sizes/font_size = 32
 text = "⚔️ อุปกรณ์ & กระเป๋า"
 horizontal_alignment = 1
 
-[node name="HBox" type="HBoxContainer" parent="."]
+[node name="HBox" type="HBoxContainer" parent="." unique_id=2061154221]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -60,159 +60,183 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 20
 
-[node name="StatusContainer" type="Control" parent="HBox"]
-custom_minimum_size = Vector2(320, 0)
+[node name="StatusContainer" type="PanelContainer" parent="HBox" unique_id=1788457682]
+custom_minimum_size = Vector2(350, 0)
 layout_mode = 2
 
-[node name="VBox" type="VBoxContainer" parent="HBox/StatusContainer"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 4
-
-[node name="NameLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="VBox" type="VBoxContainer" parent="HBox/StatusContainer" unique_id=1249176305]
 layout_mode = 2
-theme_override_font_sizes/font_size = 22
-text = "ชื่อ"
+theme_override_constants/separation = 10
+
+[node name="Header" type="VBoxContainer" parent="HBox/StatusContainer/VBox" unique_id=1883328665]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="NameLabel" type="Label" parent="HBox/StatusContainer/VBox/Header" unique_id=774919418]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "ชื่อผู้กล้า"
 horizontal_alignment = 1
 
-[node name="ClassLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="ClassLabel" type="Label" parent="HBox/StatusContainer/VBox/Header" unique_id=390531029]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
 text = "อาชีพ"
 horizontal_alignment = 1
 
-[node name="LevelLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="LevelLabel" type="Label" parent="HBox/StatusContainer/VBox/Header" unique_id=197287511]
 layout_mode = 2
-text = "Level"
+theme_override_font_sizes/font_size = 14
+text = "Level 1"
 horizontal_alignment = 1
 
-[node name="HPBar" type="ProgressBar" parent="HBox/StatusContainer/VBox"]
-custom_minimum_size = Vector2(0, 24)
+[node name="HeroPreview" type="TextureRect" parent="HBox/StatusContainer/VBox" unique_id=602741353]
+custom_minimum_size = Vector2(150, 200)
 layout_mode = 2
+size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Label" type="Label" parent="HBox/StatusContainer/VBox/HPBar"]
+[node name="Bars" type="VBoxContainer" parent="HBox/StatusContainer/VBox" unique_id=298149927]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HPBar" type="ProgressBar" parent="HBox/StatusContainer/VBox/Bars" unique_id=472962634]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+show_percentage = false
+
+[node name="Label" type="Label" parent="HBox/StatusContainer/VBox/Bars/HPBar" unique_id=31223141]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_font_sizes/font_size = 12
 text = "HP: 100/100"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MPBar" type="ProgressBar" parent="HBox/StatusContainer/VBox"]
-custom_minimum_size = Vector2(0, 24)
+[node name="MPBar" type="ProgressBar" parent="HBox/StatusContainer/VBox/Bars" unique_id=1117303828]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
+show_percentage = false
 
-[node name="Label" type="Label" parent="HBox/StatusContainer/VBox/MPBar"]
+[node name="Label" type="Label" parent="HBox/StatusContainer/VBox/Bars/MPBar" unique_id=1264450102]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_font_sizes/font_size = 12
 text = "MP: 30/30"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="AtkValue" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="StatsGrid" type="GridContainer" parent="HBox/StatusContainer/VBox" unique_id=708091378]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+columns = 2
+
+[node name="AtkValue" type="Label" parent="HBox/StatusContainer/VBox/StatsGrid" unique_id=1966447390]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.4, 0.3, 1)
 text = "ATK: 0"
 
-[node name="DefValue" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="DefValue" type="Label" parent="HBox/StatusContainer/VBox/StatsGrid" unique_id=1755815828]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.3, 0.6, 1, 1)
 text = "DEF: 0"
 
-[node name="GoldLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="GoldLabel" type="Label" parent="HBox/StatusContainer/VBox/StatsGrid" unique_id=640972905]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.85, 0, 1)
 text = "💰 0 G"
 
-[node name="Sep1" type="HSeparator" parent="HBox/StatusContainer/VBox"]
+[node name="Sep" type="HSeparator" parent="HBox/StatusContainer/VBox" unique_id=2126674187]
 layout_mode = 2
 
-[node name="EquipTitle" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="EquipGrid" type="GridContainer" parent="HBox/StatusContainer/VBox" unique_id=1457574748]
 layout_mode = 2
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
-text = "📦 สวมใส่อยู่"
-horizontal_alignment = 1
+theme_override_constants/h_separation = 5
+theme_override_constants/v_separation = 5
+columns = 2
 
-[node name="Equip_weapon" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="Slot_weapon" type="Button" parent="HBox/StatusContainer/VBox/EquipGrid" unique_id=1996241511]
+custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "อาวุธ: -ว่าง-"
+theme_override_font_sizes/font_size = 12
+text = "⚔️ ว่าง"
 
-[node name="Equip_head" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="Slot_head" type="Button" parent="HBox/StatusContainer/VBox/EquipGrid" unique_id=673377882]
+custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "หมวก: -ว่าง-"
+theme_override_font_sizes/font_size = 12
+text = "🪖 ว่าง"
 
-[node name="Equip_body" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="Slot_body" type="Button" parent="HBox/StatusContainer/VBox/EquipGrid" unique_id=1323642407]
+custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "เกราะ: -ว่าง-"
+theme_override_font_sizes/font_size = 12
+text = "🛡️ ว่าง"
 
-[node name="Equip_hands" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="Slot_hands" type="Button" parent="HBox/StatusContainer/VBox/EquipGrid" unique_id=1757289613]
+custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "ถุงมือ: -ว่าง-"
+theme_override_font_sizes/font_size = 12
+text = "🧤 ว่าง"
 
-[node name="Equip_feet" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="Slot_feet" type="Button" parent="HBox/StatusContainer/VBox/EquipGrid" unique_id=792509534]
+custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "รองเท้า: -ว่าง-"
+theme_override_font_sizes/font_size = 12
+text = "👢 ว่าง"
 
-[node name="Equip_accessory" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="Slot_accessory" type="Button" parent="HBox/StatusContainer/VBox/EquipGrid" unique_id=589496487]
+custom_minimum_size = Vector2(160, 40)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "เครื่องประดับ: -ว่าง-"
+theme_override_font_sizes/font_size = 12
+text = "💍 ว่าง"
 
-[node name="SetBonusLabel" type="Label" parent="HBox/StatusContainer/VBox"]
+[node name="SetBonusLabel" type="Label" parent="HBox/StatusContainer/VBox" unique_id=1282887006]
 layout_mode = 2
-theme_override_font_sizes/font_size = 13
 theme_override_colors/font_color = Color(0.3, 1, 0.5, 1)
-text = ""
+theme_override_font_sizes/font_size = 12
 
-[node name="VBox" type="VBoxContainer" parent="HBox"]
+[node name="VBox" type="VBoxContainer" parent="HBox" unique_id=1026613125]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="TabBar" type="HBoxContainer" parent="HBox/VBox"]
+[node name="TabBar" type="HBoxContainer" parent="HBox/VBox" unique_id=198599191]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="BagTab" type="Button" parent="HBox/VBox/TabBar"]
+[node name="BagTab" type="Button" parent="HBox/VBox/TabBar" unique_id=993144367]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "🎒 กระเป๋า"
 
-[node name="EnhanceTab" type="Button" parent="HBox/VBox/TabBar"]
+[node name="EnhanceTab" type="Button" parent="HBox/VBox/TabBar" unique_id=1422645279]
 custom_minimum_size = Vector2(120, 40)
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "🔨 ตีบวก"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="HBox/VBox"]
+[node name="ScrollContainer" type="ScrollContainer" parent="HBox/VBox" unique_id=1913063095]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ItemGrid" type="GridContainer" parent="HBox/VBox/ScrollContainer"]
+[node name="ItemGrid" type="GridContainer" parent="HBox/VBox/ScrollContainer" unique_id=104683074]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 columns = 3
 
-[node name="MessageLabel" type="Label" parent="."]
+[node name="MessageLabel" type="Label" parent="." unique_id=1081089966]
 layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
@@ -225,11 +249,11 @@ offset_right = 400.0
 offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 0
-theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.3, 1, 0.3, 1)
+theme_override_font_sizes/font_size = 22
 horizontal_alignment = 1
 
-[node name="CloseButton" type="Button" parent="."]
+[node name="CloseButton" type="Button" parent="." unique_id=604940150]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0

@@ -44,11 +44,50 @@ func _ready():
 	pause_menu_instance = pause_menu_scene.instantiate()
 	add_child(pause_menu_instance)
 	
+	# Play Shop BGM
+	AudioManager.play_bgm("menu")
+	
+	# Show Merchant Dialogue
+	await get_tree().create_timer(0.5).timeout
+	NPCDialogUI.show_npc_dialog("merchant_fortune")
+	
+	# Apply theme styling
+	_apply_theme()
+	
 	buy_button.disabled = true
 	feedback_label.text = ""
 	update_gold()
 	populate_items()
 	clear_detail()
+
+func _apply_theme():
+	"""Apply premium UI theme to shop"""
+	# Style gold label
+	gold_label.add_theme_color_override("font_color", UIThemeManager.COLOR_ACCENT)
+	gold_label.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_LARGE)
+	
+	# Style feedback label
+	feedback_label.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
+	feedback_label.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
+	
+	# Style detail panel labels
+	detail_name.add_theme_color_override("font_color", UIThemeManager.COLOR_ACCENT)
+	detail_name.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_LARGE)
+	
+	detail_rarity.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
+	detail_rarity.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
+	
+	detail_stats.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
+	detail_stats.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
+	
+	detail_desc.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
+	detail_desc.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
+	
+	detail_price.add_theme_color_override("font_color", UIThemeManager.COLOR_ACCENT)
+	detail_price.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_LARGE)
+	
+	# Style buy button
+	UIThemeManager.apply_button_theme(buy_button)
 
 func update_gold():
 	gold_label.text = "💰 Gold: %d" % Global.player_gold
@@ -56,6 +95,7 @@ func update_gold():
 # === Category filter ===
 func _on_category_pressed(cat: String):
 	current_category = cat
+	AudioManager.play_sfx("button_click")
 	selected_item_id = ""
 	clear_detail()
 	populate_items()
@@ -246,8 +286,13 @@ func _on_buy_pressed():
 		
 		update_gold()
 		_select_item(selected_item_id) # Refresh detail panel
+		
+		# Play Buy SFX (using levelup for now as a positive sound)
+		AudioManager.play_sfx("levelup")
+		
 		show_feedback("✅ ซื้อ %s สำเร็จ!" % item.get("name", ""), Color(0.3, 1, 0.3))
 	else:
+		AudioManager.play_sfx("menu_close") # Error sound
 		show_feedback("❌ เหรียญไม่พอ!", Color(1, 0.3, 0.3))
 
 func show_feedback(msg: String, color: Color):
@@ -259,4 +304,5 @@ func show_feedback(msg: String, color: Color):
 	tween.tween_property(feedback_label, "modulate:a", 0.0, 2.0).set_delay(1.5)
 
 func _on_exit_button_pressed():
+	AudioManager.play_sfx("button_click")
 	get_tree().change_scene_to_file("res://Scenes/Crossroads.tscn")

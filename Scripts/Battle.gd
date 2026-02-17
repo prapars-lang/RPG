@@ -51,23 +51,95 @@ func _ready():
 	load_player_stats()
 	setup_battle()
 	Global.level_up_occurred.connect(_on_level_up)
+	
+	# --- Visual Polish: Battle HUD ---
+	_apply_hud_styles()
+	
+	# Connect hover signals and apply styles for buttons
+	for btn in [$UI/Controls/AttackBtn, $UI/Controls/SkillBtn, $UI/Controls/ItemBtn, $UI/SkillMenu/VBox/CloseSkillBtn, $UI/ItemMenu/VBox/CloseItemBtn]:
+		btn.pivot_offset = btn.size / 2
+		btn.mouse_entered.connect(_on_btn_mouse_entered.bind(btn))
+		btn.mouse_exited.connect(_on_btn_mouse_exited.bind(btn))
+	
+	# Idle Animation for Sprites (Breathing effect)
+	_start_idle_animations()
 
-func _on_level_up(new_level, old_stats, new_stats):
+func _apply_hud_styles():
+	# Style HP Bar with theme colors
+	var hp_bg = StyleBoxFlat.new()
+	hp_bg.bg_color = UIThemeManager.COLOR_DARK_BG
+	hp_bg.corner_radius_top_left = 5
+	hp_bg.corner_radius_bottom_left = 5
+	
+	var hp_fill = StyleBoxFlat.new()
+	hp_fill.bg_color = Color(0.8, 0.2, 0.2) # Red for damage
+	hp_fill.corner_radius_top_left = 5
+	hp_fill.corner_radius_bottom_left = 5
+	hp_fill.border_width_right = 2
+	hp_fill.border_color = Color(1, 0.5, 0.5, 0.5)
+	
+	player_hp_bar.add_theme_stylebox_override("background", hp_bg)
+	player_hp_bar.add_theme_stylebox_override("fill", hp_fill)
+	
+	# Style MP Bar
+	var mp_fill = hp_fill.duplicate()
+	mp_fill.bg_color = Color(0.2, 0.5, 0.9) # Blue for mana
+	player_mp_bar.add_theme_stylebox_override("background", hp_bg)
+	player_mp_bar.add_theme_stylebox_override("fill", mp_fill)
+	
+	# Style Enemy Bar
+	enemy_hp_bar.add_theme_stylebox_override("background", hp_bg)
+	enemy_hp_bar.add_theme_stylebox_override("fill", hp_fill)
+	
+	# Style Actions Panel with UIThemeManager colors
+	var btn_style = StyleBoxFlat.new()
+	btn_style.bg_color = UIThemeManager.COLOR_PRIMARY_DARK
+	btn_style.corner_radius_top_left = 12
+	btn_style.corner_radius_top_right = 12
+	btn_style.corner_radius_bottom_left = 12
+	btn_style.corner_radius_bottom_right = 12
+	btn_style.border_width_left = 2
+	btn_style.border_width_top = 2
+	btn_style.border_width_right = 2
+	btn_style.border_width_bottom = 2
+	btn_style.border_color = UIThemeManager.COLOR_PRIMARY
+
+	for btn in [$UI/Controls/AttackBtn, $UI/Controls/SkillBtn, $UI/Controls/ItemBtn]:
+		btn.add_theme_stylebox_override("normal", btn_style)
+		btn.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
+		btn.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
+		
+		var h_style = btn_style.duplicate()
+		h_style.bg_color = UIThemeManager.COLOR_PRIMARY
+		h_style.border_color = UIThemeManager.COLOR_ACCENT
+		h_style.shadow_color = UIThemeManager.COLOR_PRIMARY
+		h_style.shadow_size = 8
+		btn.add_theme_stylebox_override("hover", h_style)
+		btn.add_theme_color_override("font_hover_color", UIThemeManager.COLOR_ACCENT)
+
+func _start_idle_animations():
+	# Hero Idle
+	var h_tween = create_tween().set_loops()
+	h_tween.tween_property(hero_sprite_ui, "position:y", hero_sprite_ui.position.y - 12, 2.5).set_trans(Tween.TRANS_SINE)
+	h_tween.tween_property(hero_sprite_ui, "position:y", hero_sprite_ui.position.y, 2.5).set_trans(Tween.TRANS_SINE)
+	
+	# Monster Idle
+	var m_tween = create_tween().set_loops()
+	m_tween.tween_property(monster_sprite_ui, "scale", Vector2(1.05, 1.05), 3.0).set_trans(Tween.TRANS_SINE)
+	m_tween.tween_property(monster_sprite_ui, "scale", Vector2(1.0, 1.0), 3.0).set_trans(Tween.TRANS_SINE)
+
+func _on_level_up(new_level, old_stats, new_stats, new_skills):
 	battle_log.text = "LEVEL UP! เลเวล " + str(new_level) + "!"
-	await get_tree().create_timer(1.0).timeout
+	AudioManager.play_sfx("levelup")
+	
+	if new_skills.size() > 0:
+		await get_tree().create_timer(1.0).timeout
+		var skills_text = ", ".join(new_skills)
+		battle_log.text = "เรียนรู้สกิลใหม่: " + skills_text + "!"
+		
+	await get_tree().create_timer(1.5).timeout
 	battle_log.text = "พลังเพิ่มขึ้น! HP/MP ฟื้นฟูเต็ม!"
 	update_ui()
-	
-	# Create a visual pop-up logic (to be implemented more fully later)
-	var popup = Label.new()
-	popup.text = "LEVEL UP!"
-	popup.add_theme_font_size_override("font_size", 48)
-	popup.add_theme_color_override("font_color", Color.YELLOW)
-	popup.position = Vector2(400, 300)
-	$UI.add_child(popup)
-	
-	await get_tree().create_timer(1.5).timeout
-	popup.queue_free()
 
 func load_player_stats():
 	var stats = Global.get_current_stats()
@@ -117,6 +189,7 @@ func setup_battle():
 		monster_sprite_ui.texture = load(monster_path)
 	
 	battle_log.text = current_monster_data.name + " ปรากฏตัวออกมาแล้ว!"
+	$UI/Controls.show()
 	update_ui()
 	player_turn()
 
@@ -143,8 +216,11 @@ func show_skill_menu():
 	for child in skill_list.get_children():
 		child.queue_free()
 	
-	var my_skills = Global.skills[Global.player_class]
-	for skill in my_skills:
+	var all_class_skills = Global.skills.get(Global.player_class, [])
+	for skill in all_class_skills:
+		if skill.level > Global.player_level:
+			continue
+			
 		var btn = Button.new()
 		btn.text = skill.name + " (" + str(skill.cost) + " MP)"
 		btn.disabled = player_mp < skill.cost
@@ -283,7 +359,19 @@ func execute_player_action(success):
 			if pending_skill.type == "dmg":
 				enemy_hp -= total_dmg
 			elif pending_skill.type == "buff":
-				battle_log.text += " (เพิ่มความแข็งแกร่ง!)"
+				var buff_val = pending_skill.value
+				player_def += buff_val
+				battle_log.text += " (พลังป้องกันเพิ่มขึ้น +%d!)" % buff_val
+				AudioManager.play_sfx("heal")
+			elif pending_skill.type == "heal":
+				var heal_val = pending_skill.value + int(player_atk * 0.2)
+				player_hp = min(player_hp + heal_val, player_max_hp)
+				battle_log.text += " (ฟื้นฟู HP +%d!)" % heal_val
+				AudioManager.play_sfx("heal")
+			elif pending_skill.type == "mp":
+				player_mp = min(player_mp + pending_skill.value, player_max_mp)
+				battle_log.text += " (ฟื้นฟู MP +%d!)" % pending_skill.value
+				AudioManager.play_sfx("heal")
 		else:
 			# Normal Attack: ATK + Random(0-5)
 			var damage = player_atk + randi() % 6
@@ -310,8 +398,13 @@ func execute_player_action(success):
 		player_hp -= enemy_dmg
 	
 	pending_skill = null
+	update_ui()
+	
+	# If correct answer -> Attack -> Next is Enemy Turn (true)
+	# If wrong answer -> Counter Attack -> Next is Player Turn (false)
+	check_battle_end(success)
 
-func check_battle_end():
+func check_battle_end(trigger_enemy_turn: bool = true):
 	if enemy_hp <= 0:
 		current_state = BattleState.WON
 		var xp_gain = current_monster_data.xp
@@ -324,6 +417,7 @@ func check_battle_end():
 		battle_log.text = "ชัยชนะ! ได้รับ " + str(xp_gain) + " XP และ " + str(gold_gain) + " Gold!"
 		Global.gain_xp(xp_gain)
 		Global.add_gold(gold_gain)
+		$UI/Controls.hide()
 		
 		await get_tree().create_timer(3.0).timeout
 		
@@ -338,10 +432,23 @@ func check_battle_end():
 		
 	elif player_hp <= 0:
 		current_state = BattleState.LOST
+		$UI/Controls.hide()
+		skill_menu.hide()
+		item_menu.hide()
+		question_box.hide()
+		
 		battle_log.text = "พ่ายแพ้... รักษาสุขภาพให้ดีกว่านี้ในครั้งหน้านะ!"
-		# Might want a Game Over screen or Restart logic here later
+		
+		# Wait then return to Menu
+		await get_tree().create_timer(4.0).timeout
+		get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
 	else:
-		enemy_turn()
+		if trigger_enemy_turn:
+			enemy_turn()
+		else:
+			# Counter-attack finished, return to player turn
+			await get_tree().create_timer(1.0).timeout
+			player_turn()
 
 func enemy_turn():
 	current_state = BattleState.ENEMY_TURN
@@ -398,3 +505,14 @@ func play_anim(target, type):
 		
 		# Safety: guarantee modulate is WHITE after animation completes
 		target.modulate = Color.WHITE
+
+# --- UI Juice ---
+func _on_btn_mouse_entered(btn: Button):
+	var tween = create_tween()
+	tween.tween_property(btn, "scale", Vector2(1.05, 1.05), 0.1)
+	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _on_btn_mouse_exited(btn: Button):
+	var tween = create_tween()
+	tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.1)
+	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)

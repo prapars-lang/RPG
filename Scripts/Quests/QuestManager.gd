@@ -5,12 +5,12 @@ extends Node
 
 const QuestData = preload("res://Scripts/Quests/QuestData.gd")
 
-static func activate_quest(quest_id: String):
+func activate_quest(quest_id: String):
 	if not Global.active_quests.has(quest_id) and not Global.completed_quests.has(quest_id):
 		Global.active_quests.append(quest_id)
 		print("Quest Activated: ", quest_id)
 
-static func complete_quest(quest_id: String):
+func complete_quest(quest_id: String):
 	if Global.active_quests.has(quest_id):
 		Global.active_quests.erase(quest_id)
 		if not Global.completed_quests.has(quest_id):
@@ -27,8 +27,8 @@ static func complete_quest(quest_id: String):
 				if Global.has_method("check_level_up"):
 					Global.check_level_up()
 
-static func is_quest_active(quest_id: String) -> bool:
+func is_quest_active(quest_id: String) -> bool:
 	return Global.active_quests.has(quest_id)
 
-static func is_quest_completed(quest_id: String) -> bool:
+func is_quest_completed(quest_id: String) -> bool:
 	return Global.completed_quests.has(quest_id)

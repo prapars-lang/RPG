@@ -1,0 +1,137 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/TownHub.gd" id="1_town"]
+[ext_resource type="Texture2D" path="res://Assets/Restored Park.png" id="2_bg"]
+
+[node name="TownHub" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_town")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.3)
+
+[node name="QuestBtn" type="Button" parent="."]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 30.0
+offset_right = 200.0
+offset_bottom = 85.0
+text = "📜 ภารกิจ"
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -500.0
+offset_top = 25.0
+offset_right = 500.0
+offset_bottom = 95.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 52
+text = "หมู่บ้านแห่งพฤกษา (Vita Village)"
+horizontal_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 80.0
+offset_bottom = -60.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AreasGrid" type="GridContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="LibraryBtn" type="Button" parent="CenterContainer/AreasGrid"]
+custom_minimum_size = Vector2(280, 130)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "📚 หอจดหมายเหตุ
+(Elder Wisdom)"
+
+[node name="TempleBtn" type="Button" parent="CenterContainer/AreasGrid"]
+custom_minimum_size = Vector2(280, 130)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "🏥 มหาวิหารแห่งการเยียวยา
+(Healer Compassion)"
+
+[node name="ShopBtn" type="Button" parent="CenterContainer/AreasGrid"]
+custom_minimum_size = Vector2(280, 130)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "💰 ร้านค้าภูติน้อย
+(Merchant Fortune)"
+
+[node name="ArenaBtn" type="Button" parent="CenterContainer/AreasGrid"]
+custom_minimum_size = Vector2(280, 130)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "⚔️ ลานประลองแสงจันทร์
+(Rival Ambitions)"
+
+[node name="CrossroadsBtn" type="Button" parent="CenterContainer/AreasGrid"]
+custom_minimum_size = Vector2(280, 130)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "🗺️ ออกสู่ป่า
+(Crossroads)"
+
+[node name="InventoryBtn" type="Button" parent="CenterContainer/AreasGrid"]
+custom_minimum_size = Vector2(280, 130)
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "🎒 กระเป๋าเดินทาง"
+
+[node name="DescriptionLine" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -55.0
+offset_right = 400.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 18
+text = "สถานที่พักผ่อนและแลกเปลี่ยนความรู้ของผู้พิทักษ์..."
+horizontal_alignment = 1
+
+[connection signal="pressed" from="QuestBtn" to="." method="_on_quest_pressed"]
+[connection signal="pressed" from="CenterContainer/AreasGrid/LibraryBtn" to="." method="_on_library_pressed"]
+[connection signal="pressed" from="CenterContainer/AreasGrid/TempleBtn" to="." method="_on_temple_pressed"]
+[connection signal="pressed" from="CenterContainer/AreasGrid/ShopBtn" to="." method="_on_shop_pressed"]
+[connection signal="pressed" from="CenterContainer/AreasGrid/ArenaBtn" to="." method="_on_arena_pressed"]
+[connection signal="pressed" from="CenterContainer/AreasGrid/CrossroadsBtn" to="." method="_on_crossroads_pressed"]
+[connection signal="pressed" from="CenterContainer/AreasGrid/InventoryBtn" to="." method="_on_inventory_pressed"]

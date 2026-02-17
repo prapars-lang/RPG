@@ -15,7 +15,45 @@ var slot_paths = [
 ]
 
 func _ready():
+	_apply_theme()
 	refresh_slots()
+	
+	# Connect hover signals for static buttons
+	for btn in get_tree().get_nodes_in_group("save_load_btns"): # Assuming they might be in a group, or just find them
+		_setup_btn_hover(btn)
+	
+	# Alternatively, just find all buttons in the VBox
+	for btn in $Panel/VBoxContainer.find_children("*", "Button", true):
+		_setup_btn_hover(btn)
+
+func _apply_theme():
+	"""Apply premium UI theme to save/load menu"""
+	# Style slot labels
+	for label in [slot1_label, slot2_label, slot3_label]:
+		label.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
+		label.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
+	
+	# Style all buttons
+	for btn in [load_btn1, load_btn2, load_btn3]:
+		UIThemeManager.apply_button_theme(btn)
+	
+	# Find delete/close buttons and style them too
+	for btn in $Panel/VBoxContainer.find_children("*", "Button", true):
+		if btn not in [load_btn1, load_btn2, load_btn3]:
+			UIThemeManager.apply_button_theme(btn)
+
+func _setup_btn_hover(btn: Button):
+	btn.pivot_offset = btn.size / 2
+	if not btn.mouse_entered.is_connected(_on_btn_hover.bind(btn)):
+		btn.mouse_entered.connect(_on_btn_hover.bind(btn))
+	if not btn.mouse_exited.is_connected(_on_btn_unhover.bind(btn)):
+		btn.mouse_exited.connect(_on_btn_unhover.bind(btn))
+
+func _on_btn_hover(btn: Button):
+	create_tween().tween_property(btn, "scale", Vector2(1.05, 1.05), 0.1)
+
+func _on_btn_unhover(btn: Button):
+	create_tween().tween_property(btn, "scale", Vector2(1.0, 1.0), 0.1)
 
 func refresh_slots():
 	var labels = [slot1_label, slot2_label, slot3_label]

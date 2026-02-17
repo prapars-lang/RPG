@@ -5,19 +5,24 @@ extends Node
 signal request_completed(response_text: String)
 signal request_failed(error_message: String)
 
-var api_key: String = "sk-G0tmEjZjb6Tpl9bjKStb723GFuvWgzzSapCN4W4QxiWj2u53pFqLUPtroe7OTQPr" # Set your OpenCode API Key here
-var api_url: String = "https://api.opencode.ai/v1/chat/completions" # Confirming URL
-var model_name: String = "typhoon-v1.5x-70b-instruct"
+var api_key: String = ""
+var api_url: String = ""
+var model_name: String = ""
 
 @onready var http_request = HTTPRequest.new()
 
 func _ready():
+	# Load configuration from ConfigManager
+	api_key = ConfigManager.get_llm_api_key()
+	api_url = ConfigManager.get_llm_api_url()
+	model_name = ConfigManager.get_llm_model()
+	
 	add_child(http_request)
 	http_request.request_completed.connect(_on_request_completed)
 
 func generate_response(prompt: String, system_prompt: String = "You are a helpful assistant in an educational RPG game."):
 	if api_key == "":
-		push_error("OpenCode API Key is missing. Please set it in LLMService.gd")
+		push_error("OpenCode API Key is missing. Please set OPENCODE_API_KEY in environment variables or in user://.env file under [llm] section with key 'api_key'")
 		request_failed.emit("Missing API Key")
 		return
 

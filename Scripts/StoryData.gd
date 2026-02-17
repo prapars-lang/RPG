@@ -612,103 +612,129 @@ func get_story_chunk(path_name, chunk_index):
 	return null
 
 const path_nutrition = {
-	# --- Scene 1: Arrival at the Kingdom of Flavors ---
-	1: {
+	# --- ACT 1: The Sugary Border (0-4) ---
+	0: {
 		"type": "dialogue",
-		"background": "res://Assets/Kitchen Forest.png", 
+		"background": "res://Assets/The Sleepy Forest.png", 
 		"dialogue": [
-			{"name": "Guide", "text": "ยินดีต้อนรับสู่ 'อาณาจักรแห่งรสชาติ' ท่านผู้กล้า!", "focus": "guide"},
-			{"name": "Hero", "text": "ที่นี่ดูอุดมสมบูรณ์จังเลยนะ", "focus": "hero"},
-			{"name": "Guide", "text": "เคยเป็นเช่นนั้น... จนกระทั่งกองทัพ 'น้ำตาลซ่อนเร้น' บุกรุก", "focus": "guide"},
-			{"name": "Hero", "text": "น้ำตาลซ่อนเร้นเหรอ? มันอันตรายยังไง?", "focus": "hero"},
-			{"name": "Guide", "text": "มันจะทำให้ชาวเมืองอ่อนแอ ฟันผุ และอ้วนโดยไม่รู้ตัว!", "focus": "guide"}
+			{"name": "Guide", "text": "ยินดีต้อนรับสู่ 'อาณาจักรแห่งรสชาติ' ท่านผู้กล้า! ที่นี่เคยเป็นสวรรค์ของอาหารสุขภาพ", "focus": "guide"},
+			{"name": "Hero", "text": "แต่ตอนนี้มันดู... เหนียวเหนอะหนะไปหมดเลยนะ", "focus": "hero"},
+			{"name": "Guide", "text": "เพราะกองทัพ 'น้ำตาลซ่อนเร้น' นำโดยสายลับน้ำตาลได้ยึดครองชายแดนไว้!", "focus": "guide"}
 		],
-		"next_chunk": 2
+		"next_chunk": 1
 	},
-	
-	# --- Scene 2: First Battle vs Sugar Spy ---
+	1: { "type": "battle", "enemy_id": "sugar_spy", "next_chunk": 2 },
 	2: {
-		"type": "battle",
-		"enemy_id": "sugar_spy",
+		"type": "dialogue",
+		"background": "res://Assets/The Sleepy Forest.png",
+		"dialogue": [
+			{"name": "Guide", "text": "น้ำตาลให้พลังงานก็จริง แต่ถ้ามากไปมันจะกลายเป็นไขมันสะสมนะ", "focus": "guide"},
+			{"name": "Hero", "text": "พวกมันชอบซ่อนอยู่ในน้ำอัดลมและขนมหวานสินะ", "focus": "hero"},
+			{"name": "System", "text": "(เสียงซ่าๆ ดังมาจากพุ่มไม้ข้างหน้า)", "focus": "none"}
+		],
 		"next_chunk": 3
 	},
-	
-	# --- Scene 3: Learning about 5 Food Groups ---
-	3: {
-		"type": "dialogue",
-		"background": "res://Assets/Kitchen Forest.png",
-		"dialogue": [
-			{"name": "Hero", "text": "เจ้านั่นพยายามหลอกให้ฉันกินขนมหวานมากเกินไป!", "focus": "hero"},
-			{"name": "Guide", "text": "นั่นแหละแผนของมัน! ท่านต้องรู้จัก 'อาหารหลัก 5 หมู่'", "focus": "guide"},
-			{"name": "Hero", "text": "โปรตีน คาร์โบไฮเดรต เกลือแร่ วิตามิน และไขมัน ใช่ไหม?", "focus": "hero"},
-			{"name": "Guide", "text": "ถูกต้อง! การกินให้สมดุลคือเกราะป้องกันที่ดีที่สุด", "focus": "guide"}
-		],
-		"next_chunk": 4
-	},
-	
-	# --- Scene 4: Battle vs Salt Slime ---
+	3: { "type": "battle", "enemy_id": "soda_slime", "next_chunk": 4 },
 	4: {
-		"type": "battle",
-		"enemy_id": "salt_slime",
+		"type": "dialogue",
+		"background": "res://Assets/Mirror of Falsehood.png",
+		"dialogue": [
+			{"name": "Guide", "text": "ระวัง! ทางข้างหน้าคือ 'ทุ่งหญ้าสารกันบูด' สิ่งที่ดูสดใหม่อาจจะเป็นของปลอม", "focus": "guide"},
+			{"name": "Hero", "text": "นั่นมัน... วิญญาณที่ลอยอยู่นั่นคืออะไร?", "focus": "hero"}
+		],
 		"next_chunk": 5
 	},
-	
-	# --- Scene 5: Warning about Sodium ---
-	5: {
-		"type": "dialogue",
-		"background": "res://Assets/Salt Desert.png",
-		"dialogue": [
-			{"name": "Hero", "text": "ตัวเมื่อกี้เค็มปี๋เลย! ร่างกายฉันรู้สึกคิวน้ำมาก", "focus": "hero"},
-			{"name": "Guide", "text": "นั่นคือสมุนของท่านลอร์ดโซเดียม การกินคนมากเกินไปทำร้ายไตนะ", "focus": "guide"},
-			{"name": "Hero", "text": "ต้องระวังเรื่องรสจัดด้วยสินะ ทั้งเค็ม ทั้งหวาน", "focus": "hero"},
-			{"name": "Guide", "text": "ใช่แล้ว! 'หวานน้อย สั่งได้' คือคาถาป้องกันตัว", "focus": "guide"}
-		],
-		"next_chunk": 6
-	},
-	
-	# --- Scene 6: Battle vs Fat Phantom ---
+
+	# --- ACT 2: The Processed Wasteland (5-9) ---
+	5: { "type": "battle", "enemy_id": "preservative_ghost", "next_chunk": 6 },
 	6: {
-		"type": "battle",
-		"enemy_id": "fat_phantom",
+		"type": "dialogue",
+		"background": "res://Assets/Mirror of Falsehood.png",
+		"dialogue": [
+			{"name": "Hero", "text": "สารกันบูดพวกนี้ทำให้ร่างกายเราทำงานหนักขึ้นในการขับสารพิษ!", "focus": "hero"},
+			{"name": "Guide", "text": "ถูกต้อง! การเลือกทานอาหารสดใหม่คือทางออกที่ดีที่สุด", "focus": "guide"},
+			{"name": "System", "text": "(ท่านพบกระป๋องอาหารขนาดยักษ์ขวางทางอยู่)", "focus": "none"}
+		],
 		"next_chunk": 7
 	},
-	
-	# --- Scene 7: Preparation for Nutrition Boss ---
-	7: {
+	7: { "type": "battle", "enemy_id": "processed_mimic", "next_chunk": 8 },
+	8: {
+		"type": "dialogue",
+		"background": "res://Assets/The Hall of Stagnation.png",
+		"dialogue": [
+			{"name": "Hero", "text": "อาหารแปรรูปพวกนี้มีทั้งโซเดียมและสารเจือปนเต็มไปหมด!", "focus": "hero"},
+			{"name": "Guide", "text": "เรากำลังเข้าสู่เขตของ 'ลอร์ดโซเดียม'... เตรียมตัวให้พร้อม ความเค็มกำลังจะมา!", "focus": "guide"}
+		],
+		"next_chunk": 9
+	},
+	9: { "type": "battle", "enemy_id": "salt_slime", "next_chunk": 10 },
+
+	# --- ACT 3: The Salty Dunes & Fatty Mountains (10-14) ---
+	10: {
+		"type": "dialogue",
+		"background": "res://Assets/The Hall of Stagnation.png",
+		"dialogue": [
+			{"name": "Hero", "text": "กินเค็มมากไปทำให้ตัวบวมและไตทำงานหนักนะเนี่ย", "focus": "hero"},
+			{"name": "Guide", "text": "ใช่แล้ว! คาถาป้องกันคือ 'ลดเค็ม ลดโรค' และดื่มน้ำเปล่าให้เพียงพอ", "focus": "guide"}
+		],
+		"next_chunk": 11
+	},
+	11: {
 		"type": "dialogue",
 		"background": "res://Assets/Candy Castle Gate.png",
 		"dialogue": [
-			{"name": "Guide", "text": "ข้างหน้าคือ 'ปราสาทลูกกวาด' ที่สถิตของ 'ราชา Junk Food'", "focus": "guide"},
-			{"name": "Hero", "text": "เขาเป็นคนบงการเรื่องอาหารขยะทั้งหมดใช่ไหม?", "focus": "hero"},
-			{"name": "Guide", "text": "ใช่! เขาใช้ความอร่อยมาเป็นเหยื่อล่อให้คนลืมสุขภาพ", "focus": "guide"},
-			{"name": "Hero", "text": "ฉันจะพิสูจน์ให้เห็นว่า อาหารที่มีประโยชน์ก็อร่อยได้!", "focus": "hero"}
+			{"name": "System", "text": "(เงาขนาดยักษ์ทอดทับทางเดิน... มันคือไททันแห่งความอ้วน)", "focus": "none"},
+			{"name": "Hero", "text": "นั่นมัน... ตัวอะไรน่ะ ใหญ่ยักษ์ชะมัด!", "focus": "hero"},
+			{"name": "Guide", "text": "นั่นคือ 'ไททันไขมันทรานส์' มือขวาของจักรพรรดิ!", "focus": "guide"}
 		],
-		"next_chunk": 8
+		"next_chunk": 12
 	},
-	
-	# --- Scene 8: Boss Battle vs Junk Food King ---
-	8: {
-		"type": "battle",
-		"enemy_id": "junk_food_king",
-		"next_chunk": 9
-	},
-	
-	# --- Scene 9: Victory & Conclusion ---
-	9: {
+	12: { "type": "battle", "enemy_id": "trans_fat_titan", "next_chunk": 13 },
+	13: {
 		"type": "dialogue",
-		"background": "res://Assets/Healthy Harvest.png",
+		"background": "res://Assets/Candy Castle Gate.png",
 		"dialogue": [
-			{"name": "Junk Food King", "text": "ไม่... ผักและผลไม้เหล่านั้น... มันทำให้ข้าละลาย!", "focus": "monster"},
-			{"name": "Hero", "text": "สุขภาพที่ดีเริ่มจากการเลือกสิ่งที่มีประโยชน์เข้าสู่ร่างกาย!", "focus": "hero"},
-			{"name": "Guide", "text": "อาณาจักรแห่งรสชาติกลับมาสดใสอีกครั้งแล้ว!", "focus": "guide"},
-			{"name": "ราชินีแห่งความเขียวขจี", "text": "ขอบคุณท่านผู้กล้า จงรับ 'ตราแห่งโภชนาการ' (Nutrition Emblem) ไว้", "focus": "npc"},
-			{"name": "Hero", "text": "ฉันจะกินอาหารที่มีประโยชน์เพื่อรักษาพลังนี้ไว้!", "focus": "hero"}
+			{"name": "Hero", "text": "เอาชนะมันได้แล้ว! แต่นั่นเป็นแค่จุดเริ่มใช่ไหม?", "focus": "hero"},
+			{"name": "Guide", "text": "ใช่! ปราสาท Junk Food อยู่ข้างหน้า... ที่สถิตของราชาและจักรพรรดิ", "focus": "guide"}
 		],
-		"next_chunk": 10
+		"next_chunk": 14
 	},
-	
-	# --- Scene 10: End Chapter ---
-	10: {
+	14: { "type": "battle", "enemy_id": "fat_phantom", "next_chunk": 15 },
+
+	# --- ACT 4: The Imperial Candy Castle (15-19) ---
+	15: {
+		"type": "dialogue",
+		"background": "res://Assets/Candy Castle Gate.png",
+		"dialogue": [
+			{"name": "Hero", "text": "ใกล้ถึงแล้ว! ฉันรู้สึกถึงพลังงานความหวานที่รุนแรงมาก", "focus": "hero"},
+			{"name": "Guide", "text": "ระวังตัวด้วย! 'ราชา Junk Food' กำลังเฝ้าประตูอยู่!", "focus": "guide"}
+		],
+		"next_chunk": 16
+	},
+	16: { "type": "battle", "enemy_id": "junk_food_king", "next_chunk": 17 },
+	17: {
+		"type": "dialogue",
+		"background": "res://Assets/Restored Park.png", # Represents inner castle
+		"dialogue": [
+			{"name": "Hero", "text": "ชั้นสุดท้ายแล้วสินะ... จักรพรรดิ Junk Food!", "focus": "hero"},
+			{"name": "Emperor", "text": "มนุษย์ผู้โง่เขลา... เจ้าคิดว่าถั่วและผักจะสู้ความอร่อยของข้าได้หรือ?", "focus": "boss"},
+			{"name": "Hero", "text": "ความอร่อยที่ไม่ยั่งยืนคือยาพิษ! รับมือ!", "focus": "hero"}
+		],
+		"next_chunk": 18
+	},
+	18: { "type": "battle", "enemy_id": "junk_food_emperor", "next_chunk": 19 },
+	19: {
+		"type": "dialogue",
+		"background": "res://Assets/Restored Park.png",
+		"dialogue": [
+			{"name": "Emperor", "text": "อ๊ากกกก! พลังแห่งวิตามิน... มันทำลายข้า!", "focus": "boss"},
+			{"name": "Hero", "text": "ความสมดุลคือชัยชนะที่แท้จริง!", "focus": "hero"},
+			{"name": "Guide", "text": "ยอดเยี่ยมมากท่านผู้กล้า! ตราแห่งโภชนาการเป็นของท่านแล้ว", "focus": "guide"},
+			{"name": "System", "text": "[ได้รับ: Nutrition Emblem (เหรียญตราแห่งโภชนาการ)]", "focus": "none"}
+		],
+		"next_chunk": 20
+	},
+	20: {
 		"type": "end_chapter",
 		"next_scene": "res://Scenes/Crossroads.tscn"
 	}

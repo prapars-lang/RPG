@@ -7,6 +7,23 @@ var quest_log_scene = preload("res://Scenes/QuestLog.tscn")
 func _ready():
 	# Start hidden
 	hide()
+	
+	# Apply theme styling
+	_apply_theme()
+	
+	# Connect hover signals for all primary buttons
+	for btn in $Panel/VBoxContainer.get_children():
+		if btn is Button:
+			btn.pivot_offset = btn.size / 2 # Ensure scaling from center
+			btn.mouse_entered.connect(_on_btn_mouse_entered.bind(btn))
+			btn.mouse_exited.connect(_on_btn_mouse_exited.bind(btn))
+
+func _apply_theme():
+	"""Apply premium UI theme to pause menu"""
+	# Style all buttons with UIThemeManager
+	for btn in $Panel/VBoxContainer.get_children():
+		if btn is Button:
+			UIThemeManager.apply_button_theme(btn)
 
 func _input(event):
 	# Toggle pause menu with ESC key
@@ -70,8 +87,25 @@ func _on_load_btn_pressed():
 	save_menu.tree_exited.connect(func(): show())
 
 func _on_options_btn_pressed():
-	print("Options (placeholder)")
-	# TODO: Create options menu
+	# Hide pause menu
+	hide()
+	# Instantiate OptionsMenu
+	var options_menu = load("res://Scenes/OptionsMenu.tscn").instantiate()
+	options_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().root.add_child(options_menu)
+	# Show pause menu again when options closes
+	options_menu.tree_exited.connect(func(): show())
+
+# --- UI Juice ---
+func _on_btn_mouse_entered(btn: Button):
+	var tween = create_tween()
+	tween.tween_property(btn, "scale", Vector2(1.05, 1.05), 0.1)
+	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _on_btn_mouse_exited(btn: Button):
+	var tween = create_tween()
+	tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.1)
+	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _on_main_menu_btn_pressed():
 	hide()

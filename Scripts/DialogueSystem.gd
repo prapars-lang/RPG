@@ -13,6 +13,20 @@ var current_line = 0
 func _ready():
 	# Hide on start
 	visible = false
+	_apply_theme()
+
+func _apply_theme():
+	"""Apply premium UI theme to dialogue system"""
+	# Style name label (NPC name) - smaller, more proportional
+	name_label.add_theme_color_override("font_color", UIThemeManager.COLOR_ACCENT)
+	name_label.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_BIG)
+	
+	# Style text label (dialogue text)
+	text_label.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
+	text_label.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
+	
+	# Style next indicator
+	next_indicator.add_theme_color_override("font_color", UIThemeManager.COLOR_PRIMARY)
 
 func start_dialogue(lines: Array):
 	dialogue_queue = lines

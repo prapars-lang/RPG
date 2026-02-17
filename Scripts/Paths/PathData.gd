@@ -16,7 +16,7 @@ const PATHS = [
 		"id": "nutrition",
 		"title": "ทางเดินแห่งโภชนาการ",
 		"subtitle": "อาหาร 5 หมู่",
-		"icon": "res://Assets/Junk Food King.png",
+		"icon": "res://Assets/Sugar Overlord.png",
 		"description": "เรียนรู้การเลือกทานอาหารที่มีประโยชน์เพื่อให้ร่างกายมีพลังงาน",
 		"bg_color": Color(0.1, 0.1, 0.4, 0.8)
 	},

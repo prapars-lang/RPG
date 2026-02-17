@@ -1,5 +1,13 @@
-[theme_resource]
-default_font = ExtResource("1_font")
-default_font_size = 18
+[gd_resource type="Theme" load_steps=3 format=3]
 
-[ext_resource type="FontFile" uid="uid://df7k8x2n8w2xj" path="res://Assets/NotoSansThai_Regular.woff2" id="1_font"]
+[ext_resource type="FontFile" uid="uid://dkhc8as671y5f" path="res://Assets/NotoSansThai_Bold.woff2" id="1_bold"]
+[ext_resource type="FontFile" uid="uid://df7k8x2n8w2xj" path="res://Assets/NotoSansThai_Regular.woff2" id="2_reg"]
+
+[resource]
+default_font = ExtResource("2_reg")
+default_font_size = 18
+Button/fonts/font = ExtResource("2_reg")
+Label/fonts/font = ExtResource("2_reg")
+LineEdit/fonts/font = ExtResource("2_reg")
+RichTextLabel/fonts/bold_font = ExtResource("1_bold")
+RichTextLabel/fonts/normal_font = ExtResource("2_reg")

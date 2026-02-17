@@ -8,6 +8,10 @@ extends Control
 
 func _ready():
 	print("IntroStory started. Player class: ", Global.player_class, " Gender: ", Global.player_gender)
+	_apply_theme()
+	
+	# Play Intro/Story Music
+	AudioManager.play_bgm("story")
 	
 	# Load Hero Sprite — key format: "อาชีพ_เพศ" e.g. "นักล่า_เด็กชาย"
 	var icon_key = Global.player_class + "_" + Global.player_gender
@@ -47,6 +51,11 @@ func _ready():
 	
 	# Initial focus
 	update_visual_focus("spirit")
+
+func _apply_theme():
+	"""Apply premium UI theme to intro story"""
+	# The dialogue system will handle its own styling via DialogueSystem.gd
+	pass
 
 func _input(event):
 	# Listen for dialogue progression to update focus

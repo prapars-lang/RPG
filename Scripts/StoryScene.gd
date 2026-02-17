@@ -9,11 +9,12 @@ var current_chunk_data = {}
 var pause_menu_scene = preload("res://Scenes/PauseMenu.tscn")
 var pause_menu_instance = null
 
-const QuestManager = preload("res://Scripts/Quests/QuestManager.gd")
-
 func _ready():
 	# Track current scene
 	Global.current_scene = "res://Scenes/StoryScene.tscn"
+	
+	# Apply theme styling
+	_apply_theme()
 	
 	# Add PauseMenu
 	pause_menu_instance = pause_menu_scene.instantiate()
@@ -34,7 +35,16 @@ func _ready():
 		ai_help_btn.position = Vector2(1000, 50) # Top Right-ish
 		ai_help_btn.size = Vector2(250, 50)
 		ai_help_btn.pressed.connect(_on_ai_help_pressed)
+		UIThemeManager.apply_button_theme(ai_help_btn)
 		add_child(ai_help_btn)
+
+func _apply_theme():
+	"""Apply premium UI theme to story scene"""
+	# Style any title/text labels in the scene
+	for label in find_children("*", "Label", true):
+		if label is Label and label.name not in ["NameLabel", "TextLabel"]:
+			label.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
+			label.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
 
 func _on_ai_help_pressed():
 	if dialogue_system:
@@ -59,6 +69,10 @@ func load_chunk():
 		return
 		
 	print("Chunk loaded successfully! Type: ", current_chunk_data.get("type", "unknown"))
+		
+	# Play Story BGM if not already playing
+	if not AudioManager.is_bgm_playing() or AudioManager.current_bgm_key != "story":
+		AudioManager.play_bgm("story")
 		
 	# Automatic Quest Activation (at start of chapter)
 	if chunk_idx == 0:

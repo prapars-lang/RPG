@@ -1,0 +1,104 @@
+[gd_scene load_steps=2 format=3 uid="uid://ci7qy5w4s5n8j"]
+
+[ext_resource type="Script" uid="uid://c7t4y5w4s5n8j" path="res://Scripts/OptionsMenu.gd" id="1_opt"]
+
+[node name="OptionsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_opt")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0.0784314, 0.0588235, 0.862745)
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(500, 400)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -200.0
+offset_top = 30.0
+offset_right = 200.0
+offset_bottom = -30.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "ตั้งค่า (Options)"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="MusicContainer" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/MusicContainer"]
+layout_mode = 2
+text = "ระดับเสียงเพลง (Music Volume)"
+
+[node name="HSlider" type="HSlider" parent="Panel/VBox/MusicContainer"]
+layout_mode = 2
+value = 80.0
+
+[node name="SFXContainer" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/SFXContainer"]
+layout_mode = 2
+text = "ระดับเสียงประกอบ (SFX Volume)"
+
+[node name="HSlider" type="HSlider" parent="Panel/VBox/SFXContainer"]
+layout_mode = 2
+value = 80.0
+
+[node name="ResolutionContainer" type="VBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel/VBox/ResolutionContainer"]
+layout_mode = 2
+text = "ความละเอียด (Resolution)"
+
+[node name="OptionButton" type="OptionButton" parent="Panel/VBox/ResolutionContainer"]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="BackBtn" type="Button" parent="Panel/VBox"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+text = "กลับ (Back)"
+
+[connection signal="value_changed" from="Panel/VBox/MusicContainer/HSlider" to="." method="_on_music_slider_value_changed"]
+[connection signal="item_selected" from="Panel/VBox/ResolutionContainer/OptionButton" to="." method="_on_resolution_selected"]
+[connection signal="pressed" from="Panel/VBox/BackBtn" to="." method="_on_back_btn_pressed"]

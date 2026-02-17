@@ -6,6 +6,10 @@ extends Control
 
 func _ready():
 	print("VictoryScene started.")
+	_apply_theme()
+	
+	# Play Victory BGM
+	AudioManager.play_bgm("victory")
 	# Load Spirit
 	var spirit_path = "res://Assets/forest_spirit.png"
 	if ResourceLoader.exists(spirit_path) or FileAccess.file_exists(spirit_path):
@@ -35,6 +39,11 @@ func _ready():
 	# Wait a bit before starting
 	await get_tree().create_timer(1.0).timeout
 	dialogue_system.start_dialogue(lines)
+
+func _apply_theme():
+	"""Apply premium UI theme to victory scene"""
+	# The dialogue system will handle its own styling via DialogueSystem.gd _apply_theme()
+	pass
 
 func _on_victory_finished():
 	get_tree().change_scene_to_file("res://Scenes/Crossroads.tscn")

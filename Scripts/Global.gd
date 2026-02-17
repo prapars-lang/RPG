@@ -1,6 +1,6 @@
 extends Node
 
-signal level_up_occurred(new_level, stats_before, stats_after)
+signal level_up_occurred(new_level, stats_before, stats_after, new_skills)
 
 # --- Player Data ---
 var player_name = "ผู้กล้า"
@@ -31,6 +31,13 @@ var current_scene = "res://Scenes/MainMenu.tscn" # Track where player is for sav
 # Quest State
 var active_quests = [] # IDs of active quests
 var completed_quests = [] # IDs of completed quests
+
+func check_all_paths_completed() -> bool:
+	var path_quests = ["exercise_start", "nutrition_start", "hygiene_start", "wisdom_start"]
+	for q_id in path_quests:
+		if q_id not in completed_quests:
+			return false
+	return true
 
 
 # --- System Data ---
@@ -156,16 +163,28 @@ var stats = {
 
 var skills = {
 	"อัศวิน": [
-		{"name": "โล่ยืดเหยียด", "cost": 10, "type": "buff", "value": 5, "desc": "เพิ่มพลังป้องกันด้วยการยืดเหยียด"}
+		{"name": "โล่ยืดเหยียด", "level": 1, "cost": 10, "type": "buff", "value": 5, "desc": "เพิ่มพลังป้องกันด้วยการยืดเหยียด"},
+		{"name": "จังหวะคาร์ดิโอ", "level": 3, "cost": 15, "type": "dmg", "value": 35, "desc": "โจมตีต่อเนื่องด้วยความกระปรี้กระเปร่า"},
+		{"name": "พลังกล้ามเนื้อ", "level": 5, "cost": 25, "type": "dmg", "value": 60, "desc": "โจมตีรุนแรงด้วยพลังกายที่ฝึกฝนมาดี"},
+		{"name": "หัวใจนักกีฬา", "level": 10, "cost": 40, "type": "heal", "value": 50, "desc": "ฟื้นฟูพลังชีวิตและเพิ่มพลังป้องกัน"}
 	],
 	"จอมเวทย์": [
-		{"name": "พลังอาหาร 5 หมู่", "cost": 15, "type": "dmg", "value": 40, "desc": "โจมตีรุนแรงด้วยพลังโภชนาการ"}
+		{"name": "พลังอาหาร 5 หมู่", "level": 1, "cost": 15, "type": "dmg", "value": 40, "desc": "โจมตีรุนแรงด้วยพลังโภชนาการ"},
+		{"name": "วิตามินบำรุงสมอง", "level": 3, "cost": 20, "type": "mp", "value": 30, "desc": "ฟื้นฟูมานาด้วยสารอาหารบำรุงสมอง"},
+		{"name": "พลังงานสะอาด", "level": 5, "cost": 30, "type": "dmg", "value": 75, "desc": "ระเบิดพลังงานบริสุทธิ์ใส่ศัตรู"},
+		{"name": "โภชนาการสมบูรณ์", "level": 10, "cost": 45, "type": "dmg", "value": 120, "desc": "สุดยอดเวทมนตร์แห่งสุขภาพสมบูรณ์"}
 	],
 	"นักล่า": [
-		{"name": "สเปรย์ฆ่าเชื้อ", "cost": 12, "type": "dmg", "value": 30, "desc": "ฉีดสเปรย์กำจัดเชื้อโรคอย่างรวดเร็ว"}
+		{"name": "สเปรย์ฆ่าเชื้อ", "level": 1, "cost": 12, "type": "dmg", "value": 30, "desc": "ฉีดสเปรย์กำจัดเชื้อโรคอย่างรวดเร็ว"},
+		{"name": "กับดักสบู่", "level": 3, "cost": 18, "type": "dmg", "value": 45, "desc": "วางกับดักสบู่ชำระล้างความชั่วร้าย"},
+		{"name": "หน้ากากป้องกัน", "level": 5, "cost": 22, "type": "buff", "value": 15, "desc": "สวมหน้ากากเพิ่มพลังป้องกันมลภาวะ"},
+		{"name": "ล้างบางเชื้อโรค", "level": 10, "cost": 35, "type": "dmg", "value": 100, "desc": "กำจัดเชื้อโรคและสิ่งสกปรกทั้งหมดในพริบตา"}
 	],
 	"ผู้พิทักษ์": [
-		{"name": "ระฆังแห่งสติ", "cost": 20, "type": "buff", "value": 30, "desc": "ฟื้นฟูพลังชีวิตและมานาด้วยเสียงระฆัง"}
+		{"name": "ระฆังแห่งสติ", "level": 1, "cost": 15, "type": "heal", "value": 30, "desc": "ฟื้นฟูพลังชีวิตด้วยเสียงระฆัง"},
+		{"name": "สมาธิภาวนา", "level": 3, "cost": 20, "type": "buff", "value": 12, "desc": "สงบนิ่งเพื่อเพิ่มพลังป้องกันอย่างมาก"},
+		{"name": "จิตใจที่แจ่มใส", "level": 5, "cost": 25, "type": "heal", "value": 60, "desc": "เยียวยาจิตใจและร่างกายด้วยพลังบวก"},
+		{"name": "พลังแห่งการพักผ่อน", "level": 10, "cost": 50, "type": "heal", "value": 150, "desc": "สุดยอดพลังแห่งการฟื้นฟูจากการพักผ่อนที่เพียงพอ"}
 	]
 }
 
@@ -207,32 +226,81 @@ var monster_db = {
 		"hp": 70,
 		"atk": 12,
 		"xp": 60,
-		"gold": 25,
-		"texture": "res://Assets/Sugar Spy.png"
+		"min_gold": 20,
+		"max_gold": 30,
+		"texture": "res://Assets/Sugar Overlord.png"
 	},
 	"fat_phantom": {
 		"name": "ปีศาจไขมันพอก",
 		"hp": 90,
 		"atk": 15,
 		"xp": 80,
-		"gold": 35,
-		"texture": "res://Assets/Fat Phantom.png"
+		"min_gold": 30,
+		"max_gold": 45,
+		"texture": "res://Assets/Greasy Blob.png"
 	},
 	"salt_slime": {
 		"name": "สไลม์เกลือเค็ม",
 		"hp": 80,
 		"atk": 20,
 		"xp": 75,
-		"gold": 30,
-		"texture": "res://Assets/Salt Slime.png"
+		"min_gold": 25,
+		"max_gold": 40,
+		"texture": "res://Assets/Salt Crystalline.png"
 	},
-	"junk_food_king": { # Boss
+	"junk_food_king": { # Mid-Boss
 		"name": "ราชา Junk Food",
-		"hp": 350,
-		"atk": 45,
-		"xp": 700,
-		"gold": 300,
-		"texture": "res://Assets/Junk Food King.png"
+		"hp": 400,
+		"atk": 50,
+		"xp": 800,
+		"min_gold": 200,
+		"max_gold": 300,
+		"texture": "res://Assets/Sugar Overlord.png"
+	},
+	"soda_slime": {
+		"name": "สไลม์น้ำซ่าซาบซ่าน",
+		"hp": 100,
+		"atk": 25,
+		"xp": 90,
+		"min_gold": 40,
+		"max_gold": 60,
+		"texture": "res://Assets/Salt Crystalline.png" # Placeholder tintable
+	},
+	"preservative_ghost": {
+		"name": "ผีสารกันบูด",
+		"hp": 120,
+		"atk": 22,
+		"xp": 110,
+		"min_gold": 50,
+		"max_gold": 80,
+		"texture": "res://Assets/Atrophy Spirit.png"
+	},
+	"processed_mimic": {
+		"name": "อาหารกระป๋องกินคน",
+		"hp": 150,
+		"atk": 30,
+		"xp": 150,
+		"min_gold": 70,
+		"max_gold": 120,
+		"texture": "res://Assets/Trash Demon.png" # Placeholder
+	},
+	"trans_fat_titan": { # Elite / Sub-Boss
+		"name": "ไททันไขมันทรานส์",
+		"hp": 250,
+		"atk": 40,
+		"xp": 300,
+		"min_gold": 150,
+		"max_gold": 250,
+		"texture": "res://Assets/Couch Potato Golem.png"
+	},
+	"junk_food_emperor": { # Final Boss
+		"name": "จักรพรรดิ Junk Food",
+		"hp": 1200,
+		"atk": 85,
+		"xp": 2500,
+		"min_gold": 1000,
+		"max_gold": 2000,
+		"texture": "res://Assets/Plague Lord.png" # Using Plague Lord as Emperor placeholder
 	},
 
 	# --- Path 3: Hygiene (Society) ---
@@ -477,9 +545,10 @@ func get_xp_for_level(level):
 
 func gain_xp(amount):
 	player_xp += amount
-	var required_xp = get_xp_for_level(player_level)
-	
-	if player_xp >= required_xp:
+	check_level_up()
+
+func check_level_up():
+	while player_xp >= get_xp_for_level(player_level):
 		level_up()
 
 func add_gold(amount):
@@ -518,7 +587,16 @@ func level_up():
 	s.hp = s.max_hp
 	s.mana = s.max_mana
 	
-	emit_signal("level_up_occurred", player_level, old_stats, s)
+	# Check for new skills
+	var new_skills = []
+	for skill in skills[player_class]:
+		if skill.level == player_level:
+			new_skills.append(skill.name)
+	
+	if new_skills.size() > 0:
+		print("New Skills Learned: ", new_skills)
+	
+	emit_signal("level_up_occurred", player_level, old_stats, s, new_skills)
 	print("LEVEL UP! Level: ", player_level)
 	save_game() # Auto-save on level up
 	return true
@@ -593,8 +671,38 @@ func get_unique_question(grade: String, topic: String = "") -> Dictionary:
 		print("[QSystem] Selected: '", final_selection.q.left(30), "...' | Total used now: ", used_questions.size())
 		# Auto-save used_questions to prevent data loss on crash/exit
 		save_game()
+		# Shuffle the options for variety
+		final_selection = shuffle_question_options(final_selection)
 		
 	return final_selection
+
+func shuffle_question_options(question: Dictionary) -> Dictionary:
+	"""Shuffle answer options while keeping track of correct answer"""
+	if question.is_empty() or question.get("options") == null:
+		return question
+	
+	# Create a copy to avoid modifying original
+	var shuffled = question.duplicate(true)
+	var options = shuffled.get("options", []).duplicate()
+	
+	if options.size() <= 1:
+		return shuffled
+	
+	# Shuffle the options array
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	
+	# Fisher-Yates shuffle
+	for i in range(options.size() - 1, 0, -1):
+		var j = rng.randi_range(0, i)
+		var temp = options[i]
+		options[i] = options[j]
+		options[j] = temp
+	
+	shuffled["options"] = options
+	print("[QSystem] Options shuffled for: '", question.q.left(30), "...'")
+	
+	return shuffled
 
 func get_monster_for_path(path_name):
 	match path_name:

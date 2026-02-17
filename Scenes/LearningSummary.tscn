@@ -1,0 +1,170 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Quests/LearningSummary.gd" id="1_summary"]
+
+[node name="LearningSummary" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_summary")
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.7)
+
+[node name="Panel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(900, 600)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -450.0
+offset_top = -300.0
+offset_right = 450.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Header" type="MarginContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/margin_top = 20
+
+[node name="Title" type="Label" parent="Panel/VBox/Header"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "สรุปผลการเรียนรู้มรรคาแห่งชีวิต"
+horizontal_alignment = 1
+
+[node name="Scroll" type="ScrollContainer" parent="Panel/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Grid" type="GridContainer" parent="Panel/VBox/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 30
+theme_override_constants/v_separation = 30
+columns = 2
+
+[node name="ExerciseBox" type="VBoxContainer" parent="Panel/VBox/Scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="Label" parent="Panel/VBox/Scroll/Grid/ExerciseBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "💪"
+horizontal_alignment = 1
+
+[node name="PathTitle" type="Label" parent="Panel/VBox/Scroll/Grid/ExerciseBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "มรรคาแห่งพลัง"
+horizontal_alignment = 1
+
+[node name="SummaryText" type="Label" parent="Panel/VBox/Scroll/Grid/ExerciseBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "เรียนรู้พื้นฐานการออกกำลังกาย
+สม่ำเสมอ เพื่อร่างกายที่แข็งแรง"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="NutritionBox" type="VBoxContainer" parent="Panel/VBox/Scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="Label" parent="Panel/VBox/Scroll/Grid/NutritionBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "🍎"
+horizontal_alignment = 1
+
+[node name="PathTitle" type="Label" parent="Panel/VBox/Scroll/Grid/NutritionBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "มรรคาแห่งโภชนาการ"
+horizontal_alignment = 1
+
+[node name="SummaryText" type="Label" parent="Panel/VBox/Scroll/Grid/NutritionBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "จดจำอาหาร 5 หมู่
+เลือกทานแต่สิ่งที่มีประโยชน์"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="HygieneBox" type="VBoxContainer" parent="Panel/VBox/Scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="Label" parent="Panel/VBox/Scroll/Grid/HygieneBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "🧼"
+horizontal_alignment = 1
+
+[node name="PathTitle" type="Label" parent="Panel/VBox/Scroll/Grid/HygieneBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "มรรคาแห่งความสะอาด"
+horizontal_alignment = 1
+
+[node name="SummaryText" type="Label" parent="Panel/VBox/Scroll/Grid/HygieneBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "รักษาสุขอนามัยส่วนตัว
+ห่างไกลจากโรคร้ายและเชื้อโรค"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="WisdomBox" type="VBoxContainer" parent="Panel/VBox/Scroll/Grid"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Icon" type="Label" parent="Panel/VBox/Scroll/Grid/WisdomBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "🧘"
+horizontal_alignment = 1
+
+[node name="PathTitle" type="Label" parent="Panel/VBox/Scroll/Grid/WisdomBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "มรรคาแห่งปัญญา"
+horizontal_alignment = 1
+
+[node name="SummaryText" type="Label" parent="Panel/VBox/Scroll/Grid/WisdomBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "รักษาสมดุลของจิตใจ
+ด้วยสมาธิและความรู้แจ้ง"
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="Footer" type="MarginContainer" parent="Panel/VBox"]
+layout_mode = 2
+theme_override_constants/margin_bottom = 20
+
+[node name="CloseBtn" type="Button" parent="Panel/VBox/Footer"]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "ยินดีด้วย! จบการเดินทาง"
+
+[connection signal="pressed" from="Panel/VBox/Footer/CloseBtn" to="." method="_on_close_pressed"]

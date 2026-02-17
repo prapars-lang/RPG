@@ -21,14 +21,23 @@ config/icon="res://Assets/hero_knight.png"
 
 [autoload]
 
+ConfigManager="*res://Scripts/ConfigManager.gd"
 Global="*res://Scripts/Global.gd"
 StoryData="*res://Scripts/StoryData.gd"
 LevelUpUI="*res://Scenes/LevelUpUI.tscn"
 LLMService="*res://Scripts/LLMService.gd"
 DialogueSystem="*res://Scenes/DialogueSystem.tscn"
+AudioManager="*res://Scripts/AudioManager.gd"
+NPCManager="*res://Scripts/NPCManager.gd"
+NPCDialogUI="*res://Scenes/NPCDialogUI.tscn"
+QuestManager="*res://Scripts/Quests/QuestManager.gd"
 
 [display]
 
 window/size/viewport_width=1280
 window/size/viewport_height=720
 window/stretch/mode="canvas_items"
+
+[gui]
+
+theme/custom="res://Assets/MainTheme.tres"
