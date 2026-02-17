@@ -41,7 +41,7 @@ signal card_unlocked(card_id, card_data)
 var unlocked_cards: Array = [] # Card IDs the player has collected
 
 var card_database = {
-	# ===== Nutrition Cards =====
+	# ===== Nutrition Cards (10) =====
 	"vitamin_c": {"name": "วิตามินซี", "category": "nutrition", "set": "vitamins",
 		"description": "ช่วยเสริมสร้างภูมิคุ้มกัน พบมากในส้ม มะนาว ฝรั่ง", "rarity": "common"},
 	"vitamin_a": {"name": "วิตามินเอ", "category": "nutrition", "set": "vitamins",
@@ -52,7 +52,18 @@ var card_database = {
 		"description": "สร้างกล้ามเนื้อและซ่อมแซมเซลล์ พบในไข่ เนื้อสัตว์ ถั่ว", "rarity": "common"},
 	"carbohydrate": {"name": "คาร์โบไฮเดรต", "category": "nutrition", "set": "nutrients",
 		"description": "แหล่งพลังงานหลักของร่างกาย พบในข้าว ขนมปัง เส้นก๋วยเตี๋ยว", "rarity": "common"},
-	# ===== Hygiene Cards =====
+	"calcium": {"name": "แคลเซียม", "category": "nutrition", "set": "minerals",
+		"description": "เสริมสร้างกระดูกและฟันให้แข็งแรง พบในนม โยเกิร์ต ผักใบเขียว", "rarity": "common"},
+	"iron": {"name": "ธาตุเหล็ก", "category": "nutrition", "set": "minerals",
+		"description": "ช่วยขนส่งออกซิเจนในเลือด พบในตับ เนื้อแดง ผักโขม", "rarity": "common"},
+	"fiber": {"name": "ใยอาหาร", "category": "nutrition", "set": "nutrients",
+		"description": "ช่วยระบบย่อยอาหาร ป้องกันท้องผูก พบในผัก ผลไม้ ธัญพืช", "rarity": "common"},
+	"food_pyramid": {"name": "พีระมิดอาหาร", "category": "nutrition", "set": "food_wisdom",
+		"description": "อาหารหลัก 5 หมู่ครบถ้วน กินหลากหลายสัดส่วนพอเหมาะ", "rarity": "rare"},
+	"water_benefits": {"name": "ประโยชน์ของน้ำ", "category": "nutrition", "set": "food_wisdom",
+		"description": "ดื่มน้ำสะอาด 6-8 แก้วต่อวัน ช่วยขับของเสียและหล่อเลี้ยงร่างกาย", "rarity": "common"},
+
+	# ===== Hygiene Cards (10) =====
 	"hand_washing": {"name": "ล้างมือ 7 ขั้นตอน", "category": "hygiene", "set": "hygiene_basics",
 		"description": "ล้างมือด้วยสบู่อย่างน้อย 20 วินาที ลดเชื้อโรคได้กว่า 80%", "rarity": "common"},
 	"tooth_brushing": {"name": "แปรงฟันถูกวิธี", "category": "hygiene", "set": "hygiene_basics",
@@ -63,7 +74,18 @@ var card_database = {
 		"description": "กินร้อน ช้อนกลาง ล้างมือ ลดความเสี่ยงโรคระบบทางเดินอาหาร", "rarity": "rare"},
 	"germ_defense": {"name": "ป้องกันเชื้อโรค", "category": "hygiene", "set": "hygiene_advanced",
 		"description": "สวมหน้ากากเมื่ออยู่ที่แออัด และเลี่ยงสัมผัสใบหน้า", "rarity": "rare"},
-	# ===== Exercise Cards =====
+	"nail_care": {"name": "ดูแลเล็บ", "category": "hygiene", "set": "self_care",
+		"description": "ตัดเล็บให้สั้นสะอาด ลดการสะสมเชื้อโรคใต้เล็บ", "rarity": "common"},
+	"hair_washing": {"name": "สระผมสะอาด", "category": "hygiene", "set": "self_care",
+		"description": "สระผม 2-3 ครั้งต่อสัปดาห์ ป้องกันรังแคและเหา", "rarity": "common"},
+	"clean_clothes": {"name": "เสื้อผ้าสะอาด", "category": "hygiene", "set": "self_care",
+		"description": "เปลี่ยนเสื้อผ้าทุกวัน ซักให้สะอาดตากแดดฆ่าเชื้อ", "rarity": "common"},
+	"dental_floss": {"name": "ไหมขัดฟัน", "category": "hygiene", "set": "hygiene_advanced",
+		"description": "ใช้ไหมขัดฟันวันละ 1 ครั้ง ทำความสะอาดซอกฟันที่แปรงเข้าไม่ถึง", "rarity": "rare"},
+	"sneeze_etiquette": {"name": "มารยาทการจาม", "category": "hygiene", "set": "hygiene_basics",
+		"description": "ใช้ข้อพับแขนปิดปากเวลาจาม ป้องกันการแพร่เชื้อทางอากาศ", "rarity": "common"},
+
+	# ===== Exercise Cards (10) =====
 	"cardio": {"name": "แอโรบิก", "category": "exercise", "set": "exercise_types",
 		"description": "วิ่ง ว่ายน้ำ ปั่นจักรยาน เสริมสร้างหัวใจและปอดให้แข็งแรง", "rarity": "common"},
 	"stretching": {"name": "ยืดเหยียดร่างกาย", "category": "exercise", "set": "exercise_types",
@@ -74,22 +96,41 @@ var card_database = {
 		"description": "เด็กควรนอน 9-11 ชั่วโมง เพื่อให้ร่างกายเจริญเติบโต", "rarity": "rare"},
 	"hydration": {"name": "ดื่มน้ำเพียงพอ", "category": "exercise", "set": "rest_recovery",
 		"description": "ดื่มน้ำวันละ 6-8 แก้ว ช่วยให้ร่างกายทำงานได้เต็มประสิทธิภาพ", "rarity": "common"},
+	"team_sports": {"name": "กีฬาทีม", "category": "exercise", "set": "sports_spirit",
+		"description": "ฟุตบอล บาสเกตบอล วอลเลย์บอล ฝึกการทำงานร่วมกันและมีน้ำใจนักกีฬา", "rarity": "common"},
+	"balance_training": {"name": "ฝึกการทรงตัว", "category": "exercise", "set": "exercise_types",
+		"description": "กระโดดเชือก ยืนขาเดียว ฝึกระบบประสาทและกล้ามเนื้อทำงานประสานกัน", "rarity": "common"},
+	"warm_up": {"name": "วอร์มอัพ", "category": "exercise", "set": "sports_spirit",
+		"description": "อุ่นเครื่อง 5-10 นาทีก่อนออกกำลังกาย ลดอาการบาดเจ็บกล้ามเนื้อ", "rarity": "common"},
+	"posture": {"name": "ท่าทางที่ถูกต้อง", "category": "exercise", "set": "rest_recovery",
+		"description": "นั่งหลังตรง ไม่ก้มหน้าดูจอนาน ป้องกันอาการปวดหลังปวดคอ", "rarity": "rare"},
+	"breathing_exercise": {"name": "ฝึกหายใจ", "category": "exercise", "set": "sports_spirit",
+		"description": "หายใจลึกๆ ช้าๆ ช่วยลดความเครียดและเพิ่มสมาธิ", "rarity": "rare"},
 }
 
 var card_sets = {
 	"vitamins": {"name": "ชุดวิตามิน", "cards": ["vitamin_c", "vitamin_a", "vitamin_d"],
 		"reward_type": "title", "reward_id": "นักโภชนาการน้อย"},
-	"nutrients": {"name": "ชุดสารอาหาร", "cards": ["protein", "carbohydrate"],
+	"nutrients": {"name": "ชุดสารอาหาร", "cards": ["protein", "carbohydrate", "fiber"],
 		"reward_type": "gold", "reward_id": 200},
-	"hygiene_basics": {"name": "ชุดสุขอนามัยพื้นฐาน", "cards": ["hand_washing", "tooth_brushing", "bathing"],
+	"minerals": {"name": "ชุดแร่ธาตุ", "cards": ["calcium", "iron"],
+		"reward_type": "gold", "reward_id": 250},
+	"food_wisdom": {"name": "ชุดภูมิปัญญาอาหาร", "cards": ["food_pyramid", "water_benefits"],
+		"reward_type": "title", "reward_id": "ปราชญ์แห่งอาหาร"},
+	"hygiene_basics": {"name": "ชุดสุขอนามัยพื้นฐาน", "cards": ["hand_washing", "tooth_brushing", "bathing", "sneeze_etiquette"],
 		"reward_type": "title", "reward_id": "ยอดนักสะอาด"},
-	"hygiene_advanced": {"name": "ชุดสุขอนามัยขั้นสูง", "cards": ["food_safety", "germ_defense"],
+	"hygiene_advanced": {"name": "ชุดสุขอนามัยขั้นสูง", "cards": ["food_safety", "germ_defense", "dental_floss"],
 		"reward_type": "gold", "reward_id": 300},
-	"exercise_types": {"name": "ชุดการออกกำลังกาย", "cards": ["cardio", "stretching", "strength"],
+	"self_care": {"name": "ชุดดูแลตัวเอง", "cards": ["nail_care", "hair_washing", "clean_clothes"],
+		"reward_type": "title", "reward_id": "เจ้าหญิง/เจ้าชายสะอาด"},
+	"exercise_types": {"name": "ชุดการออกกำลังกาย", "cards": ["cardio", "stretching", "strength", "balance_training"],
 		"reward_type": "title", "reward_id": "นักกีฬาแห่งอนาคต"},
-	"rest_recovery": {"name": "ชุดพักผ่อนฟื้นฟู", "cards": ["sleep", "hydration"],
-		"reward_type": "gold", "reward_id": 150},
+	"rest_recovery": {"name": "ชุดพักผ่อนฟื้นฟู", "cards": ["sleep", "hydration", "posture"],
+		"reward_type": "gold", "reward_id": 200},
+	"sports_spirit": {"name": "ชุดหัวใจนักกีฬา", "cards": ["team_sports", "warm_up", "breathing_exercise"],
+		"reward_type": "title", "reward_id": "จิตวิญญาณนักกีฬา"},
 }
+
 
 # Map question categories to card categories
 var category_to_cards_map = {
