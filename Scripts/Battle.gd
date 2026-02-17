@@ -308,7 +308,7 @@ func show_question():
 	current_question = Global.get_unique_question(grade, Global.current_path)
 	
 	if current_question.is_empty():
-		execute_player_action(true)
+		await execute_player_action(true)
 		return
 	
 	question_label.text = "[" + grade + "] " + current_question.q
@@ -329,25 +329,30 @@ func show_question():
 		btn.pressed.connect(answer_question.bind(option))
 		options_container.add_child(btn)
 	
+	# Hide action buttons to prevent overlapping click areas
+	$UI/Controls.visible = false
+	
 	question_box.visible = true
 	question_box.z_index = 10
 	question_box.move_to_front()
 
 func answer_question(answer):
 	if current_state != BattleState.QUESTION_TIME: return
+	# Prevent double-click by immediately changing state
+	current_state = BattleState.ENEMY_TURN
 	
 	question_box.visible = false
+	# Re-show action buttons
+	$UI/Controls.visible = true
+	
 	if answer == current_question.a:
 		# Try to unlock a Knowledge Card (20% chance)
 		var unlocked_id = Global.try_unlock_random_card(Global.current_path, 0.20)
 		if unlocked_id != "":
 			_show_card_unlock_popup(unlocked_id)
-		execute_player_action(true)
+		await execute_player_action(true)
 	else:
-		execute_player_action(false)
-	
-	update_ui()
-	check_battle_end()
+		await execute_player_action(false)
 
 func _show_card_unlock_popup(card_id: String):
 	var card_data = Global.card_database.get(card_id, {})
