@@ -68,7 +68,7 @@ layout_mode = 2
 alignment = 0
 
 [node name="Spacer" type="Control" parent="MainLayout/NPCSection"]
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
 [node name="GuideSprite" type="TextureRect" parent="MainLayout/NPCSection"]
