@@ -27,3 +27,14 @@ node_modules/
 
 # Large unnecessary files
 *.pdf
+Backups/
+Builds/
+web/
+newdata/
+
+# Environment variables and secrets (DO NOT COMMIT)
+.env
+.env.local
+.env.*.local
+credentials.json
+secrets.json
