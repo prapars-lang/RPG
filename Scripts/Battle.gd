@@ -319,18 +319,19 @@ func show_question():
 	for option in current_question.options:
 		var btn = Button.new()
 		btn.text = option
-		btn.custom_minimum_size = Vector2(0, 80)
-		btn.add_theme_font_size_override("font_size", 24)
+		btn.custom_minimum_size = Vector2(0, 55)
+		btn.add_theme_font_size_override("font_size", 20)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.size_flags_vertical = Control.SIZE_EXPAND_FILL
-		btn.mouse_filter = Control.MOUSE_FILTER_STOP # Ensure it catches clicks
+		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		btn.mouse_filter = Control.MOUSE_FILTER_STOP
 		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		btn.pressed.connect(answer_question.bind(option))
 		options_container.add_child(btn)
 	
 	question_box.visible = true
-	question_box.z_index = 10 # Force it above other UI elements
-	question_box.move_to_front() # Ensure it's drawn last in the tree
+	question_box.z_index = 10
+	question_box.move_to_front()
 
 func answer_question(answer):
 	if current_state != BattleState.QUESTION_TIME: return
