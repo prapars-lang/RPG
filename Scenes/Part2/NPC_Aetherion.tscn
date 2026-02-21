@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Part2/NPC.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Assets/Part2/NPC_Aetherion.png" id="2_sprite"]
+
+[sub_resource type="CircleShape2D" id="1"]
+radius = 40.0
+
+[node name="NPC_Aetherion" type="Area2D"]
+script = ExtResource("1_script")
+npc_name = "Aetherion"
+dialogue_key = "meet_aetherion"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_sprite")
+offset = Vector2(0, -20)
+scale = Vector2(0.8, 0.8)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1")
+
+[node name="Label" type="Label" parent="."]
+visible = false
+offset_left = -50.0
+offset_top = -80.0
+offset_right = 50.0
+offset_bottom = -57.0
+text = "[E] Talk"
+horizontal_alignment = 1

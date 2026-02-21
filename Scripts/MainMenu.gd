@@ -1,6 +1,7 @@
 extends Control
 
 @onready var continue_btn = $MainContainer/ContinueBtn
+
 @onready var main_container = $MainContainer
 
 # UI Theme Colors
@@ -15,12 +16,22 @@ func _ready():
 	_apply_button_styling()
 	_apply_text_styling()
 	
+	# --- Gamification UI ---
+	var streak_label = $MainContainer/GamificationInfo/StreakLabel
+	var lp_label = $MainContainer/GamificationInfo/LPLabel
+	
+	if streak_label:
+		streak_label.text = "🔥 " + str(Global.login_streak) + " Days"
+	if lp_label:
+		lp_label.text = "🎓 " + str(Global.learning_points) + " LP"
+	
 	# Play main menu background music
 	AudioManager.play_bgm("main_menu", 1.2)
 	
 	# Check if save file exists and enable/disable Continue button
 	if Global.has_save_file():
 		continue_btn.disabled = false
+		_show_welcome_message()
 	else:
 		continue_btn.disabled = true
 	
@@ -38,6 +49,20 @@ func _ready():
 	
 	# --- Character Animation ---
 	_animate_characters()
+
+func _show_welcome_message():
+	var label = Label.new()
+	label.text = "ยินดีต้อนรับ, " + Global.player_name + "!"
+	label.add_theme_font_size_override("font_size", 22)
+	label.add_theme_color_override("font_color", COLOR_ACCENT)
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	main_container.add_child(label)
+	main_container.move_child(label, 0) # Top of the menu
+	
+	# Small pop animation
+	label.scale = Vector2(0, 0)
+	var tween = create_tween()
+	tween.tween_property(label, "scale", Vector2(1, 1), 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _apply_button_styling():
 	"""Apply premium button styling to all menu buttons"""
@@ -174,6 +199,21 @@ func _on_continue_btn_pressed():
 	_play_transition_out()
 	await get_tree().create_timer(0.5).timeout
 	Global.load_and_start()
+
+func _on_part2_btn_pressed():
+	"""Part 2: Terra Nova button"""
+	print("Starting Part 2: Terra Nova...")
+	AudioManager.play_sfx("button_click")
+	_play_transition_out()
+	
+	# Reset Part 2 state
+	Global.is_part2_story = true
+	Global.current_story_key = "part2_intro"
+	Global.story_progress = 0
+	Global.current_companion_id = ""
+	
+	await get_tree().create_timer(0.5).timeout
+	get_tree().change_scene_to_file("res://Scenes/Part2/IntroPart2.tscn")
 
 func _on_options_btn_pressed():
 	"""Options button"""

@@ -32,3 +32,15 @@ func is_quest_active(quest_id: String) -> bool:
 
 func is_quest_completed(quest_id: String) -> bool:
 	return Global.completed_quests.has(quest_id)
+
+func on_enemy_killed(enemy_id: String):
+	for quest_id in Global.active_quests:
+		var data = QuestData.get_quest(quest_id)
+		if data.get("target_id") == enemy_id:
+			var current = Global.quest_progress.get(quest_id, 0)
+			current += 1
+			Global.quest_progress[quest_id] = current
+			print("Quest Progress [", quest_id, "]: ", current, "/", data.target_count)
+			
+			if current >= data.target_count:
+				complete_quest(quest_id)

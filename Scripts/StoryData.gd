@@ -12,6 +12,43 @@ extends Node
 #    }
 # }
 
+var final_chapter = {
+	"final": {
+		# --- Final Scene 1: The Core Gate ---
+		0: {
+			"type": "dialogue",
+			"background": "res://Assets/intro_bg.png",
+			"dialogue": [
+				{"name": "Hero", "text": "นี่คือจุดสิ้นสุดสินะ... ประตูสู่แก่นโลก", "focus": "hero"},
+				{"name": "Guide", "text": "ถูกต้อง พลังงานความเขลาทั้งหมดไหลมารวมกันที่นี่", "focus": "guide"},
+				{"name": "System", "text": "(ทันใดนั้น เงาสีดำขนาดมหึมาก็ปรากฏขึ้น!)", "focus": "none"},
+				{"name": "Ignorance Incarnate", "text": "เจ้าคิดว่าจะเปลี่ยนแปลงอะไรได้? มนุษย์ย่อมขี้เกียจ... มักง่าย... และอ่อนแอ...", "focus": "monster"},
+				{"name": "Hero", "text": "อาจจะใช่... แต่พวกเราเรียนรู้ได้! และพวกเราเปลี่ยนแปลงได้!", "focus": "hero"}
+			],
+			"next_chunk": 1
+		},
+		1: {
+			"type": "battle",
+			"enemy_id": "ignorance_incarnate",
+			"next_chunk": 2
+		},
+		2: {
+			"type": "dialogue",
+			"background": "res://Assets/intro_bg.png",
+			"dialogue": [
+				{"name": "Ignorance Incarnate", "text": "เป็นไปไม่ได้... แสงสว่างแห่งปัญญานี้มัน...", "focus": "monster"},
+				{"name": "Hero", "text": "นี่คือพลังของการดูแลตัวเอง! พลังของความรู้!", "focus": "hero"},
+				{"name": "Guide", "text": "สำเร็จแล้ว! ความมืดมิดกำลังสลายไป!", "focus": "guide"}
+			],
+			"next_chunk": 3
+		},
+		3: {
+			"type": "end_chapter",
+			"next_scene": "res://Scenes/EndingScene.tscn"
+		}
+	}
+}
+
 var path_power = {
 	# --- Scene 1: The Sleepy Entrance ---
 	0: {
@@ -600,15 +637,49 @@ var path_hygiene = {
 	}
 }
 
+var path_final = {
+	# --- Scene 0: The Core Gate ---
+	0: {
+		"type": "dialogue",
+		"background": "res://Assets/The Restored Forest.png", # Placeholder for Core
+		"dialogue": [
+			{"name": "Guide", "text": "ท่านผู้กล้า... ในที่สุดท่านก็รวบรวมตราประทับครบทั้ง 4", "focus": "guide"},
+			{"name": "Guide", "text": "ประตูสู่แก่นโลกเปิดออกแล้ว... ที่นั่นคือต้นกำเนิดของความมืดมิดทั้งหมด", "focus": "guide"},
+			{"name": "Hero", "text": "ฉันพร้อมแล้ว! ไม่ว่าอะไรจะอยู่ข้างใน ฉันจะจัดการมัน!", "focus": "hero"}
+		],
+		"next_chunk": 1
+	},
+	1: {
+		"type": "dialogue",
+		"background": "res://Assets/The Hall of Stagnation.png", # Dark ominous bg
+		"dialogue": [
+			{"name": "Ignorance", "text": "เจ้าคิดว่าการกำจัดลูกน้องข้าจะเปลี่ยนแปลงอะไรได้งั้นรึ?", "focus": "boss"},
+			{"name": "Hero", "text": "แกคือใคร?!", "focus": "hero"},
+			{"name": "Ignorance", "text": "ข้าคือ 'ความไม่รู้' (Ignorance)... ตราบใดที่มนุษย์ยังเพิกเฉย ไม่ใส่ใจดูแลตัวเอง ข้าก็จะไม่มีวันตาย!", "focus": "boss"},
+			{"name": "Hero", "text": "แต่ความรู้เปลี่ยนแปลงทุกอย่างได้! ฉันพิสูจน์มาแล้ว!", "focus": "hero"}
+		],
+		"next_chunk": 2
+	},
+	2: { "type": "battle", "enemy_id": "ignorance_incarnate", "next_chunk": 3 },
+	3: {
+		"type": "dialogue",
+		"background": "res://Assets/The Restored Forest.png",
+		"dialogue": [
+			{"name": "Ignorance", "text": "เป็นไปไม่ได้... แสงแห่งปัญญา... มันแสบตาเหลือเกิน!", "focus": "boss"},
+			{"name": "Hero", "text": "หายไปซะ! โลกนี้ไม่ต้องการแกอีกแล้ว!", "focus": "hero"},
+			{"name": "System", "text": "(ความมืดมิดสลายไป แสงสว่างสาดส่องไปทั่วทุกมุมโลก)", "focus": "none"},
+			{"name": "Guide", "text": "ยินดีด้วยท่านผู้กล้า... ท่านได้กอบกู้โลกนี้ไว้อย่างสมบูรณ์แล้ว", "focus": "guide"},
+			{"name": "Hero", "text": "การเรียนรู้... มันคือการผจญภัยที่คุ้มค่าจริงๆ", "focus": "hero"}
+		],
+		"next_chunk": 4
+	},
+	4: {
+		"type": "end_game", # Special type for Credits
+		"next_scene": "res://Scenes/MainMenu.tscn"
+	}
+}
+
 func get_story_chunk(path_name, chunk_index):
-	if path_name == "power" or path_name == "exercise":
-		return path_power.get(chunk_index, null)
-	elif path_name == "wisdom":
-		return path_wisdom.get(chunk_index, null)
-	elif path_name == "hygiene":
-		return path_hygiene.get(chunk_index, null)
-	elif path_name == "nutrition":
-		return path_nutrition.get(chunk_index, null)
 	return null
 
 const path_nutrition = {

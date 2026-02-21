@@ -38,27 +38,38 @@ func _ready():
 	# Add Knowledge Codex button to sidebar
 	_add_codex_button()
 	
+	# Check for Secret Boss
+	_check_secret_boss()
+	
 	# Animate Appearance
 	UIThemeManager.animate_fade_in(self, 1.0)
 
 func _add_mastery_button():
 	"""Add a special mastery button to the sidebar"""
 	var summary_btn = Button.new()
-	summary_btn.text = "🏆 สรุปการเรียนรู้"
+	# Changed to "The Core Gate"
+	summary_btn.text = "🌌 ประตูสู่แก่นโลก"
 	summary_btn.custom_minimum_size = Vector2(0, 50)
 	$Sidebar/VBox.add_child(summary_btn)
 	UIThemeManager.apply_button_theme(summary_btn, UIThemeManager.FONT_SIZE_SMALL)
-	summary_btn.pressed.connect(_on_summary_pressed)
 	
-	# Highlight the button
-	summary_btn.modulate = Color(1.0, 0.9, 0.4) # Gold tint
-
-func _on_summary_pressed():
-	AudioManager.play_sfx("menu_open")
-	var summary_scene = load("res://Scenes/LearningSummary.tscn")
-	if summary_scene:
-		var summary = summary_scene.instantiate()
-		add_child(summary)
+	# Connect to Final Chapter Logic
+	summary_btn.pressed.connect(_on_final_chapter_pressed)
+	
+	# Highlight the button with a pulsing effect or special color
+	summary_btn.modulate = Color(0.8, 0.4, 1.0) # Purple tint for mystery
+	
+func _on_final_chapter_pressed():
+	print("Entering the Final Chapter...")
+	AudioManager.play_sfx("battle_start")
+	
+	# Setup for Story Mode (Final Path)
+	Global.is_story_mode = true
+	Global.current_path = "final"
+	Global.story_progress = 0
+	
+	# Transition to Story Scene
+	get_tree().change_scene_to_file("res://Scenes/StoryScene.tscn")
 
 func _apply_theme():
 	"""Apply premium UI theme to crossroads"""
@@ -133,3 +144,34 @@ func _add_codex_button():
 func _on_codex_pressed():
 	AudioManager.play_sfx("menu_open")
 	get_tree().change_scene_to_file("res://Scenes/CodexMenu.tscn")
+
+func _check_secret_boss():
+	if Global.is_codex_complete():
+		var boss_btn = Button.new()
+		boss_btn.text = "😈 ??? 😈"
+		boss_btn.custom_minimum_size = Vector2(0, 50)
+		boss_btn.add_theme_color_override("font_color", Color(1, 0.2, 0.2)) # Red Text
+		$Sidebar/VBox.add_child(boss_btn)
+		
+		# Special Style for Boss Button
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.1, 0, 0, 0.8)
+		style.border_width_bottom = 2
+		style.border_color = Color.RED
+		style.corner_radius_top_left = 5
+		style.corner_radius_top_right = 5
+		style.corner_radius_bottom_left = 5
+		style.corner_radius_bottom_right = 5
+		boss_btn.add_theme_stylebox_override("normal", style)
+		
+		boss_btn.pressed.connect(_on_secret_boss_pressed)
+
+func _on_secret_boss_pressed():
+	print("Challenging the Knowledge Guardian!")
+	AudioManager.play_sfx("battle_start") # Or any ominous sound
+	
+	Global.is_story_mode = true
+	Global.queued_story_enemy_id = "knowledge_guardian"
+	
+	# Transition to Battle
+	get_tree().change_scene_to_file("res://Scenes/Battle.tscn")

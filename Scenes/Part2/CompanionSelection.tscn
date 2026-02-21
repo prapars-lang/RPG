@@ -1,0 +1,126 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Part2/CompanionSelection.gd" id="1_comp"]
+[ext_resource type="Texture2D" path="res://Assets/intro_bg.png" id="2_bg"]
+
+[node name="CompanionSelection" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_comp")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 110.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 40
+text = "โปรดเลือกคู่หูของคุณ"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -150.0
+offset_right = 400.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="Option1" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Sprite" type="TextureRect" parent="HBoxContainer/Option1"]
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="HBoxContainer/Option1"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="SelectBtn" type="Button" parent="HBoxContainer/Option1"]
+layout_mode = 2
+text = "เลือกตัวนี้"
+
+[node name="Option2" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Sprite" type="TextureRect" parent="HBoxContainer/Option2"]
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="HBoxContainer/Option2"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="SelectBtn" type="Button" parent="HBoxContainer/Option2"]
+layout_mode = 2
+text = "เลือกตัวนี้"
+
+[node name="Option3" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Sprite" type="TextureRect" parent="HBoxContainer/Option3"]
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Name" type="Label" parent="HBoxContainer/Option3"]
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="SelectBtn" type="Button" parent="HBoxContainer/Option3"]
+layout_mode = 2
+text = "เลือกตัวนี้"
+
+[node name="DescriptionLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -150.0
+offset_right = 300.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/font_size = 24
+text = "รายละเอียด..."
+horizontal_alignment = 1
+autowrap_mode = 2

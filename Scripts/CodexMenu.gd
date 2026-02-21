@@ -6,6 +6,7 @@ extends Control
 @onready var detail_desc: RichTextLabel = $DetailPanel/VBox/CardDesc
 @onready var detail_category: Label = $DetailPanel/VBox/CardCategory
 @onready var detail_set_label: Label = $DetailPanel/VBox/SetInfo
+@onready var detail_image: TextureRect = $DetailPanel/VBox/CardImage
 @onready var summary_label: Label = $Panel/VBox/Header/SummaryLabel
 @onready var back_btn: Button = $Panel/VBox/Header/BackBtn
 
@@ -69,18 +70,45 @@ func _create_card_button(card_id: String) -> Button:
 	var is_unlocked = Global.is_card_unlocked(card_id)
 	
 	var btn = Button.new()
-	btn.custom_minimum_size = Vector2(160, 100)
+	btn.custom_minimum_size = Vector2(120, 160)
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	
-	var rarity_colors = {"common": Color(0.7, 0.9, 1.0), "rare": Color(0.7, 0.5, 1.0)}
+	btn.clip_contents = true
 	
 	if is_unlocked:
-		btn.text = card_data.name
+		# --- Unlocked card: show artwork ---
+		if card_data.has("image") and ResourceLoader.exists(card_data.image):
+			var texture_rect = TextureRect.new()
+			texture_rect.texture = load(card_data.image)
+			texture_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			texture_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+			texture_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			texture_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			btn.add_child(texture_rect)
+		
+		# Overlay name at bottom with dark background for readability
+		var label_bg = ColorRect.new()
+		label_bg.color = Color(0, 0, 0, 0.6)
+		label_bg.custom_minimum_size = Vector2(0, 30)
+		label_bg.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+		label_bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		btn.add_child(label_bg)
+		
+		var name_label = Label.new()
+		name_label.text = card_data.name
+		name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		name_label.add_theme_font_size_override("font_size", 14)
+		name_label.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		label_bg.add_child(name_label)
+		
+		# Rarity glow border color
+		var rarity_colors = {"common": Color(0.7, 0.9, 1.0), "rare": Color(0.7, 0.5, 1.0)}
 		btn.add_theme_color_override("font_color", rarity_colors.get(card_data.rarity, Color.WHITE))
-		btn.add_theme_font_size_override("font_size", 18)
 		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 		btn.pressed.connect(_on_card_clicked.bind(card_id))
 	else:
+		# --- Locked card: dark placeholder ---
 		btn.text = "???"
 		btn.modulate = Color(0.5, 0.5, 0.5, 0.7)
 		btn.add_theme_font_size_override("font_size", 28)
@@ -94,6 +122,14 @@ func _on_card_clicked(card_id: String):
 	
 	detail_name.text = card_data.name
 	detail_desc.text = card_data.description
+	
+	# Show card image in detail panel
+	if detail_image != null:
+		if card_data.has("image") and ResourceLoader.exists(card_data.image):
+			detail_image.texture = load(card_data.image)
+			detail_image.visible = true
+		else:
+			detail_image.visible = false
 	
 	var cat_names = {"nutrition": "โภชนาการ", "hygiene": "สุขอนามัย", "exercise": "การออกกำลังกาย"}
 	detail_category.text = "หมวดหมู่: " + cat_names.get(card_data.category, "อื่นๆ")

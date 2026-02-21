@@ -9,9 +9,46 @@ var player_gender = "เด็กชาย"
 var player_class = "อัศวิน" 
 var player_level = 1
 var player_xp = 0
+# --- Part 2: Elemental System ---
+const ELEMENT_FIRE = "fire"
+const ELEMENT_WATER = "water"
+const ELEMENT_NATURE = "nature"
+const ELEMENT_WIND = "wind"
+const ELEMENT_LIGHTNING = "lightning"
+const ELEMENT_EARTH = "earth"
+
+const ELEMENT_NAMES = {
+	ELEMENT_FIRE: "Ignivar (Fire)",
+	ELEMENT_WATER: "Aquaryn (Water)",
+	ELEMENT_NATURE: "Sylvan (Nature)",
+	ELEMENT_WIND: "Zephyra (Wind)",
+	ELEMENT_LIGHTNING: "Voltaris (Lightning)",
+	ELEMENT_EARTH: "Terradon (Earth)"
+}
+
+var current_map_element = ELEMENT_NATURE # Default for Forest
+
+func get_elemental_weakness(attacker_elm, defender_elm):
+	# Return 2.0 (Strong), 0.5 (Weak), or 1.0 (Neutral)
+	match attacker_elm:
+		ELEMENT_FIRE: return 2.0 if defender_elm == ELEMENT_NATURE else (0.5 if defender_elm == ELEMENT_WATER else 1.0)
+		ELEMENT_WATER: return 2.0 if defender_elm == ELEMENT_FIRE else (0.5 if defender_elm == ELEMENT_LIGHTNING else 1.0) # Water conducts lightning? Game logic varies
+		ELEMENT_NATURE: return 2.0 if defender_elm == ELEMENT_WATER else (0.5 if defender_elm == ELEMENT_FIRE else 1.0)
+		ELEMENT_WIND: return 2.0 if defender_elm == ELEMENT_EARTH else (0.5 if defender_elm == ELEMENT_LIGHTNING else 1.0)
+		ELEMENT_EARTH: return 2.0 if defender_elm == ELEMENT_LIGHTNING else (0.5 if defender_elm == ELEMENT_WIND else 1.0)
+		ELEMENT_LIGHTNING: return 2.0 if defender_elm == ELEMENT_WATER else (0.5 if defender_elm == ELEMENT_EARTH else 1.0)
+	return 1.0
+
 var player_gold = 0
 var current_mana = 0
 var current_path = "" # "exercise", "nutrition", "hygiene"
+var current_companion_id = "" # "ignis_pup", "aqua_slime", etc.
+var companion_level = 1
+
+# Overworld State
+var last_overworld_position = Vector2.ZERO
+var last_overworld_scene = ""
+var is_overworld_mode = false
 var class_icons = {
 	"อัศวิน_เด็กชาย": "res://Assets/Tan.png",
 	"อัศวิน_เด็กหญิง": "res://Assets/Rin.png",
@@ -22,10 +59,13 @@ var class_icons = {
 	"ผู้พิทักษ์_เด็กชาย": "res://Assets/Korn.png",
 	"ผู้พิทักษ์_เด็กหญิง": "res://Assets/Fan.png"
 }
-# Story State
+
+
 var story_progress = 0 # Current chunk index
 var is_story_mode = false # If true, Battle returns to StoryScene
 var queued_story_enemy_id = "" # Override enemy for story battles
+var current_story_key = "" # Key for Part 2 dialogue (e.g., "meet_aetherion")
+var is_part2_story = false # Flag to switch StoryScene to Part 2 mode
 var used_questions = [] # Track IDs of questions already asked this session
 var current_scene = "res://Scenes/MainMenu.tscn" # Track where player is for save/load
 
@@ -40,71 +80,74 @@ signal card_unlocked(card_id, card_data)
 
 var unlocked_cards: Array = [] # Card IDs the player has collected
 
+
 var card_database = {
 	# ===== Nutrition Cards (10) =====
-	"vitamin_c": {"name": "วิตามินซี", "category": "nutrition", "set": "vitamins",
+	"vitamin_c": {"name": "วิตามินซี", "category": "nutrition", "set": "vitamins", "image": "res://Assets/cards/vitamin_c.png",
 		"description": "ช่วยเสริมสร้างภูมิคุ้มกัน พบมากในส้ม มะนาว ฝรั่ง", "rarity": "common"},
-	"vitamin_a": {"name": "วิตามินเอ", "category": "nutrition", "set": "vitamins",
+	"vitamin_a": {"name": "วิตามินเอ", "category": "nutrition", "set": "vitamins", "image": "res://Assets/cards/vitamin_a.png",
 		"description": "บำรุงสายตาและผิวพรรณ พบในแครอท ฟักทอง ตับ", "rarity": "common"},
-	"vitamin_d": {"name": "วิตามินดี", "category": "nutrition", "set": "vitamins",
+	"vitamin_d": {"name": "วิตามินดี", "category": "nutrition", "set": "vitamins", "image": "res://Assets/cards/vitamin_d.png",
 		"description": "ช่วยดูดซึมแคลเซียม ร่างกายสร้างได้จากแสงแดด", "rarity": "rare"},
-	"protein": {"name": "โปรตีน", "category": "nutrition", "set": "nutrients",
+	"protein": {"name": "โปรตีน", "category": "nutrition", "set": "nutrients", "image": "res://Assets/cards/protein.png",
 		"description": "สร้างกล้ามเนื้อและซ่อมแซมเซลล์ พบในไข่ เนื้อสัตว์ ถั่ว", "rarity": "common"},
-	"carbohydrate": {"name": "คาร์โบไฮเดรต", "category": "nutrition", "set": "nutrients",
+	"carbohydrate": {"name": "คาร์โบไฮเดรต", "category": "nutrition", "set": "nutrients", "image": "res://Assets/cards/carbohydrate.png",
 		"description": "แหล่งพลังงานหลักของร่างกาย พบในข้าว ขนมปัง เส้นก๋วยเตี๋ยว", "rarity": "common"},
-	"calcium": {"name": "แคลเซียม", "category": "nutrition", "set": "minerals",
+	"calcium": {"name": "แคลเซียม", "category": "nutrition", "set": "minerals", "image": "res://Assets/cards/calcium.png",
 		"description": "เสริมสร้างกระดูกและฟันให้แข็งแรง พบในนม โยเกิร์ต ผักใบเขียว", "rarity": "common"},
-	"iron": {"name": "ธาตุเหล็ก", "category": "nutrition", "set": "minerals",
+	"iron": {"name": "ธาตุเหล็ก", "category": "nutrition", "set": "minerals", "image": "res://Assets/cards/iron.png",
 		"description": "ช่วยขนส่งออกซิเจนในเลือด พบในตับ เนื้อแดง ผักโขม", "rarity": "common"},
-	"fiber": {"name": "ใยอาหาร", "category": "nutrition", "set": "nutrients",
+	"fiber": {"name": "ใยอาหาร", "category": "nutrition", "set": "nutrients", "image": "res://Assets/cards/fiber.png",
 		"description": "ช่วยระบบย่อยอาหาร ป้องกันท้องผูก พบในผัก ผลไม้ ธัญพืช", "rarity": "common"},
-	"food_pyramid": {"name": "พีระมิดอาหาร", "category": "nutrition", "set": "food_wisdom",
+	"food_pyramid": {"name": "พีระมิดอาหาร", "category": "nutrition", "set": "food_wisdom", "image": "res://Assets/cards/food_pyramid.png",
 		"description": "อาหารหลัก 5 หมู่ครบถ้วน กินหลากหลายสัดส่วนพอเหมาะ", "rarity": "rare"},
-	"water_benefits": {"name": "ประโยชน์ของน้ำ", "category": "nutrition", "set": "food_wisdom",
+	"water_benefits": {"name": "ประโยชน์ของน้ำ", "category": "nutrition", "set": "food_wisdom", "image": "res://Assets/cards/water_benefits.png",
 		"description": "ดื่มน้ำสะอาด 6-8 แก้วต่อวัน ช่วยขับของเสียและหล่อเลี้ยงร่างกาย", "rarity": "common"},
 
-	# ===== Hygiene Cards (10) =====
-	"hand_washing": {"name": "ล้างมือ 7 ขั้นตอน", "category": "hygiene", "set": "hygiene_basics",
+
+
+# --- Knowledge Codex (Collection & Badges) ---
+	"hand_washing": {"name": "ล้างมือ 7 ขั้นตอน", "category": "hygiene", "set": "hygiene_basics", "image": "res://Assets/cards/hand_washing.png",
 		"description": "ล้างมือด้วยสบู่อย่างน้อย 20 วินาที ลดเชื้อโรคได้กว่า 80%", "rarity": "common"},
-	"tooth_brushing": {"name": "แปรงฟันถูกวิธี", "category": "hygiene", "set": "hygiene_basics",
+	"tooth_brushing": {"name": "แปรงฟันถูกวิธี", "category": "hygiene", "set": "hygiene_basics", "image": "res://Assets/cards/tooth_brushing.png",
 		"description": "แปรงฟันวันละ 2 ครั้ง เช้า-ก่อนนอน อย่างน้อยครั้งละ 2 นาที", "rarity": "common"},
-	"bathing": {"name": "อาบน้ำให้สะอาด", "category": "hygiene", "set": "hygiene_basics",
+	"bathing": {"name": "อาบน้ำให้สะอาด", "category": "hygiene", "set": "hygiene_basics", "image": "res://Assets/cards/bathing.png",
 		"description": "อาบน้ำทุกวันเพื่อกำจัดเหงื่อ สิ่งสกปรก และเชื้อแบคทีเรีย", "rarity": "common"},
-	"food_safety": {"name": "อาหารปลอดภัย", "category": "hygiene", "set": "hygiene_advanced",
+	"food_safety": {"name": "อาหารปลอดภัย", "category": "hygiene", "set": "hygiene_advanced", "image": "res://Assets/cards/food_safety.png",
 		"description": "กินร้อน ช้อนกลาง ล้างมือ ลดความเสี่ยงโรคระบบทางเดินอาหาร", "rarity": "rare"},
-	"germ_defense": {"name": "ป้องกันเชื้อโรค", "category": "hygiene", "set": "hygiene_advanced",
+	"germ_defense": {"name": "ป้องกันเชื้อโรค", "category": "hygiene", "set": "hygiene_advanced", "image": "res://Assets/cards/germ_defense.png",
 		"description": "สวมหน้ากากเมื่ออยู่ที่แออัด และเลี่ยงสัมผัสใบหน้า", "rarity": "rare"},
-	"nail_care": {"name": "ดูแลเล็บ", "category": "hygiene", "set": "self_care",
+	"nail_care": {"name": "ดูแลเล็บ", "category": "hygiene", "set": "self_care", "image": "res://Assets/cards/nail_care.png",
 		"description": "ตัดเล็บให้สั้นสะอาด ลดการสะสมเชื้อโรคใต้เล็บ", "rarity": "common"},
-	"hair_washing": {"name": "สระผมสะอาด", "category": "hygiene", "set": "self_care",
+	"hair_washing": {"name": "สระผมสะอาด", "category": "hygiene", "set": "self_care", "image": "res://Assets/cards/hair_washing.png",
 		"description": "สระผม 2-3 ครั้งต่อสัปดาห์ ป้องกันรังแคและเหา", "rarity": "common"},
-	"clean_clothes": {"name": "เสื้อผ้าสะอาด", "category": "hygiene", "set": "self_care",
+	"clean_clothes": {"name": "เสื้อผ้าสะอาด", "category": "hygiene", "set": "self_care", "image": "res://Assets/cards/clean_clothes.png",
 		"description": "เปลี่ยนเสื้อผ้าทุกวัน ซักให้สะอาดตากแดดฆ่าเชื้อ", "rarity": "common"},
-	"dental_floss": {"name": "ไหมขัดฟัน", "category": "hygiene", "set": "hygiene_advanced",
+	"dental_floss": {"name": "ไหมขัดฟัน", "category": "hygiene", "set": "hygiene_advanced", "image": "res://Assets/cards/dental_floss.png",
 		"description": "ใช้ไหมขัดฟันวันละ 1 ครั้ง ทำความสะอาดซอกฟันที่แปรงเข้าไม่ถึง", "rarity": "rare"},
-	"sneeze_etiquette": {"name": "มารยาทการจาม", "category": "hygiene", "set": "hygiene_basics",
+	"sneeze_etiquette": {"name": "มารยาทการจาม", "category": "hygiene", "set": "hygiene_basics", "image": "res://Assets/cards/sneeze_etiquette.png",
 		"description": "ใช้ข้อพับแขนปิดปากเวลาจาม ป้องกันการแพร่เชื้อทางอากาศ", "rarity": "common"},
 
 	# ===== Exercise Cards (10) =====
-	"cardio": {"name": "แอโรบิก", "category": "exercise", "set": "exercise_types",
+	"cardio": {"name": "แอโรบิก", "category": "exercise", "set": "exercise_types", "image": "res://Assets/cards/cardio.png",
 		"description": "วิ่ง ว่ายน้ำ ปั่นจักรยาน เสริมสร้างหัวใจและปอดให้แข็งแรง", "rarity": "common"},
-	"stretching": {"name": "ยืดเหยียดร่างกาย", "category": "exercise", "set": "exercise_types",
+	"stretching": {"name": "ยืดเหยียดร่างกาย", "category": "exercise", "set": "exercise_types", "image": "res://Assets/cards/stretching.png",
 		"description": "ยืดร่างกายก่อนและหลังออกกำลังกาย ป้องกันการบาดเจ็บ", "rarity": "common"},
-	"strength": {"name": "เสริมสร้างกล้ามเนื้อ", "category": "exercise", "set": "exercise_types",
+	"strength": {"name": "เสริมสร้างกล้ามเนื้อ", "category": "exercise", "set": "exercise_types", "image": "res://Assets/cards/strength.png",
 		"description": "วิดพื้น ซิทอัพ สร้างกล้ามเนื้อให้แข็งแรง", "rarity": "common"},
-	"sleep": {"name": "นอนหลับพักผ่อน", "category": "exercise", "set": "rest_recovery",
+	"sleep": {"name": "นอนหลับพักผ่อน", "category": "exercise", "set": "rest_recovery", "image": "res://Assets/cards/sleep.png",
 		"description": "เด็กควรนอน 9-11 ชั่วโมง เพื่อให้ร่างกายเจริญเติบโต", "rarity": "rare"},
-	"hydration": {"name": "ดื่มน้ำเพียงพอ", "category": "exercise", "set": "rest_recovery",
+	"hydration": {"name": "ดื่มน้ำเพียงพอ", "category": "exercise", "set": "rest_recovery", "image": "res://Assets/cards/hydration.png",
 		"description": "ดื่มน้ำวันละ 6-8 แก้ว ช่วยให้ร่างกายทำงานได้เต็มประสิทธิภาพ", "rarity": "common"},
-	"team_sports": {"name": "กีฬาทีม", "category": "exercise", "set": "sports_spirit",
+	"team_sports": {"name": "กีฬาทีม", "category": "exercise", "set": "sports_spirit", "image": "res://Assets/cards/team_sports.png",
 		"description": "ฟุตบอล บาสเกตบอล วอลเลย์บอล ฝึกการทำงานร่วมกันและมีน้ำใจนักกีฬา", "rarity": "common"},
-	"balance_training": {"name": "ฝึกการทรงตัว", "category": "exercise", "set": "exercise_types",
+	"balance_training": {"name": "ฝึกการทรงตัว", "category": "exercise", "set": "exercise_types", "image": "res://Assets/cards/balance_training.png",
 		"description": "กระโดดเชือก ยืนขาเดียว ฝึกระบบประสาทและกล้ามเนื้อทำงานประสานกัน", "rarity": "common"},
-	"warm_up": {"name": "วอร์มอัพ", "category": "exercise", "set": "sports_spirit",
+	"warm_up": {"name": "วอร์มอัพ", "category": "exercise", "set": "sports_spirit", "image": "res://Assets/cards/warm_up.png",
 		"description": "อุ่นเครื่อง 5-10 นาทีก่อนออกกำลังกาย ลดอาการบาดเจ็บกล้ามเนื้อ", "rarity": "common"},
-	"posture": {"name": "ท่าทางที่ถูกต้อง", "category": "exercise", "set": "rest_recovery",
+	"posture": {"name": "ท่าทางที่ถูกต้อง", "category": "exercise", "set": "rest_recovery", "image": "res://Assets/cards/posture.png",
 		"description": "นั่งหลังตรง ไม่ก้มหน้าดูจอนาน ป้องกันอาการปวดหลังปวดคอ", "rarity": "rare"},
-	"breathing_exercise": {"name": "ฝึกหายใจ", "category": "exercise", "set": "sports_spirit",
+	"breathing_exercise": {"name": "ฝึกหายใจ", "category": "exercise", "set": "sports_spirit", "image": "res://Assets/cards/breathing_exercise.png",
 		"description": "หายใจลึกๆ ช้าๆ ช่วยลดความเครียดและเพิ่มสมาธิ", "rarity": "rare"},
 }
 
@@ -204,6 +247,19 @@ func get_codex_summary() -> Dictionary:
 # Quest State
 var active_quests = [] # IDs of active quests
 var completed_quests = [] # IDs of completed quests
+var quest_progress = {} # { "quest_id": current_count }
+
+# Skill Tree System
+var skill_points = 5 # Starting points (for testing)
+var unlocked_skills = [] # List of skill IDs unlocked
+
+func unlock_skill(skill_id):
+	if not unlocked_skills.has(skill_id):
+		unlocked_skills.append(skill_id)
+		print("Skill Unlocked: ", skill_id)
+
+func has_skill(skill_id):
+	return unlocked_skills.has(skill_id)
 
 func check_all_paths_completed() -> bool:
 	var path_quests = ["exercise_start", "nutrition_start", "hygiene_start", "wisdom_start"]
@@ -337,26 +393,42 @@ var stats = {
 var skills = {
 	"อัศวิน": [
 		{"name": "โล่ยืดเหยียด", "level": 1, "cost": 10, "type": "buff", "value": 5, "desc": "เพิ่มพลังป้องกันด้วยการยืดเหยียด"},
+		{"name": "ลับคมดาบ", "level": 2, "cost": 12, "type": "buff", "value": 5, "desc": "เตรียมพร้อมโจมตี เพิ่มพลังโจมตีชั่วคราว"},
 		{"name": "จังหวะคาร์ดิโอ", "level": 3, "cost": 15, "type": "dmg", "value": 35, "desc": "โจมตีต่อเนื่องด้วยความกระปรี้กระเปร่า"},
+		{"name": "โล่กระแทก", "level": 4, "cost": 18, "type": "dmg", "value": 40, "desc": "กระแทกศัตรูด้วยโล่"},
 		{"name": "พลังกล้ามเนื้อ", "level": 5, "cost": 25, "type": "dmg", "value": 60, "desc": "โจมตีรุนแรงด้วยพลังกายที่ฝึกฝนมาดี"},
+		{"name": "ฟันกวาด", "level": 6, "cost": 30, "type": "dmg", "value": 50, "desc": "โจมตีศัตรูทั้งหมด (สมมติ)"},
+		{"name": "ปราการเหล็ก", "level": 8, "cost": 35, "type": "buff", "value": 15, "desc": "เพิ่มพลังป้องกันอย่างมหาศาล"},
 		{"name": "หัวใจนักกีฬา", "level": 10, "cost": 40, "type": "heal", "value": 50, "desc": "ฟื้นฟูพลังชีวิตและเพิ่มพลังป้องกัน"}
 	],
 	"จอมเวทย์": [
 		{"name": "พลังอาหาร 5 หมู่", "level": 1, "cost": 15, "type": "dmg", "value": 40, "desc": "โจมตีรุนแรงด้วยพลังโภชนาการ"},
+		{"name": "สมาธิ", "level": 2, "cost": 10, "type": "mp", "value": 20, "desc": "ฟื้นฟูมานาเล็กน้อย"},
 		{"name": "วิตามินบำรุงสมอง", "level": 3, "cost": 20, "type": "mp", "value": 30, "desc": "ฟื้นฟูมานาด้วยสารอาหารบำรุงสมอง"},
+		{"name": "ศรน้ำแข็ง", "level": 4, "cost": 25, "type": "dmg", "value": 50, "desc": "ยิงศรน้ำแข็งใส่ศัตรู"},
 		{"name": "พลังงานสะอาด", "level": 5, "cost": 30, "type": "dmg", "value": 75, "desc": "ระเบิดพลังงานบริสุทธิ์ใส่ศัตรู"},
+		{"name": "ไฟบอล", "level": 6, "cost": 35, "type": "dmg", "value": 80, "desc": "ลูกไฟยักษ์เผาผลาญ"},
+		{"name": "เกราะเวทย์", "level": 8, "cost": 40, "type": "buff", "value": 10, "desc": "สร้างเกราะป้องกันด้วยเวทมนตร์"},
 		{"name": "โภชนาการสมบูรณ์", "level": 10, "cost": 45, "type": "dmg", "value": 120, "desc": "สุดยอดเวทมนตร์แห่งสุขภาพสมบูรณ์"}
 	],
 	"นักล่า": [
 		{"name": "สเปรย์ฆ่าเชื้อ", "level": 1, "cost": 12, "type": "dmg", "value": 30, "desc": "ฉีดสเปรย์กำจัดเชื้อโรคอย่างรวดเร็ว"},
+		{"name": "เล็งเป้า", "level": 2, "cost": 10, "type": "buff", "value": 5, "desc": "เพิ่มความแม่นยำและพลังโจมตี"},
 		{"name": "กับดักสบู่", "level": 3, "cost": 18, "type": "dmg", "value": 45, "desc": "วางกับดักสบู่ชำระล้างความชั่วร้าย"},
+		{"name": "ยิงเบิ้ล", "level": 4, "cost": 20, "type": "dmg", "value": 55, "desc": "ยิงธนูสองดอกพร้อมกัน"},
 		{"name": "หน้ากากป้องกัน", "level": 5, "cost": 22, "type": "buff", "value": 15, "desc": "สวมหน้ากากเพิ่มพลังป้องกันมลภาวะ"},
+		{"name": "ฝนธนู", "level": 6, "cost": 30, "type": "dmg", "value": 70, "desc": "ยิงธนูจำนวนมากขึ้นฟ้าตกลงมาใส่ศัตรู"},
+		{"name": "พรางตัว", "level": 8, "cost": 25, "type": "buff", "value": 10, "desc": "หลบซ่อนตัวเพื่อลดความเสียหาย"},
 		{"name": "ล้างบางเชื้อโรค", "level": 10, "cost": 35, "type": "dmg", "value": 100, "desc": "กำจัดเชื้อโรคและสิ่งสกปรกทั้งหมดในพริบตา"}
 	],
 	"ผู้พิทักษ์": [
 		{"name": "ระฆังแห่งสติ", "level": 1, "cost": 15, "type": "heal", "value": 30, "desc": "ฟื้นฟูพลังชีวิตด้วยเสียงระฆัง"},
+		{"name": "แสงศรัทธา", "level": 2, "cost": 15, "type": "dmg", "value": 35, "desc": "โจมตีด้วยแสงแห่งความดี"},
 		{"name": "สมาธิภาวนา", "level": 3, "cost": 20, "type": "buff", "value": 12, "desc": "สงบนิ่งเพื่อเพิ่มพลังป้องกันอย่างมาก"},
+		{"name": "ค้อนธรรมะ", "level": 4, "cost": 25, "type": "dmg", "value": 60, "desc": "ทุบศัตรูด้วยค้อนแห่งธรรม"},
 		{"name": "จิตใจที่แจ่มใส", "level": 5, "cost": 25, "type": "heal", "value": 60, "desc": "เยียวยาจิตใจและร่างกายด้วยพลังบวก"},
+		{"name": "โล่ศักดิ์สิทธิ์", "level": 6, "cost": 30, "type": "buff", "value": 20, "desc": "สร้างโล่ป้องกันความชั่วร้าย"},
+		{"name": "พรแห่งชีวิต", "level": 8, "cost": 40, "type": "heal", "value": 100, "desc": "ฟื้นฟูพลังชีวิตอย่างมาก"},
 		{"name": "พลังแห่งการพักผ่อน", "level": 10, "cost": 50, "type": "heal", "value": 150, "desc": "สุดยอดพลังแห่งการฟื้นฟูจากการพักผ่อนที่เพียงพอ"}
 	]
 }
@@ -365,6 +437,86 @@ var monster_db = {
 	# --- Basic / Generic ---
 	
 	# --- Path 1: Body (Exercise) ---
+	"unstable_slime": {
+		"name": "Unstable Slime",
+		"hp": 60,
+		"atk": 15,
+		"xp": 50,
+		"min_gold": 20,
+		"max_gold": 30,
+		"element": ELEMENT_WATER, 
+		"texture": "res://Assets/Part2/Unstable_Slime.png"
+	},
+	"thorn_wolf": {
+		"name": "Thorn Wolf",
+		"hp": 80,
+		"atk": 20,
+		"xp": 70,
+		"min_gold": 30,
+		"max_gold": 45,
+		"element": ELEMENT_NATURE,
+		"texture": "res://Assets/Part2/Thorn_Wolf.png"
+	},
+	"spore_shroom": {
+		"name": "Spore Shroom",
+		"hp": 70,
+		"atk": 18,
+		"xp": 60,
+		"min_gold": 25,
+		"max_gold": 40,
+		"element": ELEMENT_NATURE,
+		"texture": "res://Assets/Part2/Spore_Shroom.png"
+	},
+	"bubble_crab": {
+		"name": "Bubble Crab",
+		"hp": 90,
+		"atk": 22,
+		"xp": 75,
+		"min_gold": 35,
+		"max_gold": 50,
+		"element": ELEMENT_WATER,
+		"texture": "res://Assets/Part2/Bubble_Crab.png"
+	},
+	"magma_slime": {
+		"name": "Magma Slime",
+		"hp": 85,
+		"atk": 25,
+		"xp": 70,
+		"min_gold": 30,
+		"max_gold": 45,
+		"element": ELEMENT_FIRE,
+		"texture": "res://Assets/Part2/Magma_Slime.png"
+	},
+	"crystal_spider": {
+		"name": "Crystal Spider",
+		"hp": 95,
+		"atk": 28,
+		"xp": 80,
+		"min_gold": 40,
+		"max_gold": 55,
+		"element": ELEMENT_EARTH,
+		"texture": "res://Assets/Part2/Crystal_Spider.png"
+	},
+	"thunder_hawk": {
+		"name": "Thunder Hawk",
+		"hp": 100,
+		"atk": 30,
+		"xp": 90,
+		"min_gold": 45,
+		"max_gold": 60,
+		"element": ELEMENT_LIGHTNING, # Mapping Wind/Lightning to Lightning for now
+		"texture": "res://Assets/Part2/Thunder_Hawk.png"
+	},
+	"corrupted_treant": {
+		"name": "Corrupted Treant (BOSS)",
+		"hp": 500,
+		"atk": 50,
+		"xp": 1000,
+		"min_gold": 500,
+		"max_gold": 600,
+		"element": ELEMENT_NATURE,
+		"texture": "res://Assets/Part2/Corrupted_Treant.png"
+	},
 	"lazy_slime": {
 		"name": "สไลม์ขี้เกียจ",
 		"hp": 40,
@@ -372,6 +524,8 @@ var monster_db = {
 		"xp": 30,
 		"min_gold": 10,
 		"max_gold": 15,
+
+		"element": ELEMENT_WATER,
 		"texture": "res://Assets/Lazy Slime.png"
 	},
 	"atrophy_ghost": {
@@ -523,6 +677,7 @@ var monster_db = {
 		"atk": 15,
 		"xp": 120,
 		"gold": 50,
+		"element": ELEMENT_NATURE,
 		"texture": "res://Assets/Virus Monster.png"
 	},
 	"germ": {
@@ -558,37 +713,88 @@ var monster_db = {
 		"xp": 500,
 		"gold": 200,
 		"texture": "res://Assets/Overthinking Golem.png"
+	},
+	"knowledge_guardian": {
+		"name": "Pathos อสูรแห่งความเขลา", 
+		"hp": 500, "max_hp": 500, 
+		"atk": 35, "def": 20, 
+		"xp": 500, "gold": 999, 
+		"sprite": "res://Assets/monsters/shadow_demon.png",
+		"weakness": ["nutrition", "hygiene", "exercise", "body", "health", "safety"],
+		"description": "บอสลับผู้พิทักษ์ความรู้ แพ้ทางผู้มีความรู้รอบตัว"
+	},
+	"ignorance_incarnate": {
+		"name": "Ignorance Incarnate (ร่างอวตารแห่งความเขลา)", 
+		"hp": 800, "max_hp": 800, 
+		"atk": 40, "def": 25, 
+		"xp": 9999, "gold": 0, 
+		"sprite": "res://Assets/monsters/final_boss_ignorance.png",
+		"description": "ต้นกำเนิดของปีศาจทั้งหมด... ความไม่รู้ที่กัดกินโลก",
+		"weakness": "all" # Special flag for battle logic
 	}
 }
 
+func is_codex_complete() -> bool:
+	if card_database.is_empty(): return false
+	for card_id in card_database.keys():
+		if not card_id in unlocked_cards:
+			return false
+	return true
+
 func _ready():
+	# Load Config
+	var config = ConfigManager.load_config()
+	if config:
+		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), linear_to_db(config.master_volume))
+	
 	load_questions()
+	load_game() # Load data first!
 	check_login_streak()
 
 # --- Gamification Logic ---
 
 func check_login_streak():
 	var current_date = Time.get_date_string_from_system()
+	# Robust Date Check using UNIX time
+	var today_unix = Time.get_unix_time_from_datetime_string(current_date)
+	var last_login_unix = 0
+	if last_login_date != "":
+		last_login_unix = Time.get_unix_time_from_datetime_string(last_login_date)
+	
 	if last_login_date == "":
 		login_streak = 1
 		last_login_date = current_date
 	elif last_login_date != current_date:
-		# Use Time to parse and compare
-		var last_parts = last_login_date.split("-")
-		var curr_parts = current_date.split("-")
+		# 86400 seconds = 1 Day
+		# Allow some loose timing (e.g. within 48 hours to be safe, but ideally check date diff)
+		var diff_seconds = today_unix - last_login_unix
+		var diff_days = int(diff_seconds / 86400)
 		
-		# Simple day check (can be improved for month/year rollovers)
-		if int(curr_parts[2]) == int(last_parts[2]) + 1:
+		# If login is consecutive day (diff is approx 1 day)
+		# Note: get_date_string_from_system returns YYYY-MM-DD, so strict check is better
+		if diff_days == 1:
 			login_streak += 1
 			print("[Gamification] Streak increased! Day: ", login_streak)
-			if login_streak >= 3: unlock_achievement("streak_3")
-			if login_streak >= 7: unlock_achievement("streak_7")
-		else:
+			if login_streak == 3: unlock_achievement("streak_3")
+			if login_streak == 7: unlock_achievement("streak_7")
+		elif diff_days > 1:
 			login_streak = 1 # Reset if missed a day
-			print("[Gamification] Streak reset.")
+			print("[Gamification] Streak reset. Missed ", diff_days, " days.")
 		
 		last_login_date = current_date
 	save_game()
+
+var achievement_data = {
+	"streak_3": {"name": "ผู้มุ่งมั่น", "desc": "ล็อคอินต่อเนื่อง 3 วัน", "icon": "🔥"},
+	"streak_7": {"name": "วินัยเหล็ก", "desc": "ล็อคอินต่อเนื่อง 7 วัน", "icon": "📅"},
+	"first_blood": {"name": "ก้าวแรกสู่สังเวียน", "desc": "ชนะการต่อสู้ครั้งแรก", "icon": "⚔️"},
+	"rich_kid": {"name": "เศรษฐีน้อย", "desc": "มีเงินครบ 1,000 Gold", "icon": "💰"},
+	"scholar": {"name": "หนอนหนังสือ", "desc": "ตอบคำถามถูก 10 ข้อ", "icon": "🎓"},
+	"collector": {"name": "นักสะสม", "desc": "รวบรวมการ์ดครบ 5 ใบ", "icon": "🃏"}
+}
+
+func get_achievement_info(id):
+	return achievement_data.get(id, {"name": "Unknown", "desc": "???", "icon": "❓"})
 
 func unlock_achievement(achievement_id: String):
 	if not achievement_id in achievements:
@@ -597,8 +803,19 @@ func unlock_achievement(achievement_id: String):
 		# Reward for unlocking
 		learning_points += 50
 		save_game()
-		# Notify UI if possible
-		_show_achievement_notification(achievement_id)
+func _show_achievement_notification(achievement_id: String):
+	# Find the current scene root to add the popup
+	var root = get_tree().current_scene
+	if root:
+		var popup_scene = load("res://Scenes/AchievementPopup.tscn")
+		var popup = popup_scene.instantiate()
+		root.add_child(popup)
+		# Ensure it's on top of everything
+		popup.z_index = 100
+		
+		# Allow the popup to qualify itself
+		if popup.has_method("setup"):
+			popup.setup(achievement_id)
 
 func gain_learning_points(amount: int):
 	learning_points += amount
@@ -606,10 +823,7 @@ func gain_learning_points(amount: int):
 	if learning_points >= 1000: unlock_achievement("master_scholar")
 	save_game()
 
-func _show_achievement_notification(id: String):
-	# Proactive: Broadcast signal for UI to catch
-	# (We can implement a UI listener later)
-	pass
+
 
 # --- Core Logic Functions ---
 
@@ -647,7 +861,7 @@ func get_current_stats():
 		if "def" in set_bonus: base["def"] += set_bonus["def"]
 		if "hp" in set_bonus: base.max_hp += set_bonus.hp
 		if "mana" in set_bonus: base.max_mana += set_bonus.mana
-	
+
 	return base
 
 func get_set_bonus() -> Dictionary:
@@ -784,25 +998,25 @@ func level_up():
 	# Class-based Stat Growth
 	var s = stats[player_class]
 	if player_class == "อัศวิน":
-		s.max_hp += 20
+		s.max_hp += 30 # Increased from 20
 		s.max_mana += 5
-		s.atk += 3
-		s["def"] += 2
+		s.atk += 4
+		s["def"] += 3
 	elif player_class == "จอมเวทย์":
-		s.max_hp += 10
+		s.max_hp += 15 # Increased from 10
+		s.max_mana += 20
+		s.atk += 6
+		s["def"] += 2
+	elif player_class == "นักล่า":
+		s.max_hp += 20 # Increased from 15
 		s.max_mana += 15
 		s.atk += 5
-		s["def"] += 1
-	elif player_class == "นักล่า":
-		s.max_hp += 15
-		s.max_mana += 10
-		s.atk += 4
-		s["def"] += 1
+		s["def"] += 2
 	elif player_class == "ผู้พิทักษ์":
-		s.max_hp += 18
-		s.max_mana += 12
-		s.atk += 2
-		s["def"] += 3
+		s.max_hp += 35 # Increased from 18
+		s.max_mana += 15
+		s.atk += 3
+		s["def"] += 4
 		
 	s.hp = s.max_hp
 	s.mana = s.max_mana
@@ -1013,7 +1227,10 @@ func load_game():
 		player_level = data.get("level", 1)
 		player_xp = data.get("xp", 0)
 		player_gold = data.get("gold", 0)
-		if "stats" in data: stats = data["stats"]
+		if "stats" in data:
+			for key in data["stats"]:
+				if key in stats:
+					stats[key] = data["stats"][key]
 		if "inventory" in data: inventory = data["inventory"]
 		if "story_progress" in data: story_progress = data["story_progress"]
 		if "current_path" in data: current_path = data["current_path"]

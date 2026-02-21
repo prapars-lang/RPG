@@ -14,6 +14,7 @@ var enemy_max_hp = 50
 
 var player_atk = 10
 var player_def = 5
+var player_shield = 0 # Added for Earth skills
 
 var current_question = {}
 var pending_skill = null # Store skill while answering question
@@ -29,10 +30,12 @@ const BattleEffectManager = preload("res://Scripts/Battle/BattleEffectManager.gd
 @onready var player_mp_bar = $UI/Stats/PlayerMP
 @onready var enemy_hp_bar = $UI/EnemyStatContainer/EnemyHP
 @onready var hero_sprite_ui = $UI/HeroSprite
+@onready var companion_sprite_ui = $UI/CompanionSprite
 @onready var monster_sprite_ui = $UI/MonsterSprite
 @onready var question_box = $UI/QuestionBox
 @onready var question_label = $UI/QuestionBox/VBox/QuestionLabel
 @onready var options_container = $UI/QuestionBox/VBox/Options
+
 @onready var skill_menu = $UI/SkillMenu
 @onready var skill_list = $UI/SkillMenu/VBox/SkillList
 @onready var item_menu = $UI/ItemMenu
@@ -63,6 +66,9 @@ func _ready():
 	
 	# Idle Animation for Sprites (Breathing effect)
 	_start_idle_animations()
+	
+	# Play Battle Music
+	AudioManager.play_bgm("battle")
 
 func _apply_hud_styles():
 	# Style HP Bar with theme colors
@@ -129,16 +135,26 @@ func _start_idle_animations():
 	m_tween.tween_property(monster_sprite_ui, "scale", Vector2(1.0, 1.0), 3.0).set_trans(Tween.TRANS_SINE)
 
 func _on_level_up(new_level, old_stats, new_stats, new_skills):
+	# Calculate gains
+	var hp_gain = new_stats.max_hp - old_stats.max_hp
+	var mp_gain = new_stats.max_mana - old_stats.max_mana
+	var atk_gain = new_stats.atk - old_stats.atk
+	var def_gain = new_stats["def"] - old_stats["def"]
+	
 	battle_log.text = "LEVEL UP! เลเวล " + str(new_level) + "!"
 	AudioManager.play_sfx("levelup")
 	
+	# Show Stat Gains
+	await get_tree().create_timer(1.2).timeout
+	battle_log.text = "ค่าพลัง: HP+%d MP+%d ATK+%d DEF+%d" % [hp_gain, mp_gain, atk_gain, def_gain]
+	
 	if new_skills.size() > 0:
-		await get_tree().create_timer(1.0).timeout
+		await get_tree().create_timer(2.0).timeout
 		var skills_text = ", ".join(new_skills)
 		battle_log.text = "เรียนรู้สกิลใหม่: " + skills_text + "!"
 		
-	await get_tree().create_timer(1.5).timeout
-	battle_log.text = "พลังเพิ่มขึ้น! HP/MP ฟื้นฟูเต็ม!"
+	await get_tree().create_timer(2.0).timeout
+	battle_log.text = "ฟื้นฟูพลังชีวิตและมานาเต็มเปี่ยม!"
 	update_ui()
 
 func load_player_stats():
@@ -160,6 +176,7 @@ var current_monster_data = {}
 
 func setup_battle():
 	current_state = BattleState.START
+	player_shield = 0 # Reset shield at start of battle
 	
 	# Determine monster: Story Override OR Random Encounters
 	if Global.is_story_mode and Global.queued_story_enemy_id != "":
@@ -182,6 +199,18 @@ func setup_battle():
 	var img_path = Global.class_icons.get(icon_key, "")
 	if img_path != "" and (ResourceLoader.exists(img_path) or FileAccess.file_exists(img_path)):
 		hero_sprite_ui.texture = load(img_path)
+	
+	# Set Companion Sprite
+	if Global.current_companion_id != "":
+		# Load Companion Data (Lazy load or via Part2 script)
+		var comp_path = "res://Scripts/Part2/CompanionData.gd"
+		if FileAccess.file_exists(comp_path):
+			var CompDB = load(comp_path).new()
+			var comp_data = CompDB.get_companion(Global.current_companion_id)
+			if comp_data:
+				if ResourceLoader.exists(comp_data.sprite):
+					companion_sprite_ui.texture = load(comp_data.sprite)
+					battle_log.text += "\n" + comp_data.name + " ร่วมต่อสู้!"
 	
 	# Set Monster Sprite
 	var monster_path = current_monster_data.texture
@@ -226,6 +255,41 @@ func show_skill_menu():
 		btn.disabled = player_mp < skill.cost
 		btn.pressed.connect(_on_skill_selected.bind(skill))
 		skill_list.add_child(btn)
+	
+	# --- ADDED: Companion Skill ---
+	if Global.current_companion_id != "":
+		var comp_path = "res://Scripts/Part2/CompanionData.gd"
+		if FileAccess.file_exists(comp_path):
+			var CompDB = load(comp_path).new()
+			var comp_data = CompDB.get_companion(Global.current_companion_id)
+			if comp_data and comp_data.has("skill"):
+				var skill = comp_data.skill
+				var btn = Button.new()
+				btn.text = "[คู่หู] " + skill.name + " (" + str(skill.cost) + " MP)"
+				btn.disabled = player_mp < skill.cost
+				
+				# Ensure styling
+				UIThemeManager.apply_button_theme(btn)
+				
+				btn.pressed.connect(_on_skill_selected.bind(skill))
+				skill_list.add_child(btn)
+	# ------------------------------
+	
+	# --- ADDED: Elemental Skills (Skill Tree) ---
+	var SkillDB = load("res://Scripts/Part2/SkillTreeData.gd")
+	for skill_id in Global.unlocked_skills:
+		var skill = SkillDB.SKILLS.get(skill_id)
+		if skill:
+			var btn = Button.new()
+			btn.text = skill.name + " (" + str(skill.cost) + " MP)"
+			btn.disabled = player_mp < skill.cost
+			
+			# Ensure styling
+			UIThemeManager.apply_button_theme(btn)
+			
+			btn.pressed.connect(_on_skill_selected.bind(skill))
+			skill_list.add_child(btn)
+	# ------------------------------------------
 	
 	skill_menu.visible = true
 
@@ -311,7 +375,10 @@ func show_question():
 		await execute_player_action(true)
 		return
 	
-	question_label.text = "[" + grade + "] " + current_question.q
+	# Show question with counter (e.g. "ข้อ 10/85 [P1] คำถาม...")
+	var total_q = Global.question_data.get(grade, []).size()
+	var used_count = Global.used_questions.size()
+	question_label.text = "ข้อ " + str(used_count) + "/" + str(total_q) + "  " + current_question.q
 	
 	for child in options_container.get_children():
 		child.queue_free()
@@ -319,8 +386,11 @@ func show_question():
 	for option in current_question.options:
 		var btn = Button.new()
 		btn.text = option
-		btn.custom_minimum_size = Vector2(0, 55)
-		btn.add_theme_font_size_override("font_size", 20)
+		btn.custom_minimum_size = Vector2(0, 60) # Slightly taller
+		
+		# Apply Premium Theme
+		UIThemeManager.apply_button_theme(btn, 20)
+		
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		btn.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		btn.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -410,36 +480,96 @@ func execute_player_action(success):
 			battle_log.text = "สำเร็จ! ใช้สกิล " + pending_skill.name
 			await play_anim(hero_sprite_ui, "attack")
 			
-			# Skill damage scales with player_atk
-			var total_dmg = pending_skill.value + int(player_atk * 0.5)
+			# --- Skill Handling by Type ---
+			var skill_type = pending_skill.get("type", "active")
 			
-			BattleEffectManager.shake_camera(battle_camera, 8.0, 0.4)
-			BattleEffectManager.flash_sprite(monster_sprite_ui)
-			BattleEffectManager.show_damage_number($UI, total_dmg, monster_sprite_ui.position + Vector2(200, 100))
-			
-			await play_anim(monster_sprite_ui, "damage")
+			if skill_type == "heal":
+				var heal_amount = pending_skill.value + int(player_atk * 0.2)
+				player_hp = min(player_hp + heal_amount, player_max_hp)
+				BattleEffectManager.show_damage_number($UI, "+" + str(heal_amount), hero_sprite_ui.position + Vector2(0, -50), Color.GREEN)
+				battle_log.text += " ฟื้นฟู " + str(heal_amount) + " HP!"
+				
+			elif skill_type == "shield":
+				var shield_amount = pending_skill.value + int(player_def * 0.5)
+				player_shield += shield_amount
+				BattleEffectManager.show_damage_number($UI, "+" + str(shield_amount) + " Shield", hero_sprite_ui.position + Vector2(0, -50), Color.CYAN)
+				battle_log.text += " สร้างเกราะป้องกัน " + str(shield_amount) + " หน่วย!"
+				
+			elif skill_type == "buff":
+				# Simple buff implementation (permanent for battle or temp?)
+				# For prototype, let's make it simple: 3 turns? Or just add to stat?
+				var stat = pending_skill.get("stat", "def")
+				var val = pending_skill.value
+				if stat == "def":
+					player_def += val
+					battle_log.text += " เพิ่มพลังป้องกัน " + str(val) + "!"
+				elif stat == "atk": # If exists
+					player_atk += val
+					battle_log.text += " เพิ่มพลังโจมตี " + str(val) + "!"
+				elif stat == "evasion":
+					# specialized logic needed, skipping for now or adding dummy
+					battle_log.text += " เพิ่มค่าหลบหลีก!"
+					
+			else: # "active" / "dmg"
+				# --- Elemental System Logic (Damage) ---
+				var atk_element = pending_skill.get("element", "neutral")
+				var def_element = current_monster_data.get("element", "neutral")
+				var weakness_mult = Global.get_elemental_weakness(atk_element, def_element)
+				
+				# Skill damage scales with player_atk
+				var raw_dmg = pending_skill.value + int(player_atk * 0.5)
+				var total_dmg = int(raw_dmg * weakness_mult)
+				
+				var feedback_text = ""
+				if weakness_mult > 1.0:
+					feedback_text = " (Weakness!)"
+					BattleEffectManager.show_damage_number($UI, "Effective!", monster_sprite_ui.position + Vector2(0, -50), Color.YELLOW)
+				elif weakness_mult < 1.0:
+					feedback_text = " (Resisted)"
+				
+				# Apply Damage
+				enemy_hp -= total_dmg
+				BattleEffectManager.show_damage_number($UI, total_dmg, monster_sprite_ui.position + Vector2(200, 100))
+					
+				# --- Elemental Instability (Environment) ---
+				var env_interaction = Global.get_elemental_weakness(atk_element, Global.current_map_element)
+				if env_interaction > 1.0:
+					battle_log.text = "Elemental Instability! ศัตรูแข็งแกร่งขึ้น!"
+					BattleEffectManager.shake_camera(battle_camera, 5.0, 0.5)
+					# Buff Enemy
+					enemy_hp = min(enemy_hp + 20, enemy_max_hp) # Heal Enemy
+					BattleEffectManager.show_damage_number($UI, "+Instability", monster_sprite_ui.position + Vector2(0, -80), Color.PURPLE)
+					await get_tree().create_timer(1.0).timeout
+				# -------------------------------------------
+			# ------------------------------
 			
 			player_mp -= pending_skill.cost
-			if pending_skill.type == "dmg":
-				enemy_hp -= total_dmg
-			elif pending_skill.type == "buff":
-				var buff_val = pending_skill.value
-				player_def += buff_val
-				battle_log.text += " (พลังป้องกันเพิ่มขึ้น +%d!)" % buff_val
-				AudioManager.play_sfx("heal")
-			elif pending_skill.type == "heal":
-				var heal_val = pending_skill.value + int(player_atk * 0.2)
-				player_hp = min(player_hp + heal_val, player_max_hp)
-				battle_log.text += " (ฟื้นฟู HP +%d!)" % heal_val
-				AudioManager.play_sfx("heal")
-			elif pending_skill.type == "mp":
-				player_mp = min(player_mp + pending_skill.value, player_max_mp)
-				battle_log.text += " (ฟื้นฟู MP +%d!)" % pending_skill.value
-				AudioManager.play_sfx("heal")
 		else:
 			# Normal Attack: ATK + Random(0-5)
 			var damage = player_atk + randi() % 6
-			battle_log.text = "ถูกต้อง! คุณโจมตี %d หน่วย!" % damage
+			
+			# --- Weakness Logic ---
+			if current_monster_data.has("weakness") and current_question.has("topic"):
+				# Weakness can be a specific topic string or an array of strings
+				var weaknesses = current_monster_data.weakness
+				var is_weak = false
+				
+				# Special Case: Boss weak to EVERYTHING
+				if weaknesses is String and weaknesses == "all":
+					is_weak = true
+				elif weaknesses is Array:
+					is_weak = current_question.topic in weaknesses
+				elif weaknesses is String:
+					is_weak = current_question.topic == weaknesses
+					
+				if is_weak:
+					damage *= 2
+					battle_log.text = "จุดอ่อน! ความรู้คือพลัง โจมตี %d หน่วย!" % damage
+				else:
+					battle_log.text = "ถูกต้อง! คุณโจมตี %d หน่วย!" % damage
+			else:
+				battle_log.text = "ถูกต้อง! คุณโจมตี %d หน่วย!" % damage
+			
 			await play_anim(hero_sprite_ui, "attack")
 			
 			BattleEffectManager.shake_camera(battle_camera, 5.0, 0.3)
@@ -481,13 +611,19 @@ func check_battle_end(trigger_enemy_turn: bool = true):
 		battle_log.text = "ชัยชนะ! ได้รับ " + str(xp_gain) + " XP และ " + str(gold_gain) + " Gold!"
 		Global.gain_xp(xp_gain)
 		Global.add_gold(gold_gain)
+		
+		# --- Quest Update ---
+		if QuestManager.has_method("on_enemy_killed"):
+			QuestManager.on_enemy_killed(current_monster_id)
+		# --------------------
+		
 		$UI/Controls.hide()
 		
 		await get_tree().create_timer(3.0).timeout
 		
-		# --- MODIFIED: Return to Story if in Story Mode ---
+		# --- Return to Story if in Story Mode ---
 		if Global.is_story_mode:
-			# Advance to next chunk (The Battle Chunk usually points to Next Dialogue)
+			# Advance to next chunk
 			Global.story_progress += 1 
 			get_tree().change_scene_to_file("res://Scenes/StoryScene.tscn")
 		else:
@@ -521,16 +657,36 @@ func enemy_turn():
 	var raw_atk = current_monster_data.get("atk", 10)
 	var final_dmg = max(5, raw_atk - int(player_def * 0.5))
 	
-	battle_log.text = current_monster_data.name + " กำลังโจมตี!"
+	# --- Shield Logic ---
+	var blocked_amount = 0
+	if player_shield > 0:
+		if player_shield >= final_dmg:
+			blocked_amount = final_dmg
+			player_shield -= final_dmg
+			final_dmg = 0
+		else:
+			blocked_amount = player_shield
+			final_dmg -= player_shield
+			player_shield = 0
+			
+		battle_log.text = current_monster_data.name + " โจมตี! (เกราะรับไว้ " + str(blocked_amount) + ")"
+	else:
+		battle_log.text = current_monster_data.name + " โจมตี!"
+	# --------------------
+	
 	await play_anim(monster_sprite_ui, "attack")
 	
 	# Premium FX
 	BattleEffectManager.shake_camera(battle_camera, 6.0, 0.4)
 	BattleEffectManager.flash_sprite(hero_sprite_ui)
-	BattleEffectManager.show_damage_number($UI, final_dmg, hero_sprite_ui.position + Vector2(200, 100), Color.RED)
 	
-	await play_anim(hero_sprite_ui, "damage")
-	player_hp -= final_dmg
+	if final_dmg > 0:
+		BattleEffectManager.show_damage_number($UI, final_dmg, hero_sprite_ui.position + Vector2(200, 100), Color.RED)
+		await play_anim(hero_sprite_ui, "damage")
+		player_hp -= final_dmg
+	else:
+		BattleEffectManager.show_damage_number($UI, "Blocked!", hero_sprite_ui.position + Vector2(200, 100), Color.CYAN)
+		
 	update_ui()
 	
 	if player_hp > 0:

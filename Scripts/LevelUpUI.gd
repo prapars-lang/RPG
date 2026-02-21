@@ -33,7 +33,7 @@ func _apply_theme():
 	if close_btn:
 		UIThemeManager.apply_button_theme(close_btn)
 
-func _show_levelup(new_level, old_stats, new_stats):
+func _show_levelup(new_level, old_stats, new_stats, new_skills):
 	level_text.text = "เลเวล " + str(new_level)
 	hp_val.text = str(old_stats.max_hp) + " -> " + str(new_stats.max_hp)
 	mp_val.text = str(old_stats.max_mana) + " -> " + str(new_stats.max_mana)

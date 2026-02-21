@@ -39,6 +39,17 @@ const QUESTS = {
 		"objective": "เอาชนะ Overthinking Golem",
 		"xp_reward": 200,
 		"gold_reward": 100
+	},
+	"stabilize_forest": {
+		"id": "stabilize_forest",
+		"path": "part2",
+		"title": "ปรับสมดุลป่า (Stabilize Forest)",
+		"description": "กำจัด Unstable Slime 3 ตัว เพื่อลดความแปรปรวนของธาตุ",
+		"objective": "กำจัด Unstable Slime (0/3)",
+		"target_id": "unstable_slime",
+		"target_count": 3,
+		"xp_reward": 100,
+		"gold_reward": 200
 	}
 }
 

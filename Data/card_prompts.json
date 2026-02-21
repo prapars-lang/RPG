@@ -1,0 +1,242 @@
+[
+    {
+        "id": "vitamin_c",
+        "name": "วิตามินซี",
+        "category": "nutrition",
+        "rarity": "common",
+        "description": "ช่วยเสริมสร้างภูมิคุ้มกัน พบมากในส้ม มะนาว ฝรั่ง",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cute chibi hero character in a bright orange outfit holding a giant glowing crystal orange fruit, sparkling vitamin particles, ornate decorative gold and blue fantasy RPG frame, vibrant colors, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "vitamin_a",
+        "name": "วิตามินเอ",
+        "category": "nutrition",
+        "rarity": "common",
+        "description": "บำรุงสายตาและผิวพรรณ พบในแครอท ฟักทอง ตับ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cute chibi scout character with glowing golden eyes holding a magical radiant carrot, pumpkin accents in background, ornate decorative gold and blue fantasy RPG frame, warm magical aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "vitamin_d",
+        "name": "วิตามินดี",
+        "category": "nutrition",
+        "rarity": "rare",
+        "description": "ช่วยดูดซึมแคลเซียม ร่างกายสร้างได้จากแสงแดด",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a radiant chibi sun-priest character with golden wings holding a glowing sun-orb and a glass of milk, celestial sparkles, ornate decorative gold and purple rare fantasy RPG frame, heavenly glow, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "protein",
+        "name": "โปรตีน",
+        "category": "nutrition",
+        "rarity": "common",
+        "description": "สร้างกล้ามเนื้อและซ่อมแซมเซลล์ พบในไข่ เนื้อสัตว์ ถั่ว",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a strong muscular chibi warrior flexing arms in a protein-themed armor, holding a giant steak and an egg shield, ornate decorative gold and red fantasy RPG frame, power aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "carbohydrate",
+        "name": "คาร์โบไฮเดรต",
+        "category": "nutrition",
+        "rarity": "common",
+        "description": "แหล่งพลังงานหลักของร่างกาย พบในข้าว ขนมปัง เส้นก๋วยเตี๋ยว",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, an energetic chibi runner character carrying a giant steaming rice bowl and a loaf of bread, golden energy trails, ornate decorative gold and yellow fantasy RPG frame, vibrant yellow aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "calcium",
+        "name": "แคลเซียม",
+        "category": "nutrition",
+        "rarity": "common",
+        "description": "เสริมสร้างกระดูกและฟันให้แข็งแรง พบในนม โยเกิร์ต ผักใบเขียว",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cute chibi guardian knight with white bone armor and a milk bottle shield, protecting a tooth character, bright white glow, ornate decorative gold and white fantasy RPG frame, protective aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "iron",
+        "name": "ธาตุเหล็ก",
+        "category": "nutrition",
+        "rarity": "common",
+        "description": "ช่วยขนส่งออกซิเจนในเลือด พบในตับ เนื้อแดง ผักโขม",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a brave chibi blood-vanguard character in red metallic armor carrying a heavy iron sword and spinach leaves, deep red energy, ornate decorative gold and crimson fantasy RPG frame, metallic glow, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "fiber",
+        "name": "ใยอาหาร",
+        "category": "nutrition",
+        "rarity": "common",
+        "description": "ช่วยระบบย่อยอาหาร ป้องกันท้องผูก พบในผัก ผลไม้ ธัญพืช",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cheerful chibi nature-shaman character surrounded by giant green broccoli and floating fruits, plant vines swirling around, ornate decorative gold and green fantasy RPG frame, nature energy, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "food_pyramid",
+        "name": "พีระมิดอาหาร",
+        "category": "nutrition",
+        "rarity": "rare",
+        "description": "อาหารหลัก 5 หมู่ครบถ้วน กินหลากหลายสัดส่วนพอเหมาะ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a majestic chibi queen character sitting on a golden food pyramid throne, holding a balanced scales of fruit and protein, ornate decorative gold and rainbow rare fantasy RPG frame, royal aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "water_benefits",
+        "name": "ประโยชน์ของน้ำ",
+        "category": "nutrition",
+        "rarity": "common",
+        "description": "ดื่มน้ำสะอาด 6-8 แก้วต่อวัน ช่วยขับของเสียและหล่อเลี้ยงร่างกาย",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a beautiful chibi water-spirit character with liquid hair, holding a crystal glass of pure water, blue splashes and bubbles, ornate decorative gold and blue fantasy RPG frame, refreshing aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "hand_washing",
+        "name": "ล้างมือ 7 ขั้นตอน",
+        "category": "hygiene",
+        "rarity": "common",
+        "description": "ล้างมือด้วยสบู่อย่างน้อย 20 วินาที ลดเชื้อโรคได้กว่า 80%",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cute chibi child happily washing hands with giant sparkling soap bubbles, a smiling soap mascot character beside them, ornate decorative gold and blue fantasy RPG frame, water cascades, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "tooth_brushing",
+        "name": "แปรงฟันถูกวิธี",
+        "category": "hygiene",
+        "rarity": "common",
+        "description": "แปรงฟันวันละ 2 ครั้ง เช้า-ก่อนนอน อย่างน้อยครั้งละ 2 นาที",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cheerful chibi character brushing a giant shiny white tooth with a magical toothbrush, toothpaste foam and sparkles, ornate decorative gold and cyan fantasy RPG frame, fresh aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "bathing",
+        "name": "อาบน้ำให้สะอาด",
+        "category": "hygiene",
+        "rarity": "common",
+        "description": "อาบน้ำทุกวันเพื่อกำจัดเหงื่อ สิ่งสกปรก และเชื้อแบคทีเรีย",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a happy chibi character in a bubble-filled white bathtub with a rubber ducky, water splashes and steam, ornate decorative gold and blue fantasy RPG frame, sparkling clean aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "food_safety",
+        "name": "อาหารปลอดภัย",
+        "category": "hygiene",
+        "rarity": "rare",
+        "description": "กินร้อน ช้อนกลาง ล้างมือ ลดความเสี่ยงโรคระบบทางเดินอาหาร",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cute chibi chef character holding a golden dome lid over a steaming healthy meal, green checkmark sparkles, ornate decorative gold and purple rare fantasy RPG frame, safety barrier aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "germ_defense",
+        "name": "ป้องกันเชื้อโรค",
+        "category": "hygiene",
+        "rarity": "rare",
+        "description": "สวมหน้ากากเมื่ออยู่ที่แออัด และเลี่ยงสัมผัสใบหน้า",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a brave chibi medic-knight character wearing a face mask and wielding a hygiene shield, defeating cute germ monsters, ornate decorative gold and purple rare fantasy RPG frame, protective shield dome, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "nail_care",
+        "name": "ดูแลเล็บ",
+        "category": "hygiene",
+        "rarity": "common",
+        "description": "ตัดเล็บให้สั้นสะอาด ลดการสะสมเชื้อโรคใต้เล็บ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cute chibi character focusing on trimming their clean sparkling nails, giant nail clipper character helpers, ornate decorative gold and pink fantasy RPG frame, clean pink aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "hair_washing",
+        "name": "สระผมสะอาด",
+        "category": "hygiene",
+        "rarity": "common",
+        "description": "สระผม 2-3 ครั้งต่อสัปดาห์ ป้องกันรังแคและเหา",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cheerful chibi character with long flowing hair covered in fluffy shampoo foam and bubbles, holding a lavender bottle, ornate decorative gold and purple fantasy RPG frame, lavender scent trails, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "clean_clothes",
+        "name": "เสื้อผ้าสะอาด",
+        "category": "hygiene",
+        "rarity": "common",
+        "description": "เปลี่ยนเสื้อผ้าทุกวัน ซักให้สะอาดตากแดดฆ่าเชื้อ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a happy chibi character wearing bright colorful clothes and holding a laundry basket, bright sun shining in background, ornate decorative gold and sky-blue fantasy RPG frame, fresh laundry sparkles, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "dental_floss",
+        "name": "ไหมขัดฟัน",
+        "category": "hygiene",
+        "rarity": "rare",
+        "description": "ใช้ไหมขัดฟันวันละ 1 ครั้ง ทำความสะอาดซอกฟันที่แปรงเข้าไม่ถึง",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a skilled chibi fairy character weaving a golden magical thread between giant shiny teeth, stars and sparkles trail, ornate decorative gold and purple rare fantasy RPG frame, magical cleaning glow, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "sneeze_etiquette",
+        "name": "มารยาทการจาม",
+        "category": "hygiene",
+        "rarity": "common",
+        "description": "ใช้ข้อพับแขนปิดปากเวลาจาม ป้องกันการแพร่เชื้อทางอากาศ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a polite chibi character elegantly covering their sneeze with an elbow, a glowing green barrier shield forming around them, ornate decorative gold and green fantasy RPG frame, green health aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "cardio",
+        "name": "แอโรบิก",
+        "category": "exercise",
+        "rarity": "common",
+        "description": "วิ่ง ว่ายน้ำ ปั่นจักรยาน เสริมสร้างหัวใจและปอดให้แข็งแรง",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, an energetic chibi athlete character running fast with a glowing heart symbol on their chest, trail of fire and speed lines, ornate decorative gold and orange fantasy RPG frame, high energy aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "stretching",
+        "name": "ยืดเหยียดร่างกาย",
+        "category": "exercise",
+        "rarity": "common",
+        "description": "ยืดร่างกายก่อนและหลังออกกำลังกาย ป้องกันการบาดเจ็บ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a graceful chibi gymnast character performing a flexible stretch, rainbow ribbons of energy flowing around, ornate decorative gold and rainbow fantasy RPG frame, flexibility aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "strength",
+        "name": "เสริมสร้างกล้ามเนื้อ",
+        "category": "exercise",
+        "rarity": "common",
+        "description": "วิดพื้น ซิทอัพ สร้างกล้ามเนื้อให้แข็งแรง",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a strong chibi character with muscular arms lifting giant weights with a smile, muscle energy icons floating, ornate decorative gold and red fantasy RPG frame, power-up effect, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "sleep",
+        "name": "นอนหลับพักผ่อน",
+        "category": "exercise",
+        "rarity": "rare",
+        "description": "เด็กควรนอน 9-11 ชั่วโมง เพื่อให้ร่างกายเจริญเติบโต",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a peaceful chibi character sleeping on a giant fluffy crescent moon cloud, twinkling stars and dream bubbles, ornate decorative gold and purple rare fantasy RPG frame, tranquil night aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "hydration",
+        "name": "ดื่มน้ำเพียงพอ",
+        "category": "exercise",
+        "rarity": "common",
+        "description": "ดื่มน้ำวันละ 6-8 แก้ว ช่วยให้ร่างกายทำงานได้เต็มประสิทธิภาพ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a cheerful chibi character drinking from a glowing magical water bottle, surrounded by 8 crystal water icons, water splashes, ornate decorative gold and blue fantasy RPG frame, hydration glow, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "team_sports",
+        "name": "กีฬาทีม",
+        "category": "exercise",
+        "rarity": "common",
+        "description": "ฟุตบอล บาสเกตบอล วอลเลย์บอล ฝึกการทำงานร่วมกันและมีน้ำใจนักกีฬา",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, three happy chibi friends in sports uniforms high-fiving over a soccer ball, teamwork heart in background, ornate decorative gold and yellow fantasy RPG frame, friendship aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "balance_training",
+        "name": "ฝึกการทรงตัว",
+        "category": "exercise",
+        "rarity": "common",
+        "description": "กระโดดเชือก ยืนขาเดียว ฝึกระบบประสาทและกล้ามเนื้อทำงานประสานกัน",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a focused chibi character standing on one leg on a thin beam, balancing glowing star symbols on hands, ornate decorative gold and teal fantasy RPG frame, calm balance aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "warm_up",
+        "name": "วอร์มอัพ",
+        "category": "exercise",
+        "rarity": "common",
+        "description": "อุ่นเครื่อง 5-10 นาทีก่อนออกกำลังกาย ลดอาการบาดเจ็บกล้ามเนื้อ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, an active chibi character doing jumping jacks with a gentle flame aura, a 10-minute glowing timer icon, ornate decorative gold and amber fantasy RPG frame, ready-for-battle aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "posture",
+        "name": "ท่าทางที่ถูกต้อง",
+        "category": "exercise",
+        "rarity": "rare",
+        "description": "นั่งหลังตรง ไม่ก้มหน้าดูจอนาน ป้องกันอาการปวดหลังปวดคอ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a chibi student character sitting perfectly straight at a desk, a glowing golden vertical spine-guide aligned with them, ornate decorative gold and purple rare fantasy RPG frame, health discipline aura, character fills the frame, high quality digital illustration, no text"
+    },
+    {
+        "id": "breathing_exercise",
+        "name": "ฝึกหายใจ",
+        "category": "exercise",
+        "rarity": "rare",
+        "description": "หายใจลึกๆ ช้าๆ ช่วยลดความเครียดและเพิ่มสมาธิ",
+        "prompt": "Full-frame premium collectible card art, vertical 3:4 aspect ratio, a serene chibi character in meditation pose, breathing in colorful air spirals and lotus flowers, ornate decorative gold and purple rare fantasy RPG frame, zen peace aura, character fills the frame, high quality digital illustration, no text"
+    }
+]

@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Texture2D" path="res://Assets/Part2/BG_Verdant_Start.png" id="1_bg"]
+[ext_resource type="PackedScene" path="res://Scenes/Part2/OverworldPlayer.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://Scenes/Part2/NPC_Aetherion.tscn" id="3_npc"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
+size = Vector2(50, 1080)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wall_h"]
+size = Vector2(1920, 50)
+
+[node name="Map_Forest" type="Node2D"]
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(960, 540)
+texture = ExtResource("1_bg")
+
+[node name="NPC_Aetherion" parent="." instance=ExtResource("3_npc")]
+position = Vector2(400, 300)
+
+[node name="OverworldPlayer" parent="." instance=ExtResource("2_player")]
+position = Vector2(960, 800)
+
+[node name="Boundaries" type="StaticBody2D" parent="."]
+
+[node name="LeftWall" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(-25, 540)
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="RightWall" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(1945, 540)
+shape = SubResource("RectangleShape2D_wall")
+
+[node name="TopWall" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(960, -25)
+shape = SubResource("RectangleShape2D_wall_h")
+
+[node name="BottomWall" type="CollisionShape2D" parent="Boundaries"]
+position = Vector2(960, 1105)
+shape = SubResource("RectangleShape2D_wall_h")

@@ -2,9 +2,9 @@ extends Node
 # ConfigTester.gd - Test script to verify ConfigManager is working correctly
 
 func _ready():
-	print("\n" + "="*60)
+	print("\n" + "============================================================")
 	print("CONFIG MANAGER TEST")
-	print("="*60)
+	print("============================================================")
 	
 	await get_tree().process_frame
 	
@@ -51,14 +51,14 @@ func _ready():
 	print("  ✅ PASSED: Global state accessible")
 	
 	# Summary
-	print("\n" + "="*60)
+	print("\n" + "============================================================")
 	if api_key != "" and api_url != "" and model != "":
 		print("✅ ALL TESTS PASSED - Game is ready to play!")
 		print("   Press F5 to start the game")
 	else:
 		print("❌ SOME TESTS FAILED - Check .env file setup")
 		print("   See SETUP_GUIDE.md for instructions")
-	print("="*60 + "\n")
+	print("============================================================" + "\n")
 	
 	# Auto-close to return to editor (optional - comment out to stay)
 	await get_tree().create_timer(3.0).timeout

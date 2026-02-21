@@ -24,7 +24,7 @@ static func shake_camera(camera: Camera2D, intensity: float, duration: float):
 	
 	camera.offset = original_pos
 
-static func show_damage_number(parent: Node, amount: int, position: Vector2, color: Color = Color.RED):
+static func show_damage_number(parent: Node, amount: Variant, position: Vector2, color: Color = Color.RED):
 	var label = Label.new()
 	label.text = str(amount)
 	label.add_theme_font_size_override("font_size", 48)

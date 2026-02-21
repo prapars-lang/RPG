@@ -1,7 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://ghvi5pwcpegb"]
 
 [ext_resource type="Script" uid="uid://ddvst2jitvti4" path="res://Scripts/MainMenu.gd" id="1_menu"]
-
 [ext_resource type="FontFile" uid="uid://djlm7bdb4nnv1" path="res://Assets/NotoSansThai_Regular.woff2" id="2_font"]
 [ext_resource type="FontFile" uid="uid://db8v1frrmm3og" path="res://Assets/NotoSansThai_Bold.woff2" id="3_font_bold"]
 [ext_resource type="Texture2D" uid="uid://b1v356n2hw3xs" path="res://Assets/vita_forest_bg.png" id="4_bg"]
@@ -135,6 +134,25 @@ grow_vertical = 2
 theme_override_constants/separation = 15
 alignment = 1
 
+[node name="GamificationInfo" type="HBoxContainer" parent="MainContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="StreakLabel" type="Label" parent="MainContainer/GamificationInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.6, 0.2, 1)
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 20
+text = "🔥 3 Days"
+
+[node name="LPLabel" type="Label" parent="MainContainer/GamificationInfo"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.8, 1, 1)
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 20
+text = "🎓 150 LP"
+
 [node name="StartBtn" type="Button" parent="MainContainer"]
 custom_minimum_size = Vector2(300, 65)
 layout_mode = 2
@@ -149,6 +167,15 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 28
 disabled = true
 text = "เล่นต่อ"
+
+
+
+[node name="Part2Btn" type="Button" parent="MainContainer"]
+custom_minimum_size = Vector2(300, 65)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 28
+text = "🌍 Part 2: Terra Nova"
 
 [node name="OptionsBtn" type="Button" parent="MainContainer"]
 custom_minimum_size = Vector2(300, 55)
@@ -173,6 +200,7 @@ text = "ออกจากเกม"
 
 [connection signal="pressed" from="MainContainer/StartBtn" to="." method="_on_start_btn_pressed"]
 [connection signal="pressed" from="MainContainer/ContinueBtn" to="." method="_on_continue_btn_pressed"]
+[connection signal="pressed" from="MainContainer/Part2Btn" to="." method="_on_part2_btn_pressed"]
 [connection signal="pressed" from="MainContainer/OptionsBtn" to="." method="_on_options_btn_pressed"]
 [connection signal="pressed" from="MainContainer/CreditsBtn" to="." method="_on_credits_btn_pressed"]
 [connection signal="pressed" from="MainContainer/ExitBtn" to="." method="_on_exit_btn_pressed"]

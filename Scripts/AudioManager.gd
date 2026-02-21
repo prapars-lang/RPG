@@ -114,12 +114,18 @@ func _load_audio_settings():
 
 # ============== BACKGROUND MUSIC ==============
 
+# ============== BACKGROUND MUSIC ==============
+
 func play_bgm(bgm_key: String, fade_in_duration: float = 1.0) -> void:
 	"""Play background music with optional fade-in"""
 	if bgm_key not in bgm_paths:
 		push_error("BGM key not found: %s" % bgm_key)
 		return
 	
+	# If already playing this track, do nothing
+	if is_music_playing and current_bgm_key == bgm_key and current_bgm != null and current_bgm.playing:
+		return
+		
 	var bgm_path = bgm_paths[bgm_key]
 	
 	# Load the audio file
@@ -128,36 +134,38 @@ func play_bgm(bgm_key: String, fade_in_duration: float = 1.0) -> void:
 		push_error("Failed to load BGM: %s" % bgm_path)
 		return
 	
-	# Stop current BGM if playing
+	# fade out OLD player if it exists
 	if current_bgm != null:
-		stop_bgm(fade_in_duration)
+		_fade_out_and_free(current_bgm, fade_in_duration)
+		current_bgm = null
 	
-	# Create new BGM player
-	current_bgm = AudioStreamPlayer.new()
-	current_bgm.stream = audio_stream
-	current_bgm.bus = MUSIC_BUS
-	current_bgm.volume_db = -80.0  # Start silent
-	add_child(current_bgm)
-	current_bgm.play()
-	is_music_playing = true
+	# Create NEW player
+	var new_player = AudioStreamPlayer.new()
+	new_player.stream = audio_stream
+	new_player.bus = MUSIC_BUS
+	new_player.volume_db = -80.0  # Start silent
+	add_child(new_player)
+	new_player.play()
+	
+	current_bgm = new_player
 	current_bgm_key = bgm_key
+	is_music_playing = true
 	
-	# Fade in
-	_fade_music(0.0, get_music_volume(), fade_in_duration)
+	# Fade in NEW player
+	_fade_in(new_player, get_music_volume(), fade_in_duration)
 
 func stop_bgm(fade_out_duration: float = 1.0) -> void:
 	"""Stop background music with optional fade-out"""
 	if current_bgm == null:
 		return
 	
-	_fade_music(get_music_volume(), -80.0, fade_out_duration)
-	await get_tree().create_timer(fade_out_duration).timeout
+	# Hand off the current player to the cleanup routine
+	_fade_out_and_free(current_bgm, fade_out_duration)
 	
-	if current_bgm != null:
-		current_bgm.stop()
-		current_bgm.queue_free()
-		current_bgm = null
-		is_music_playing = false
+	# Clear references immediately so we know nothing is "currently" playing
+	current_bgm = null
+	current_bgm_key = ""
+	is_music_playing = false
 
 func pause_bgm() -> void:
 	"""Pause current background music"""
@@ -169,16 +177,18 @@ func resume_bgm() -> void:
 	if current_bgm != null:
 		current_bgm.stream_paused = false
 
-func _fade_music(from_db: float, to_db: float, duration: float) -> void:
-	"""Fade music from one volume to another"""
-	if bgm_fade_tween != null:
-		bgm_fade_tween.kill()
+func _fade_in(player: AudioStreamPlayer, target_db: float, duration: float) -> void:
+	var tween = create_tween()
+	tween.tween_property(player, "volume_db", target_db, duration)
+
+func _fade_out_and_free(player: AudioStreamPlayer, duration: float) -> void:
+	"""Fade out a player and free it when done"""
+	if player == null: return
 	
-	if current_bgm == null:
-		return
-	
-	bgm_fade_tween = create_tween()
-	bgm_fade_tween.tween_property(current_bgm, "volume_db", to_db, duration)
+	var tween = create_tween()
+	tween.tween_property(player, "volume_db", -80.0, duration)
+	tween.tween_callback(player.stop)
+	tween.tween_callback(player.queue_free)
 
 # ============== SOUND EFFECTS ==============
 

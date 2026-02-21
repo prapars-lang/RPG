@@ -1,0 +1,117 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Part2/IntroPart2.gd" id="1_intro2"]
+[ext_resource type="Texture2D" path="res://Assets/Part2/BG_Verdant_Start.png" id="2_bg"]
+[ext_resource type="FontFile" path="res://Assets/NotoSansThai_Bold.woff2" id="3_font_bold"]
+
+[node name="IntroPart2" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_intro2")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Particles" type="CPUParticles2D" parent="."]
+position = Vector2(640, 720)
+amount = 40
+lifetime = 10.0
+preprocess = 5.0
+speed_scale = 0.4
+direction = Vector2(0, -1)
+spread = 120.0
+gravity = Vector2(0, -10)
+initial_velocity_min = 20.0
+initial_velocity_max = 50.0
+scale_amount_min = 1.5
+scale_amount_max = 4.0
+color = Color(0.3, 1, 0.5, 0.25)
+
+[node name="CenterContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -200.0
+offset_right = 400.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.8)
+theme_override_constants/shadow_offset_x = 4
+theme_override_constants/shadow_offset_y = 4
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 80
+text = "TERRA NOVA"
+horizontal_alignment = 1
+modulate = Color(1, 1, 1, 0)
+
+[node name="SubtitleLabel" type="Label" parent="CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.9, 1, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_fonts/font = ExtResource("3_font_bold")
+theme_override_font_sizes/font_size = 28
+text = ""
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="CenterContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="NarrationLabel" type="Label" parent="CenterContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.85, 0.75, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.5)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 20
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Spacer2" type="Control" parent="CenterContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="StartBtn" type="Button" parent="CenterContainer"]
+custom_minimum_size = Vector2(280, 65)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
+text = "เริ่มการผจญภัย"
+modulate = Color(1, 1, 1, 0)
+
+[connection signal="pressed" from="CenterContainer/StartBtn" to="." method="_on_start_btn_pressed"]
