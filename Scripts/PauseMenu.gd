@@ -62,6 +62,21 @@ func _on_quest_btn_pressed():
 	# Show pause menu again when quest log closes
 	q_log.tree_exited.connect(func(): show())
 
+func _on_companion_btn_pressed():
+	# Hide pause menu
+	hide()
+	# Instantiate CompanionStatusUI
+	var menu = load("res://Scenes/Part2/CompanionStatusUI.tscn").instantiate()
+	menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	get_tree().root.add_child(menu)
+	# Show pause menu again when closed
+	menu.tree_exited.connect(func(): show())
+
+func _on_skill_tree_btn_pressed():
+	hide()
+	get_tree().paused = false # Must unpause to change scene effectively if using change_scene
+	get_tree().change_scene_to_file("res://Scenes/Part2/SkillTree.tscn")
+
 func _on_save_btn_pressed():
 	# Update current scene before showing save menu
 	var current_scene_path = get_tree().current_scene.scene_file_path

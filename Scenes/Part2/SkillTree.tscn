@@ -1,0 +1,121 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Part2/SkillTree.gd" id="1_skill"]
+[ext_resource type="Texture2D" path="res://Assets/Part2/BG_Void_Dimension.png" id="2_bg"]
+
+[node name="SkillTree" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_skill")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.5)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 40.0
+offset_right = -50.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Header" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="VBox/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 48
+text = "ผังทักษะธาตุ (Skill Tree)"
+
+[node name="SPLabel" type="Label" parent="VBox/Header"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "แต้มทักษะ: 5"
+
+[node name="TabContainer" type="TabContainer" parent="VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 24
+
+[node name="Fire" type="ScrollContainer" parent="VBox/TabContainer"]
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="VBox/TabContainer/Fire"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="Water" type="ScrollContainer" parent="VBox/TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="VBox/TabContainer/Water"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="Nature" type="ScrollContainer" parent="VBox/TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="VBox/TabContainer/Nature"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="Earth" type="ScrollContainer" parent="VBox/TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Grid" type="GridContainer" parent="VBox/TabContainer/Earth"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 20
+theme_override_constants/v_separation = 20
+columns = 3
+
+[node name="Footer" type="HBoxContainer" parent="VBox"]
+layout_mode = 2
+alignment = 1
+
+[node name="BackBtn" type="Button" parent="VBox/Footer"]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "กลับไปแผนที่"
+
+[connection signal="pressed" from="VBox/Footer/BackBtn" to="." method="_on_back_pressed"]

@@ -1,7 +1,7 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://blwu83sao1te2"]
 
-[ext_resource type="Script" path="res://Scripts/Part2/NPC.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://Assets/Part2/NPC_Aetherion.png" id="2_sprite"]
+[ext_resource type="Script" uid="uid://6gqnvayhvgb7" path="res://Scripts/Part2/NPC.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cplb66m1xjl36" path="res://Assets/Part2/NPC_Aetherion.png" id="2_sprite"]
 
 [sub_resource type="CircleShape2D" id="1"]
 radius = 40.0
@@ -12,9 +12,9 @@ npc_name = "Aetherion"
 dialogue_key = "meet_aetherion"
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.8, 0.8)
 texture = ExtResource("2_sprite")
 offset = Vector2(0, -20)
-scale = Vector2(0.8, 0.8)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("1")

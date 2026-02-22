@@ -625,7 +625,8 @@ var path_hygiene = {
 			{"name": "Plague Lord", "text": "อ๊ากกกก! (ระเบิดเป็นฟองสบู่นับพัน)", "focus": "monster"},
 			{"name": "Guide", "text": "ท่านทำได้! เมืองนี้ได้รับการฟื้นฟูแล้ว!", "focus": "guide"},
 			{"name": "วิญญาณนักสุขาภิบาล", "text": "ขอบคุณท่านผู้กล้า จงรับ 'ตราแห่งความสะอาด' (Hygiene Emblem) ไว้เถิด", "focus": "guide"},
-			{"name": "Hero", "text": "ฉันจะนำความรู้นี้ไปเผยแพร่ต่อให้ทุกคนรู้!", "focus": "hero"}
+			{"name": "Hero", "text": "ฉันจะนำความรู้นี้ไปเผยแพร่ต่อให้ทุกคนรู้!", "focus": "hero"},
+			{"name": "System", "text": "[ได้รับ: Hygiene Emblem (เหรียญตราแห่งความสะอาด)]", "focus": "none"}
 		],
 		"next_chunk": 20
 	},
@@ -679,7 +680,28 @@ var path_final = {
 	}
 }
 
-func get_story_chunk(path_name, chunk_index):
+func get_story_chunk(_path_name, _chunk_index):
+	var path_data = null
+	match _path_name:
+		"exercise":
+			path_data = path_power
+		"nutrition":
+			path_data = path_nutrition
+		"hygiene":
+			path_data = path_hygiene
+		"wisdom":
+			path_data = path_wisdom
+		"final":
+			path_data = final_chapter.get("final", {})
+	
+	if path_data == null:
+		push_warning("[StoryData] Unknown path: " + str(_path_name))
+		return null
+	
+	if _chunk_index in path_data:
+		return path_data[_chunk_index]
+	
+	push_warning("[StoryData] Chunk %d not found in path '%s'" % [_chunk_index, _path_name])
 	return null
 
 const path_nutrition = {
@@ -752,7 +774,7 @@ const path_nutrition = {
 	},
 	11: {
 		"type": "dialogue",
-		"background": "res://Assets/Candy Castle Gate.png",
+		"background": "res://Assets/img/battlebacks1/Castle1.png",
 		"dialogue": [
 			{"name": "System", "text": "(เงาขนาดยักษ์ทอดทับทางเดิน... มันคือไททันแห่งความอ้วน)", "focus": "none"},
 			{"name": "Hero", "text": "นั่นมัน... ตัวอะไรน่ะ ใหญ่ยักษ์ชะมัด!", "focus": "hero"},
@@ -763,7 +785,7 @@ const path_nutrition = {
 	12: { "type": "battle", "enemy_id": "trans_fat_titan", "next_chunk": 13 },
 	13: {
 		"type": "dialogue",
-		"background": "res://Assets/Candy Castle Gate.png",
+		"background": "res://Assets/img/battlebacks1/Castle1.png",
 		"dialogue": [
 			{"name": "Hero", "text": "เอาชนะมันได้แล้ว! แต่นั่นเป็นแค่จุดเริ่มใช่ไหม?", "focus": "hero"},
 			{"name": "Guide", "text": "ใช่! ปราสาท Junk Food อยู่ข้างหน้า... ที่สถิตของราชาและจักรพรรดิ", "focus": "guide"}
@@ -775,7 +797,7 @@ const path_nutrition = {
 	# --- ACT 4: The Imperial Candy Castle (15-19) ---
 	15: {
 		"type": "dialogue",
-		"background": "res://Assets/Candy Castle Gate.png",
+		"background": "res://Assets/img/battlebacks1/Castle1.png",
 		"dialogue": [
 			{"name": "Hero", "text": "ใกล้ถึงแล้ว! ฉันรู้สึกถึงพลังงานความหวานที่รุนแรงมาก", "focus": "hero"},
 			{"name": "Guide", "text": "ระวังตัวด้วย! 'ราชา Junk Food' กำลังเฝ้าประตูอยู่!", "focus": "guide"}

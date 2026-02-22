@@ -1,7 +1,7 @@
-[gd_resource type="Theme" load_steps=3 format=3]
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://dlpkb4mip233b"]
 
-[ext_resource type="FontFile" uid="uid://db8v1frrmm3og" path="res://Assets/NotoSansThai_Bold.woff2" id="1_bold"]
-[ext_resource type="FontFile" uid="uid://djlm7bdb4nnv1" path="res://Assets/NotoSansThai_Regular.woff2" id="2_reg"]
+[ext_resource type="FontFile" uid="uid://xnarrpgm2y4y" path="res://Assets/NotoSansThai_Bold.woff2" id="1_bold"]
+[ext_resource type="FontFile" uid="uid://1mo72lc7h3wm" path="res://Assets/NotoSansThai_Regular.woff2" id="2_reg"]
 
 [resource]
 default_font = ExtResource("2_reg")

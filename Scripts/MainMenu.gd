@@ -176,17 +176,19 @@ func _on_start_btn_pressed():
 	AudioManager.play_sfx("button_click")
 	_play_transition_out()
 	
-	# Reset Global state for new game
-	Global.player_level = 1
-	Global.player_xp = 0
-	Global.player_gold = 0
+	Global.is_part2_story = false
+	Global.current_companion_id = ""
+	Global.unlocked_chapters = [1]
+	Global.current_chapter = 1
 	Global.story_progress = 0
-	Global.current_path = ""
-	Global.used_questions = []
-	Global.inventory = {
-		"potion": 2,
-		"mana_refill": 1
-	}
+	Global.unlocked_skills = []
+	Global.skill_points = 0
+	Global.learning_points = 0
+	Global.is_story_mode = false
+	Global.active_quests = []
+	Global.completed_quests = []
+	Global.quest_progress = {}
+	Global.player_name = "ผู้กล้า"
 	
 	# Navigate with delay for effect
 	await get_tree().create_timer(0.5).timeout
@@ -199,21 +201,6 @@ func _on_continue_btn_pressed():
 	_play_transition_out()
 	await get_tree().create_timer(0.5).timeout
 	Global.load_and_start()
-
-func _on_part2_btn_pressed():
-	"""Part 2: Terra Nova button"""
-	print("Starting Part 2: Terra Nova...")
-	AudioManager.play_sfx("button_click")
-	_play_transition_out()
-	
-	# Reset Part 2 state
-	Global.is_part2_story = true
-	Global.current_story_key = "part2_intro"
-	Global.story_progress = 0
-	Global.current_companion_id = ""
-	
-	await get_tree().create_timer(0.5).timeout
-	get_tree().change_scene_to_file("res://Scenes/Part2/IntroPart2.tscn")
 
 func _on_options_btn_pressed():
 	"""Options button"""

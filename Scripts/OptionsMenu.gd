@@ -76,7 +76,7 @@ func _on_resolution_selected(index):
 	var new_res = resolutions[index]
 	get_window().size = new_res
 	# Re-center window
-	get_window().position = (DisplayServer.screen_get_size() / 2) - (new_res / 2)
+	get_window().position = Vector2i(Vector2(DisplayServer.screen_get_size()) / 2.0 - Vector2(new_res) / 2.0)
 
 func _on_back_btn_pressed():
 	# If this was opened from MainMenu, go back there

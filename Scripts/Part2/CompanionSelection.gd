@@ -36,17 +36,14 @@ func _on_hover(id):
 func _on_select_pressed(id):
 	print("Selected Companion: ", id)
 	
-	# Save to Global (Will need to add this variable to Global.gd)
-	if "current_companion_id" in Global:
-		Global.current_companion_id = id
-	else:
-		# Dynamic property for now if not defined
-		Global.set("current_companion_id", id)
+	# Save to Global
+	Global.current_companion_id = id
 	
-	AudioManager.play_sfx("level_up") # Joyful sound
+	# Fix: Use 'levelup' which exists in AudioManager.gd
+	AudioManager.play_sfx("levelup") 
 	
-	# Proceed to Story — first battle intro
+	# Proceed to Story — continue from next scene after companion_select
 	await get_tree().create_timer(1.0).timeout
-	Global.current_story_key = "first_battle_intro"
-	Global.story_progress = 0
+	Global.story_progress += 1 # Advance to the next scene in the chapter
+	Global.save_game() # Save selection and progress
 	get_tree().change_scene_to_file("res://Scenes/StoryScene.tscn")

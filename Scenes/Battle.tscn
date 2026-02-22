@@ -30,18 +30,20 @@ grow_vertical = 2
 color = Color(0, 0, 0, 0.235294)
 
 [node name="HeroSprite" type="TextureRect" parent="UI"]
-offset_left = 117.0
-offset_top = 221.0
-offset_right = 517.0
-offset_bottom = 621.0
+layout_mode = 0
+offset_left = 180.0
+offset_top = 220.0
+offset_right = 580.0
+offset_bottom = 620.0
 expand_mode = 1
 stretch_mode = 5
 
 [node name="CompanionSprite" type="TextureRect" parent="UI"]
-offset_left = 20.0
-offset_top = 350.0
-offset_right = 220.0
-offset_bottom = 550.0
+layout_mode = 0
+offset_left = 120.0
+offset_top = 430.0
+offset_right = 320.0
+offset_bottom = 630.0
 expand_mode = 1
 stretch_mode = 5
 
@@ -52,9 +54,9 @@ anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
 offset_left = -560.0
-offset_top = -200.0
+offset_top = -100.0
 offset_right = -160.0
-offset_bottom = 200.0
+offset_bottom = 300.0
 grow_horizontal = 0
 grow_vertical = 2
 expand_mode = 1
@@ -142,6 +144,11 @@ text = "ใช้สกิล"
 custom_minimum_size = Vector2(130, 0)
 layout_mode = 2
 text = "ไอเทม"
+
+[node name="CompanionBtn" type="Button" parent="UI/Controls"]
+custom_minimum_size = Vector2(130, 0)
+layout_mode = 2
+text = "คู่หู"
 
 [node name="QuestionBox" type="Panel" parent="UI"]
 visible = false

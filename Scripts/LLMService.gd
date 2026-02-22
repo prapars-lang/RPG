@@ -47,7 +47,7 @@ func generate_response(prompt: String, system_prompt: String = "You are a helpfu
 		push_error("An error occurred in the HTTP request.")
 		request_failed.emit("HTTP Request Error")
 
-func _on_request_completed(result, response_code, headers, body):
+func _on_request_completed(_result, response_code, _headers, body):
 	if response_code != 200:
 		var response_text = body.get_string_from_utf8()
 		push_error("API Request failed with code: %d. Response: %s" % [response_code, response_text])

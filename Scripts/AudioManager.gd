@@ -46,6 +46,7 @@ var sfx_paths = {
 	"menu_open": "res://Audio/sfx_menu_open.ogg",
 	"menu_close": "res://Audio/sfx_menu_close.ogg",
 	"typing": "res://Audio/sfx_typing.ogg",
+	"battle_start": "res://Audio/sfx_attack.ogg", # Placeholder
 }
 
 # Mute states
@@ -80,7 +81,7 @@ func _input(event):
 
 func _setup_audio_buses():
 	"""Create master, music, and sfx audio buses"""
-	var audio_bus_layout = AudioServer.get_bus_count()
+	# Check current bus setup
 	
 	# Check if buses already exist
 	if AudioServer.get_bus_index(MUSIC_BUS) == -1:
@@ -128,10 +129,14 @@ func play_bgm(bgm_key: String, fade_in_duration: float = 1.0) -> void:
 		
 	var bgm_path = bgm_paths[bgm_key]
 	
-	# Load the audio file
+	# Check if file exists before loading
+	if not ResourceLoader.exists(bgm_path):
+		push_warning("BGM file not found: %s (skipping)" % bgm_path)
+		return
+	
 	var audio_stream = load(bgm_path)
 	if audio_stream == null:
-		push_error("Failed to load BGM: %s" % bgm_path)
+		push_warning("Failed to load BGM: %s" % bgm_path)
 		return
 	
 	# fade out OLD player if it exists
@@ -199,10 +204,15 @@ func play_sfx(sfx_key: String, volume_offset: float = 0.0) -> void:
 		return
 	
 	var sfx_path = sfx_paths[sfx_key]
-	var audio_stream = load(sfx_path)
 	
+	# Check if file exists before loading
+	if not ResourceLoader.exists(sfx_path):
+		push_warning("SFX file not found: %s (skipping)" % sfx_path)
+		return
+	
+	var audio_stream = load(sfx_path)
 	if audio_stream == null:
-		push_error("Failed to load SFX: %s" % sfx_path)
+		push_warning("Failed to load SFX: %s" % sfx_path)
 		return
 	
 	# Find an available player
@@ -221,7 +231,7 @@ func play_sfx(sfx_key: String, volume_offset: float = 0.0) -> void:
 	available_player.volume_db = get_sfx_volume() + volume_offset
 	available_player.play()
 
-func play_sfx_at_position(sfx_key: String, position: Vector2, volume_offset: float = 0.0) -> void:
+func play_sfx_at_position(sfx_key: String, _position: Vector2, volume_offset: float = 0.0) -> void:
 	"""Play a spatial sound effect (future enhancement)"""
 	# For now, just play regular SFX
 	# Can be extended for 3D audio positioning

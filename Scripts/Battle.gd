@@ -39,7 +39,9 @@ const BattleEffectManager = preload("res://Scripts/Battle/BattleEffectManager.gd
 @onready var skill_menu = $UI/SkillMenu
 @onready var skill_list = $UI/SkillMenu/VBox/SkillList
 @onready var item_menu = $UI/ItemMenu
-@onready var item_list = $UI/ItemMenu/VBox/ItemList
+@onready var item_list_container = $UI/ItemMenu/VBox/ItemList
+
+var element_hint_label: Label
 
 # Using Global.class_icons now
 
@@ -59,13 +61,31 @@ func _ready():
 	_apply_hud_styles()
 	
 	# Connect hover signals and apply styles for buttons
-	for btn in [$UI/Controls/AttackBtn, $UI/Controls/SkillBtn, $UI/Controls/ItemBtn, $UI/SkillMenu/VBox/CloseSkillBtn, $UI/ItemMenu/VBox/CloseItemBtn]:
+	var all_btns = [$UI/Controls/AttackBtn, $UI/Controls/SkillBtn, $UI/Controls/ItemBtn, $UI/SkillMenu/VBox/CloseSkillBtn, $UI/ItemMenu/VBox/CloseItemBtn]
+	var comp_btn = $UI/Controls.get_node_or_null("CompanionBtn")
+	if comp_btn:
+		all_btns.append(comp_btn)
+		comp_btn.pressed.connect(_on_companion_btn_pressed)
+		comp_btn.visible = Global.is_part2_story and Global.current_companion_id != ""
+	
+	for btn in all_btns:
 		btn.pivot_offset = btn.size / 2
 		btn.mouse_entered.connect(_on_btn_mouse_entered.bind(btn))
 		btn.mouse_exited.connect(_on_btn_mouse_exited.bind(btn))
 	
 	# Idle Animation for Sprites (Breathing effect)
 	_start_idle_animations()
+	
+	# --- Elemental Hint initialization ---
+	if Global.is_part2_story:
+		element_hint_label = Label.new()
+		element_hint_label.name = "ElementHint"
+		element_hint_label.add_theme_font_size_override("font_size", 18)
+		element_hint_label.add_theme_color_override("font_color", UIThemeManager.COLOR_ACCENT)
+		element_hint_label.position = Vector2(850, 600) # Right side bottom-ish
+		$UI.add_child(element_hint_label)
+		if has_method("_update_element_hint"):
+			_update_element_hint()
 	
 	# Play Battle Music
 	AudioManager.play_bgm("battle")
@@ -124,15 +144,31 @@ func _apply_hud_styles():
 		btn.add_theme_color_override("font_hover_color", UIThemeManager.COLOR_ACCENT)
 
 func _start_idle_animations():
-	# Hero Idle
-	var h_tween = create_tween().set_loops()
-	h_tween.tween_property(hero_sprite_ui, "position:y", hero_sprite_ui.position.y - 12, 2.5).set_trans(Tween.TRANS_SINE)
-	h_tween.tween_property(hero_sprite_ui, "position:y", hero_sprite_ui.position.y, 2.5).set_trans(Tween.TRANS_SINE)
+	# Bind tweens to nodes for automatic safety on scene change
 	
-	# Monster Idle
-	var m_tween = create_tween().set_loops()
-	m_tween.tween_property(monster_sprite_ui, "scale", Vector2(1.05, 1.05), 3.0).set_trans(Tween.TRANS_SINE)
-	m_tween.tween_property(monster_sprite_ui, "scale", Vector2(1.0, 1.0), 3.0).set_trans(Tween.TRANS_SINE)
+	# Hero Idle (Breathing/Hover)
+	if is_instance_valid(hero_sprite_ui):
+		var h_tween = hero_sprite_ui.create_tween().set_loops()
+		h_tween.tween_property(hero_sprite_ui, "position:y", hero_sprite_ui.position.y - 10, 2.0).set_trans(Tween.TRANS_SINE)
+		h_tween.tween_property(hero_sprite_ui, "position:y", hero_sprite_ui.position.y, 2.0).set_trans(Tween.TRANS_SINE)
+	
+	# Companion Idle
+	if is_instance_valid(companion_sprite_ui):
+		var c_tween = companion_sprite_ui.create_tween().set_loops()
+		c_tween.tween_property(companion_sprite_ui, "position:y", companion_sprite_ui.position.y - 8, 1.5).set_trans(Tween.TRANS_SINE)
+		c_tween.tween_property(companion_sprite_ui, "position:y", companion_sprite_ui.position.y, 1.5).set_trans(Tween.TRANS_SINE)
+	
+	# Monster Idle (Intimidating scale + slow hover)
+	if is_instance_valid(monster_sprite_ui):
+		var m_tween = monster_sprite_ui.create_tween().set_loops()
+		m_tween.set_parallel(true)
+		m_tween.tween_property(monster_sprite_ui, "scale", Vector2(1.03, 1.03), 3.0).set_trans(Tween.TRANS_SINE)
+		m_tween.tween_property(monster_sprite_ui, "position:y", monster_sprite_ui.position.y - 15, 3.0).set_trans(Tween.TRANS_SINE)
+		
+		# In Godot 4, to chain another set of parallel tweens in a loop, we use .chain()
+		m_tween.chain().set_parallel(true)
+		m_tween.tween_property(monster_sprite_ui, "scale", Vector2(1.0, 1.0), 3.0).set_trans(Tween.TRANS_SINE)
+		m_tween.tween_property(monster_sprite_ui, "position:y", monster_sprite_ui.position.y, 3.0).set_trans(Tween.TRANS_SINE)
 
 func _on_level_up(new_level, old_stats, new_stats, new_skills):
 	# Calculate gains
@@ -146,14 +182,17 @@ func _on_level_up(new_level, old_stats, new_stats, new_skills):
 	
 	# Show Stat Gains
 	await get_tree().create_timer(1.2).timeout
+	if not is_inside_tree(): return
 	battle_log.text = "ค่าพลัง: HP+%d MP+%d ATK+%d DEF+%d" % [hp_gain, mp_gain, atk_gain, def_gain]
 	
 	if new_skills.size() > 0:
 		await get_tree().create_timer(2.0).timeout
+		if not is_inside_tree(): return
 		var skills_text = ", ".join(new_skills)
 		battle_log.text = "เรียนรู้สกิลใหม่: " + skills_text + "!"
 		
 	await get_tree().create_timer(2.0).timeout
+	if not is_inside_tree(): return
 	battle_log.text = "ฟื้นฟูพลังชีวิตและมานาเต็มเปี่ยม!"
 	update_ui()
 
@@ -194,14 +233,24 @@ func setup_battle():
 	
 	print("Battle setup. Monster: ", current_monster_data.name)
 	
+	# Set Background
+	if Global.queued_battle_background != "":
+		var bg_path = Global.queued_battle_background
+		if ResourceLoader.exists(bg_path):
+			var tex = load(bg_path)
+			if tex and is_instance_valid($UI/BackgroundTexture):
+				$UI/BackgroundTexture.texture = tex
+				print("[Battle] Background overridden: ", bg_path)
+		Global.queued_battle_background = "" # Clear after use
+	
 	# Set Hero Sprite
 	var icon_key = Global.player_class + "_" + Global.player_gender
 	var img_path = Global.class_icons.get(icon_key, "")
 	if img_path != "" and (ResourceLoader.exists(img_path) or FileAccess.file_exists(img_path)):
 		hero_sprite_ui.texture = load(img_path)
 	
-	# Set Companion Sprite
-	if Global.current_companion_id != "":
+	# Set Companion Sprite (Part 2 Only)
+	if Global.is_part2_story and Global.current_companion_id != "":
 		# Load Companion Data (Lazy load or via Part2 script)
 		var comp_path = "res://Scripts/Part2/CompanionData.gd"
 		if FileAccess.file_exists(comp_path):
@@ -210,7 +259,16 @@ func setup_battle():
 			if comp_data:
 				if ResourceLoader.exists(comp_data.sprite):
 					companion_sprite_ui.texture = load(comp_data.sprite)
+					companion_sprite_ui.show()
 					battle_log.text += "\n" + comp_data.name + " ร่วมต่อสู้!"
+				else:
+					companion_sprite_ui.hide()
+			else:
+				companion_sprite_ui.hide()
+		else:
+			companion_sprite_ui.hide()
+	else:
+		companion_sprite_ui.hide()
 	
 	# Set Monster Sprite
 	var monster_path = current_monster_data.texture
@@ -232,11 +290,15 @@ func player_turn():
 	battle_log.text = "ตาของคุณแล้ว! เลือกแผนการต่อสู้"
 
 func _on_attack_pressed():
+	print("[Battle] Attack Button Pressed! Previous state: ", current_state)
 	if current_state == BattleState.PLAYER_TURN:
 		pending_skill = null
 		show_question()
+	else:
+		print("[Battle] WARNING: Attack ignored! Turn state is: ", current_state)
 
 func _on_skill_btn_pressed():
+	print("[Battle] Skill Button Pressed!")
 	if current_state == BattleState.PLAYER_TURN:
 		show_skill_menu()
 
@@ -276,9 +338,9 @@ func show_skill_menu():
 	# ------------------------------
 	
 	# --- ADDED: Elemental Skills (Skill Tree) ---
-	var SkillDB = load("res://Scripts/Part2/SkillTreeData.gd")
+	var SkillTreeData = load("res://Scripts/Part2/SkillTreeData.gd")
 	for skill_id in Global.unlocked_skills:
-		var skill = SkillDB.SKILLS.get(skill_id)
+		var skill = SkillTreeData.SKILLS.get(skill_id)
 		if skill:
 			var btn = Button.new()
 			btn.text = skill.name + " (" + str(skill.cost) + " MP)"
@@ -308,7 +370,7 @@ func _on_item_btn_pressed():
 
 func show_item_menu():
 	# Clear old list
-	for child in item_list.get_children():
+	for child in item_list_container.get_children():
 		child.queue_free()
 	
 	var has_items = false
@@ -323,13 +385,13 @@ func show_item_menu():
 			var btn = Button.new()
 			btn.text = item_data.name + " ( x" + str(count) + " )"
 			btn.pressed.connect(_on_item_selected.bind(item_id))
-			item_list.add_child(btn)
+			item_list_container.add_child(btn)
 	
 	if not has_items:
 		var lbl = Label.new()
 		lbl.text = "ไม่มีไอเทมที่ใช้ได้"
 		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		item_list.add_child(lbl)
+		item_list_container.add_child(lbl)
 	
 	item_menu.visible = true
 
@@ -402,9 +464,13 @@ func show_question():
 	# Hide action buttons to prevent overlapping click areas
 	$UI/Controls.visible = false
 	
+	print("[Battle] Displaying Question Box...")
 	question_box.visible = true
-	question_box.z_index = 10
+	question_box.z_index = 100
 	question_box.move_to_front()
+	
+	# Ensure individual nodes are processed if they were paused
+	question_box.process_mode = Node.PROCESS_MODE_INHERIT
 
 func answer_question(answer):
 	if current_state != BattleState.QUESTION_TIME: return
@@ -420,6 +486,12 @@ func answer_question(answer):
 		var unlocked_id = Global.try_unlock_random_card(Global.current_path, 0.20)
 		if unlocked_id != "":
 			_show_card_unlock_popup(unlocked_id)
+		
+		# --- ADDED: Bond System ---
+		if Global.is_part2_story and Global.current_companion_id != "":
+			Global.companion_bond += 1
+			print("[Bond] Companion bond increased to: ", Global.companion_bond)
+		
 		await execute_player_action(true)
 	else:
 		await execute_player_action(false)
@@ -520,12 +592,10 @@ func execute_player_action(success):
 				var raw_dmg = pending_skill.value + int(player_atk * 0.5)
 				var total_dmg = int(raw_dmg * weakness_mult)
 				
-				var feedback_text = ""
 				if weakness_mult > 1.0:
-					feedback_text = " (Weakness!)"
 					BattleEffectManager.show_damage_number($UI, "Effective!", monster_sprite_ui.position + Vector2(0, -50), Color.YELLOW)
 				elif weakness_mult < 1.0:
-					feedback_text = " (Resisted)"
+					pass
 				
 				# Apply Damage
 				enemy_hp -= total_dmg
@@ -612,29 +682,41 @@ func check_battle_end(trigger_enemy_turn: bool = true):
 		Global.gain_xp(xp_gain)
 		Global.add_gold(gold_gain)
 		
+		# Visual Reward Feedback
+		if has_node("UI"):
+			BattleEffectManager.show_damage_number($UI, "💰 +" + str(gold_gain), Vector2(576, 300), Color.YELLOW)
+		
 		# --- Quest Update ---
 		if QuestManager.has_method("on_enemy_killed"):
 			QuestManager.on_enemy_killed(current_monster_id)
 		# --------------------
 		
 		$UI/Controls.hide()
+		print("[Battle] Victory! Starting transition timer (3s)...")
 		
 		await get_tree().create_timer(3.0).timeout
+		if not is_inside_tree(): 
+			print("[Battle] Not in tree after timer. Transition aborted.")
+			return
+		
+		print("[Battle] Timer finished. story_mode=", Global.is_story_mode)
 		
 		# --- Return to Story if in Story Mode ---
 		if Global.is_story_mode:
 			# Advance to next chunk
 			Global.story_progress += 1 
+			print("[Battle] Returning to StoryScene. Next progress index: ", Global.story_progress)
 			get_tree().change_scene_to_file("res://Scenes/StoryScene.tscn")
 		else:
+			print("[Battle] Going to VictoryScene.")
 			get_tree().change_scene_to_file("res://Scenes/VictoryScene.tscn")
 		# --------------------------------------------------
 		
 	elif player_hp <= 0:
 		current_state = BattleState.LOST
 		$UI/Controls.hide()
-		skill_menu.hide()
-		item_menu.hide()
+		$UI/SkillMenu.hide()
+		$UI/ItemMenu.hide()
 		question_box.hide()
 		
 		battle_log.text = "พ่ายแพ้... รักษาสุขภาพให้ดีกว่านี้ในครั้งหน้านะ!"
@@ -696,6 +778,9 @@ func enemy_turn():
 		check_battle_end()
 
 func play_anim(target, type):
+	if not is_instance_valid(target) or not target.is_inside_tree():
+		return
+		
 	var tween = create_tween()
 	if type == "attack":
 		# Lunge forward
@@ -705,7 +790,9 @@ func play_anim(target, type):
 		
 		tween.tween_property(target, "position", original_pos + lunge_dist, 0.1)
 		tween.tween_property(target, "position", original_pos, 0.1)
-		await tween.finished
+		
+		if tween.is_valid():
+			await tween.finished
 	elif type == "damage":
 		# Flash Red and Shake
 		var original_pos = target.position
@@ -721,18 +808,54 @@ func play_anim(target, type):
 			tween.tween_property(target, "position", original_pos + offset, 0.05)
 		
 		tween.tween_property(target, "position", original_pos, 0.05)
-		await tween.finished
+		
+		if tween.is_valid():
+			await tween.finished
 		
 		# Safety: guarantee modulate is WHITE after animation completes
-		target.modulate = Color.WHITE
+		if is_instance_valid(target):
+			target.modulate = Color.WHITE
 
 # --- UI Juice ---
 func _on_btn_mouse_entered(btn: Button):
+	if not is_instance_valid(btn) or not btn.is_inside_tree(): return
 	var tween = create_tween()
 	tween.tween_property(btn, "scale", Vector2(1.05, 1.05), 0.1)
 	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 
 func _on_btn_mouse_exited(btn: Button):
+	if not is_instance_valid(btn) or not btn.is_inside_tree(): return
 	var tween = create_tween()
 	tween.tween_property(btn, "scale", Vector2(1.0, 1.0), 0.1)
 	tween.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+func _update_element_hint():
+	if not Global.is_part2_story or element_hint_label == null: return
+	
+	var elm = Global.current_map_element
+	var elm_name = Global.ELEMENT_NAMES.get(elm, "Normal")
+	
+	var hint = "ภูมิประเทศ: " + elm_name + "\n"
+	
+	match elm:
+		Global.ELEMENT_NATURE:
+			hint += "(ธาตุพืชได้เปรียบ)"
+		Global.ELEMENT_FIRE:
+			hint += "(ธาตุไฟได้เปรียบ)"
+		Global.ELEMENT_WATER:
+			hint += "(ธาตุน้ำได้เปรียบ)"
+	
+	element_hint_label.text = hint
+
+func _on_companion_btn_pressed():
+	if current_state != BattleState.PLAYER_TURN: return
+	
+	var comp_id = Global.current_companion_id
+	var comp_db = load("res://Scripts/Part2/CompanionData.gd").new()
+	var data = comp_db.get_companion(comp_id, Global.companion_bond)
+	
+	if data and "skill" in data:
+		pending_skill = data.skill 
+		var evo_prefix = "🌟 [EVOLVED] " if data.get("is_evolved", false) else ""
+		battle_log.text = evo_prefix + data.name + " เตรียมร่าย " + data.skill.name + "!"
+		show_question()

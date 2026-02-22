@@ -10,6 +10,7 @@ extends Control
 @onready var narration_label = $CenterContainer/NarrationLabel
 @onready var start_btn = $CenterContainer/StartBtn
 @onready var particles = $Particles
+@onready var background = $Background
 
 var subtitle_text = "500 ปีถัดมา... เมื่อผนึกแห่งอดีตเริ่มแตกร้าว"
 var narration_lines = [
@@ -79,12 +80,17 @@ func _style_start_button():
 	start_btn.add_theme_color_override("font_hover_color", Color(1.0, 0.85, 0.3, 1.0))
 
 func _play_cinematic():
-	"""Main cinematic sequence"""
+	"""Main cinematic sequence with enhanced juice"""
 	is_animating = true
 	
-	# Phase 1: Fade background in (dark overlay fades out partially)
-	var bg_tween = create_tween()
-	bg_tween.tween_property(dark_overlay, "modulate:a", 0.6, 2.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	# Phase 0: Initial Background setup for zoom
+	background.pivot_offset = background.size / 2
+	background.scale = Vector2(1.1, 1.1)
+	
+	# Phase 1: Fade background in + Subtle Camera Zoom
+	var bg_tween = create_tween().set_parallel(true)
+	bg_tween.tween_property(dark_overlay, "modulate:a", 0.6, 3.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	bg_tween.tween_property(background, "scale", Vector2(1.0, 1.0), 10.0).set_trans(Tween.TRANS_SINE)
 	await bg_tween.finished
 	
 	# Start particles
@@ -92,53 +98,64 @@ func _play_cinematic():
 	
 	await get_tree().create_timer(0.5).timeout
 	
-	# Phase 2: Title appears with scale + fade
-	title_label.scale = Vector2(0.5, 0.5)
+	# Phase 2: Title appears with scale + bounce + flash
+	title_label.scale = Vector2(0.3, 0.3)
 	title_label.pivot_offset = title_label.size / 2
+	
 	var title_tween = create_tween().set_parallel(true)
-	title_tween.tween_property(title_label, "modulate:a", 1.0, 1.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	title_tween.tween_property(title_label, "scale", Vector2(1.0, 1.0), 1.8).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	title_tween.tween_property(title_label, "modulate:a", 1.0, 1.2).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	title_tween.tween_property(title_label, "scale", Vector2(1.0, 1.0), 1.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	
+	# Small "Flash" effect on title entry
+	var flash_tween = create_tween()
+	flash_tween.tween_property(title_label, "modulate", Color(2.5, 2.5, 2.0, 1.0), 0.15)
+	flash_tween.tween_property(title_label, "modulate", Color(1.0, 1.0, 1.0, 1.0), 0.4)
+	
 	await title_tween.finished
 	
 	# Title glow pulse
 	var glow_tween = create_tween().set_loops()
-	glow_tween.tween_property(title_label, "modulate", Color(1.2, 1.1, 0.9, 1.0), 2.0).set_trans(Tween.TRANS_SINE)
-	glow_tween.tween_property(title_label, "modulate", Color(1.0, 1.0, 1.0, 1.0), 2.0).set_trans(Tween.TRANS_SINE)
+	glow_tween.tween_property(title_label, "modulate", Color(1.2, 1.1, 0.9, 1.0), 2.5).set_trans(Tween.TRANS_SINE)
+	glow_tween.tween_property(title_label, "modulate", Color(1.0, 1.0, 1.0, 1.0), 2.5).set_trans(Tween.TRANS_SINE)
 	
 	await get_tree().create_timer(0.8).timeout
 	
 	# Phase 3: Subtitle typewriter
-	await _typewriter(subtitle_label, subtitle_text, 0.04)
+	await _typewriter(subtitle_label, subtitle_text, 0.06) # Slightly slower for dramatic effect
 	
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.2).timeout
 	
-	# Phase 4: Darken more for narration
+	# Phase 4: Darken more for narration focus
 	var darken_tween = create_tween()
-	darken_tween.tween_property(dark_overlay, "modulate:a", 0.45, 1.0)
+	darken_tween.tween_property(dark_overlay, "modulate:a", 0.7, 1.5).set_trans(Tween.TRANS_QUAD)
 	await darken_tween.finished
 	
 	# Phase 5: Narration lines (typewriter one by one)
 	for i in range(narration_lines.size()):
 		var line = narration_lines[i]
 		if i == 0:
-			await _typewriter(narration_label, line, 0.05)
+			await _typewriter(narration_label, line, 0.07)
 		else:
 			narration_label.text += "\n"
-			await _typewriter_append(narration_label, line, 0.05)
-		await get_tree().create_timer(0.6).timeout
+			await _typewriter_append(narration_label, line, 0.07)
+		await get_tree().create_timer(0.8).timeout
 	
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.2).timeout
 	
-	# Phase 6: Start button fade in
+	# Phase 6: Start button fade in with pop
 	start_btn.disabled = false
-	var btn_tween = create_tween()
-	btn_tween.tween_property(start_btn, "modulate:a", 1.0, 1.0).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	start_btn.scale = Vector2(0.8, 0.8)
+	start_btn.pivot_offset = start_btn.size / 2
+	
+	var btn_tween = create_tween().set_parallel(true)
+	btn_tween.tween_property(start_btn, "modulate:a", 1.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	btn_tween.tween_property(start_btn, "scale", Vector2(1.0, 1.0), 0.8).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
 	await btn_tween.finished
 	
 	# Button pulse animation
 	var pulse_tween = create_tween().set_loops()
-	pulse_tween.tween_property(start_btn, "modulate:a", 0.7, 1.5).set_trans(Tween.TRANS_SINE)
-	pulse_tween.tween_property(start_btn, "modulate:a", 1.0, 1.5).set_trans(Tween.TRANS_SINE)
+	pulse_tween.tween_property(start_btn, "modulate:a", 0.6, 2.0).set_trans(Tween.TRANS_SINE)
+	pulse_tween.tween_property(start_btn, "modulate:a", 1.0, 2.0).set_trans(Tween.TRANS_SINE)
 	
 	is_animating = false
 
@@ -167,17 +184,8 @@ func _on_start_btn_pressed():
 	fade_tween.tween_property(dark_overlay, "modulate:a", 1.0, 0.8).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 	await fade_tween.finished
 	
-	# Start Part 2 Story
-	Global.is_part2_story = true
-	Global.current_story_key = "part2_intro"
-	Global.story_progress = 0
-	
-	print("=== IntroPart2: Starting Part 2 Story ===")
-	print("  is_part2_story: ", Global.is_part2_story)
-	print("  current_story_key: ", Global.current_story_key)
-	print("  story_progress: ", Global.story_progress)
-	
-	get_tree().change_scene_to_file("res://Scenes/StoryScene.tscn")
+	# Go to Gender Selection instead of directly to Story
+	get_tree().change_scene_to_file("res://Scenes/Part2/GenderSelection.tscn")
 
 func _input(event):
 	"""Allow skipping cinematic with any key/click"""

@@ -1,0 +1,98 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Part2/GenderSelection.gd" id="1_gender"]
+[ext_resource type="Texture2D" path="res://Assets/Part2/BG_Void_Dimension.png" id="2_bg"]
+
+[node name="GenderSelection" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gender")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.4)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 80.0
+offset_right = 200.0
+offset_bottom = 140.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 48
+text = "เลือกตัวตนของคุณ"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -150.0
+offset_right = 400.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 100
+alignment = 1
+
+[node name="MaleOption" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Texture" type="TextureRect" parent="HBoxContainer/MaleOption"]
+custom_minimum_size = Vector2(250, 300)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="MaleBtn" type="Button" parent="HBoxContainer/MaleOption"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "เด็กชาย"
+
+[node name="FemaleOption" type="VBoxContainer" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Texture" type="TextureRect" parent="HBoxContainer/FemaleOption"]
+custom_minimum_size = Vector2(250, 300)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FemaleBtn" type="Button" parent="HBoxContainer/FemaleOption"]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "เด็กหญิง"
+
+[connection signal="pressed" from="HBoxContainer/MaleOption/MaleBtn" to="." method="_on_male_pressed"]
+[connection signal="pressed" from="HBoxContainer/FemaleOption/FemaleBtn" to="." method="_on_female_pressed"]

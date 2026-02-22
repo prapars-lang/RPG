@@ -61,6 +61,20 @@ size_flags_horizontal = 4
 theme_override_font_sizes/font_size = 28
 text = "กระเป๋า & สถานะ"
 
+[node name="CompanionBtn" type="Button" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 28
+text = "สัตว์คู่หู"
+
+[node name="SkillTreeBtn" type="Button" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 28
+text = "ผังทักษะ"
+
 [node name="SaveBtn" type="Button" parent="Panel/VBoxContainer"]
 custom_minimum_size = Vector2(250, 60)
 layout_mode = 2
@@ -91,8 +105,9 @@ text = "กลับหน้าหลัก"
 
 [connection signal="pressed" from="Panel/VBoxContainer/ResumeBtn" to="." method="_on_resume_btn_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/InventoryBtn" to="." method="_on_inventory_btn_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/CompanionBtn" to="." method="_on_companion_btn_pressed"]
+[connection signal="pressed" from="Panel/VBoxContainer/SkillTreeBtn" to="." method="_on_skill_tree_btn_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/SaveBtn" to="." method="_on_save_btn_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/LoadBtn" to="." method="_on_load_btn_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/OptionsBtn" to="." method="_on_options_btn_pressed"]
 [connection signal="pressed" from="Panel/VBoxContainer/MainMenuBtn" to="." method="_on_main_menu_btn_pressed"]
-

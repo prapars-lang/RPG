@@ -1,6 +1,7 @@
 extends Control
 
 signal dialogue_finished
+signal line_changed(data)
 
 @onready var panel = $Panel
 @onready var name_label = $Panel/NameLabel
@@ -66,6 +67,7 @@ func show_line():
 		var data = dialogue_queue[current_line]
 		name_label.text = data.get("name", "???")
 		text_label.text = data.get("text", "")
+		line_changed.emit(data)
 	else:
 		finish_dialogue()
 

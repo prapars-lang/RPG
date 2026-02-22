@@ -5,10 +5,12 @@ extends Control
 @onready var other_sprite = $Characters/OtherSprite
 @onready var dialogue_system = $DialogueSystem
 
+var item_display: TextureRect # Dynamically created for rewards
+
 var current_chunk_data = {}
 var pause_menu_scene = preload("res://Scenes/PauseMenu.tscn")
 var pause_menu_instance = null
-var _part2_data = null # Cached Part 2 story data
+# (Unused variable removed)
 
 func _ready():
 	# Track current scene
@@ -27,12 +29,17 @@ func _ready():
 	pause_menu_instance = pause_menu_scene.instantiate()
 	add_child(pause_menu_instance)
 	
-	# Connect Dialogue Signals FIRST (before load_chunk)
+	# Initialize Item Display FIRST
+	_setup_item_display()
+	
+	# Connect Dialogue Signals
 	if dialogue_system:
 		if not dialogue_system.dialogue_finished.is_connected(_on_dialogue_finished):
 			dialogue_system.dialogue_finished.connect(_on_dialogue_finished)
+		if not dialogue_system.line_changed.is_connected(_on_line_changed):
+			dialogue_system.line_changed.connect(_on_line_changed)
 	
-	# Load current story chunk (AFTER signal connection)
+	# Load current story chunk
 	load_chunk()
 	
 	# AI Advice Button (Specific for Path of Wisdom)
@@ -44,6 +51,7 @@ func _ready():
 		ai_help_btn.pressed.connect(_on_ai_help_pressed)
 		UIThemeManager.apply_button_theme(ai_help_btn)
 		add_child(ai_help_btn)
+	
 
 func _apply_theme():
 	"""Apply premium UI theme to story scene"""
@@ -52,6 +60,26 @@ func _apply_theme():
 		if label is Label and label.name not in ["NameLabel", "TextLabel"]:
 			label.add_theme_color_override("font_color", UIThemeManager.COLOR_TEXT)
 			label.add_theme_font_size_override("font_size", UIThemeManager.FONT_SIZE_NORMAL)
+
+func _setup_item_display():
+	item_display = TextureRect.new()
+	item_display.name = "RewardDisplay"
+	item_display.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	item_display.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	item_display.custom_minimum_size = Vector2(350, 350)
+	
+	# Center it
+	item_display.set_anchors_preset(Control.PRESET_CENTER)
+	item_display.set_anchor_and_offset(SIDE_LEFT, 0.5, -175)
+	item_display.set_anchor_and_offset(SIDE_TOP, 0.5, -250)
+	
+	item_display.visible = false
+	item_display.modulate.a = 0
+	add_child(item_display)
+	
+	# Ensure it's above characters but below dialogue UI
+	if dialogue_system:
+		move_child(item_display, dialogue_system.get_index())
 
 func _on_ai_help_pressed():
 	if dialogue_system:
@@ -68,37 +96,46 @@ func load_chunk():
 		print("=== LOADING PART 2 STORY ===")
 		print("Key: ", key, " | Index: ", idx)
 		
-		# Load Part 2 Data (cached for reuse)
-		if _part2_data == null:
-			var script_res = load("res://Scripts/Part2/StoryDataPart2.gd")
-			if script_res:
-				_part2_data = script_res.new()
-				print("[Part2] Script loaded OK: ", _part2_data)
-			else:
-				print("[Part2] FAILED to load StoryDataPart2.gd!")
-				current_chunk_data = null
+		# Removed old load().new() logic - using class constants
 		
-		var chapter_data = _part2_data.chapter_1 if _part2_data else null
-		print("[Part2] chapter_data: ", typeof(chapter_data), " | null?: ", chapter_data == null)
+		var chapter_key = "chapter_" + str(int(Global.current_chapter))
+		var chapter_data = StoryDataPart2.CHAPTERS.get(chapter_key, {})
+		print("[Part2] Using StoryDataPart2.CHAPTERS for '", chapter_key, "'. Empty?: ", chapter_data.is_empty())
 		
-		if chapter_data and chapter_data.has(key):
-			var dialog_chain = chapter_data[key]
-			print("[Part2] dialog_chain for '", key, "' loaded. Keys: ", dialog_chain.keys())
-			
-			if dialog_chain.has(idx):
-				current_chunk_data = dialog_chain[idx]
-				print("[Part2] Chunk ", idx, " loaded OK. Type: ", current_chunk_data.get("type", "unknown"))
+		if not chapter_data.is_empty():
+			# Format A: chain-based (key = "part2_intro", sub-dict with numbered scenes)
+			# Only treat as chain if it DOES NOT have a "type" key (which would mean it's a single scene)
+			if chapter_data.has(key) and typeof(chapter_data[key]) == TYPE_DICTIONARY and not chapter_data[key].has("type"):
+				var dialog_chain = chapter_data[key]
+				print("[Part2] dialog_chain for '", key, "' loaded. Keys: ", dialog_chain.keys())
+				
+				if dialog_chain.has(str(idx)):
+					current_chunk_data = dialog_chain[str(idx)]
+					print("[Part2] Chunk ", idx, " loaded OK. Type: ", current_chunk_data.get("type", "unknown"))
+				else:
+					print("[Part2] No chunk at index ", idx, " for key: ", key)
+					current_chunk_data = null
+			# Format B: flat numeric (scenes stored directly as "0", "1", "2"... in chapter)
+			elif chapter_data.has(str(idx)):
+				current_chunk_data = chapter_data[str(idx)]
+				print("[Part2] Direct scene ", idx, " loaded OK. Type: ", current_chunk_data.get("type", "unknown"))
 			else:
-				print("[Part2] No chunk at index ", idx, " for key: ", key)
+				print("[Part2] No scene found for key='", key, "' idx=", idx, " in ", chapter_key)
 				current_chunk_data = null
-		else:
-			print("[Part2] ERROR: No dialog_chain found for key: ", key)
-			current_chunk_data = null
 		
 		if current_chunk_data == null:
 			print("End of dialogue chain for key: ", key)
-			# Return to MainMenu (no overworld)
-			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+			if Global.current_chapter < Global.max_chapters:
+				var next_ch = Global.current_chapter + 1
+				if not next_ch in Global.unlocked_chapters:
+					Global.unlocked_chapters.append(next_ch)
+				
+				# Instead of auto-advancing, go to World Map
+				print("[Part2] Chapter Complete. Moving to World Map. Next unlocked: ", next_ch)
+				get_tree().call_deferred("change_scene_to_file", "res://Scenes/Part2/WorldMap.tscn")
+			else:
+				print("[Part2] Final Chapter Complete!")
+				get_tree().call_deferred("change_scene_to_file", "res://Scenes/MainMenu.tscn")
 			return
 	# --------------------
 	else:
@@ -113,8 +150,12 @@ func load_chunk():
 	
 	if current_chunk_data == null:
 		push_error("ERROR: Story chunk not found!")
-		push_error("Returning to Crossroads...")
-		get_tree().change_scene_to_file("res://Scenes/Crossroads.tscn")
+		if Global.is_part2_story:
+			push_error("Returning to World Map...")
+			get_tree().change_scene_to_file("res://Scenes/Part2/WorldMap.tscn")
+		else:
+			push_error("Returning to Crossroads...")
+			get_tree().change_scene_to_file("res://Scenes/Crossroads.tscn")
 		return
 		
 	print("Chunk loaded successfully! Type: ", current_chunk_data.get("type", "unknown"))
@@ -124,9 +165,13 @@ func load_chunk():
 		AudioManager.play_bgm("story")
 		
 	# Automatic Quest Activation (at start of chapter)
-	if chunk_idx == 0:
+	if chunk_idx == 0 and not Global.is_part2_story:
 		var quest_id = path_name + "_start"
 		QuestManager.activate_quest(quest_id)
+		
+	# Manual Quest Activation (from story data)
+	if current_chunk_data.has("quest_id"):
+		QuestManager.activate_quest(current_chunk_data["quest_id"])
 		
 	# Setup Visuals
 	if current_chunk_data.has("background"):
@@ -189,6 +234,75 @@ func setup_dialogue_mode():
 		push_warning("[StoryScene] Empty dialogue lines! Skipping...")
 		_on_dialogue_finished()
 
+func _on_line_changed(data):
+	var focus = data.get("focus", "none")
+	
+	match focus:
+		"hero":
+			hero_sprite.modulate = Color(1, 1, 1, 1)
+			other_sprite.modulate = Color(0.5, 0.5, 0.5, 0.8)
+		"guide", "other":
+			hero_sprite.modulate = Color(0.5, 0.5, 0.5, 0.8)
+			other_sprite.modulate = Color(1, 1, 1, 1)
+		"none":
+			hero_sprite.modulate = Color(1, 1, 1, 1)
+			other_sprite.modulate = Color(1, 1, 1, 1)
+		_:
+			# Fallback: highlight based on name
+			var speaker_name = data.get("name", "").to_lower()
+			if "hero" in speaker_name or Global.player_name.to_lower() in speaker_name:
+				hero_sprite.modulate = Color(1, 1, 1, 1)
+				other_sprite.modulate = Color(0.5, 0.5, 0.5, 0.8)
+			else:
+				hero_sprite.modulate = Color(0.5, 0.5, 0.5, 0.8)
+				other_sprite.modulate = Color(1, 1, 1, 1)
+	
+	# --- Reward Detection ---
+	var text = data.get("text", "")
+	var speaker = data.get("name", "")
+	
+	if "ได้รับ" in text or "received" in text.to_lower():
+		_show_reward_item(text)
+	elif speaker != "System" and item_display != null and item_display.visible:
+		# Hide reward when someone else speaks
+		_hide_reward_item()
+
+func _show_reward_item(text: String):
+	var reward_path = ""
+	
+	if "Vitality Gem" in text or "อัญมณีพลังชีวิต" in text:
+		reward_path = "res://Assets/items/vitality_gem.png"
+	elif "Wisdom Emblem" in text or "เหรียญตราแห่งปัญญา" in text or "ตราแห่งปัญญา" in text:
+		reward_path = "res://Assets/items/wisdom_emblem.png"
+	elif "Hygiene Emblem" in text or "เหรียญตราแห่งความสะอาด" in text or "ตราแห่งความสะอาด" in text:
+		reward_path = "res://Assets/items/hygiene_emblem.png"
+	elif "Nutrition Emblem" in text or "เหรียญตราแห่งโภชนาการ" in text or "ตราแห่งโภชนาการ" in text:
+		reward_path = "res://Assets/items/nutrition_emblem.png"
+	
+	if reward_path != "" and ResourceLoader.exists(reward_path):
+		item_display.texture = load(reward_path)
+		item_display.visible = true
+		
+		# Animation
+		item_display.scale = Vector2(0.5, 0.5)
+		item_display.modulate.a = 0
+		
+		var tween = create_tween().set_parallel(true)
+		tween.tween_property(item_display, "modulate:a", 1.0, 0.5)
+		tween.tween_property(item_display, "scale", Vector2(1.2, 1.2), 0.6).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+		
+		# Add floating effect after entry
+		tween.chain().set_parallel(false)
+		UIThemeManager.animate_floating(item_display, 20.0, 2.0)
+		
+		# Play victory SFX
+		AudioManager.play_sfx("level_up") # or a specific reward SFX if available
+
+func _hide_reward_item():
+	var tween = create_tween()
+	tween.tween_property(item_display, "modulate:a", 0.0, 0.3)
+	tween.finished.connect(func(): item_display.visible = false)
+
 func _on_dialogue_finished():
 	# Dialogue ended, check what's next
 	if current_chunk_data == null:
@@ -198,33 +312,67 @@ func _on_dialogue_finished():
 	# --- Part 2 scene chain logic ---
 	if Global.is_part2_story:
 		var next_scene = current_chunk_data.get("next_scene", "continue")
+		# Manual Quest Activation (from story data) - if not already activated by load_chunk
+		if current_chunk_data.has("quest_id"):
+			QuestManager.activate_quest(current_chunk_data["quest_id"])
 		print("[Part2] Dialogue finished. next_scene = ", next_scene)
 		
 		if next_scene == "continue":
 			# Move to next chunk in current chain
 			Global.story_progress += 1
+			Global.save_game() # Save progress
 			call_deferred("load_chunk")
 		elif next_scene == "battle":
 			# Enter battle
 			var enemy_id = current_chunk_data.get("enemy_id", "unstable_slime")
+			var bg_path = current_chunk_data.get("background", "")
 			Global.is_story_mode = true
 			Global.queued_story_enemy_id = enemy_id
-			# After battle, advance to next chunk
-			Global.story_progress += 1
+			Global.queued_battle_background = bg_path
+			
 			get_tree().change_scene_to_file("res://Scenes/Battle.tscn")
 		elif next_scene == "companion_select":
 			# Go to companion selection
 			get_tree().change_scene_to_file("res://Scenes/Part2/CompanionSelection.tscn")
 		elif next_scene == "end":
-			# End of chapter — return to main menu
-			Global.is_part2_story = false
-			get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+			# End of chapter - Update unlocked chapters and go to World Map
+			var earned_sp = 2 # Fixed reward or dynamic? Let's say 2 for now
+			Global.skill_points += earned_sp
+			
+			# Trigger Summary logic (could be a popup or dedicated scene)
+			print("[Part2] Chapter Clear! Earned ", earned_sp, " SP. Total: ", Global.skill_points)
+			
+			if Global.current_chapter < Global.max_chapters:
+				var next_ch = Global.current_chapter + 1
+				if not next_ch in Global.unlocked_chapters:
+					Global.unlocked_chapters.append(next_ch)
+				
+				# Advance chapter for progress, but reset chunk index
+				Global.current_chapter = next_ch
+				Global.story_progress = 0
+				Global.current_story_key = "" 
+				
+				print("[Part2] Chapter Complete. Moving to Summary. Next unlocked: ", next_ch)
+				Global.save_game()
+				get_tree().call_deferred("change_scene_to_file", "res://Scenes/Part2/ChapterSummary.tscn")
+			else:
+				print("[Part2] Final Chapter Complete!")
+				Global.save_game()
+				get_tree().call_deferred("change_scene_to_file", "res://Scenes/Part2/ChapterSummary.tscn")
+			return
 		else:
-			# next_scene is a story key (e.g., "meet_aetherion", "the_corruption")
-			# Jump to new scene chain
-			Global.current_story_key = next_scene
-			Global.story_progress = 0
-			call_deferred("load_chunk")
+			# If it's a numeric jump (e.g., "0")
+			if next_scene.is_valid_int():
+				Global.story_progress = next_scene.to_int()
+				Global.current_story_key = "" # Reset to flat numeric mode
+			else:
+				# It's a new story key within the same chapter
+				Global.current_story_key = next_scene
+				Global.story_progress = 0
+		
+		# Proactively save progress
+		Global.save_game()
+		call_deferred("load_chunk")
 		return
 	
 	# --- Part 1 logic (original) ---
@@ -235,12 +383,11 @@ func _on_dialogue_finished():
 
 func start_battle_transition():
 	var enemy_id = current_chunk_data.get("enemy_id", "virus")
-	Global.is_story_mode = true
+	var bg_path = current_chunk_data.get("background", "")
 	
-	# Set the monster for the battle
-	# We might need to override get_monster_for_path in Battle.gd or Global.gd
-	# For now, let's pass the enemy_id via Global to be picked up
+	Global.is_story_mode = true
 	Global.queued_story_enemy_id = enemy_id
+	Global.queued_battle_background = bg_path
 	
 	get_tree().change_scene_to_file("res://Scenes/Battle.tscn")
 

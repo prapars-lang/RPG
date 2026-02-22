@@ -1,8 +1,8 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=6 format=3 uid="uid://scbk1fnso2cc"]
 
-[ext_resource type="Texture2D" path="res://Assets/Part2/BG_Verdant_Start.png" id="1_bg"]
+[ext_resource type="Texture2D" uid="uid://bhpvdh83fkh0r" path="res://Assets/Part2/BG_Verdant_Start.png" id="1_bg"]
 [ext_resource type="PackedScene" path="res://Scenes/Part2/OverworldPlayer.tscn" id="2_player"]
-[ext_resource type="PackedScene" path="res://Scenes/Part2/NPC_Aetherion.tscn" id="3_npc"]
+[ext_resource type="PackedScene" uid="uid://blwu83sao1te2" path="res://Scenes/Part2/NPC_Aetherion.tscn" id="3_npc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_wall"]
 size = Vector2(50, 1080)
