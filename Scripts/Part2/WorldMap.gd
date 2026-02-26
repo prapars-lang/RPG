@@ -14,6 +14,8 @@ func _ready():
 	Global.save_game()
 	
 	print("--- WorldMap _ready() ---")
+	print("[WorldMap] Current Chapter: ", Global.current_chapter)
+	print("[WorldMap] Unlocked Chapters: ", Global.unlocked_chapters)
 	_setup_ui()
 	print("UI Setup Done")
 	_populate_chapters()
@@ -27,6 +29,15 @@ func _setup_ui():
 	UIThemeManager.apply_button_theme(skill_tree_btn)
 	UIThemeManager.apply_button_theme(back_btn)
 	UIThemeManager.apply_button_theme(save_btn)
+	
+	# Add Shop Button if it doesn't exist
+	if not $BottomControls.has_node("ShopBtn"):
+		var shop_btn = Button.new()
+		shop_btn.name = "ShopBtn"
+		shop_btn.text = "🛍️ ร้านค้า (Maya)"
+		$BottomControls.add_child(shop_btn)
+		UIThemeManager.apply_button_theme(shop_btn)
+		shop_btn.pressed.connect(_on_shop_pressed)
 
 func _populate_chapters(): 	# Clear old nodes (except the PathLine)
 	for child in chapter_list.get_children():
@@ -109,6 +120,13 @@ func _on_skill_tree_pressed():
 
 func _on_back_pressed():
 	get_tree().change_scene_to_file("res://Scenes/MainMenu.tscn")
+
+func _on_shop_pressed():
+	if AudioManager.has_method("play_sfx"):
+		AudioManager.play_sfx("button_click")
+	# Option A: Go directly to ShopPart2 scene (if created)
+	# Option B: Re-use Shop.tscn but with Maya's context
+	get_tree().change_scene_to_file("res://Scenes/Part2/ShopPart2.tscn")
 
 func _on_save_pressed():
 	if AudioManager.has_method("play_sfx"):

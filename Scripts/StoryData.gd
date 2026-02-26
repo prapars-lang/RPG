@@ -675,8 +675,8 @@ var path_final = {
 		"next_chunk": 4
 	},
 	4: {
-		"type": "end_game", # Special type for Credits
-		"next_scene": "res://Scenes/MainMenu.tscn"
+		"type": "end_chapter",
+		"next_scene": "res://Scenes/CertificateScreen.tscn"
 	}
 }
 

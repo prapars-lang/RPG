@@ -6,6 +6,9 @@ extends Control
 @onready var female_btn = $HBoxContainer/FemaleOption/FemaleBtn
 
 func _ready():
+	# Track current scene
+	Global.current_scene = "res://Scenes/Part2/GenderSelection.tscn"
+	
 	var male_pose = "res://Assets/Part2/Hero_TerraNova.png"
 	var female_pose = "res://Assets/Part2/Hero_TerraNova_Female_Pixel.png"
 	

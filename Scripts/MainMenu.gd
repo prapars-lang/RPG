@@ -1,7 +1,7 @@
 extends Control
 
 @onready var continue_btn = $MainContainer/ContinueBtn
-
+@onready var profile_btn = $MainContainer/ProfileBtn
 @onready var main_container = $MainContainer
 
 # UI Theme Colors
@@ -35,6 +35,12 @@ func _ready():
 	else:
 		continue_btn.disabled = true
 	
+	# Update Profile Button text
+	if ProfileManager.active_profile_name != "":
+		profile_btn.text = "โปรไฟล์: " + ProfileManager.active_profile_name
+	else:
+		profile_btn.text = "เลือกโปรไฟล์ผู้เล่น"
+	
 	# Animate Title
 	var title = $TitleContainer/GameTitle
 	var tween = create_tween().set_loops()
@@ -53,13 +59,15 @@ func _ready():
 func _show_welcome_message():
 	var label = Label.new()
 	label.text = "ยินดีต้อนรับ, " + Global.player_name + "!"
-	label.add_theme_font_size_override("font_size", 22)
+	label.add_theme_font_size_override("font_size", 18)
 	label.add_theme_color_override("font_color", COLOR_ACCENT)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	main_container.add_child(label)
 	main_container.move_child(label, 0) # Top of the menu
 	
-	# Small pop animation
+	# Fix pivot and scale animation to prevent overlap
+	await get_tree().process_frame # Let Godot calculate the size
+	label.pivot_offset = label.size / 2
 	label.scale = Vector2(0, 0)
 	var tween = create_tween()
 	tween.tween_property(label, "scale", Vector2(1, 1), 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
@@ -122,7 +130,7 @@ func _apply_button_styling():
 			btn.add_theme_color_override("font_pressed_color", COLOR_ACCENT)
 			
 			# Set font size
-			btn.add_theme_font_size_override("font_size", 28)
+			btn.add_theme_font_size_override("font_size", 22)
 			
 			btn.pivot_offset = btn.size / 2
 			btn.mouse_entered.connect(_on_btn_mouse_entered.bind(btn))
@@ -133,7 +141,7 @@ func _apply_text_styling():
 	var title = $TitleContainer/GameTitle
 	if title:
 		title.add_theme_color_override("font_color", COLOR_ACCENT)
-		title.add_theme_font_size_override("font_size", 100)
+		title.add_theme_font_size_override("font_size", 80)
 		# Add shadow effect via modulate
 	
 	var subtitle = $TitleContainer/SubTitle
@@ -194,13 +202,29 @@ func _on_start_btn_pressed():
 	await get_tree().create_timer(0.5).timeout
 	get_tree().change_scene_to_file("res://Scenes/CharacterSelection.tscn")
 
+func _on_profile_btn_pressed():
+	"""Switch Profile button"""
+	print("Opening Profile Selection...")
+	AudioManager.play_sfx("button_click")
+	get_tree().change_scene_to_file("res://Scenes/ProfileSelection.tscn")
+
 func _on_continue_btn_pressed():
 	"""Continue Game button"""
 	print("Loading saved game...")
-	AudioManager.play_sfx("button_click")
+	if AudioManager.has_method("play_sfx"):
+		AudioManager.play_sfx("button_click")
 	_play_transition_out()
 	await get_tree().create_timer(0.5).timeout
 	Global.load_and_start()
+
+func _on_load_btn_pressed():
+	"""Open Load Slot menu from Main Menu"""
+	print("Opening Load Menu...")
+	if AudioManager.has_method("play_sfx"):
+		AudioManager.play_sfx("button_click")
+	
+	var load_menu = load("res://Scenes/SaveLoadMenu.tscn").instantiate()
+	add_child(load_menu)
 
 func _on_options_btn_pressed():
 	"""Options button"""

@@ -473,7 +473,11 @@ func show_question():
 	question_box.process_mode = Node.PROCESS_MODE_INHERIT
 
 func answer_question(answer):
-	if current_state != BattleState.QUESTION_TIME: return
+	print("[Battle] Answer clicked: ", answer)
+	if current_state != BattleState.QUESTION_TIME: 
+		print("[Battle] Ignoring answer: Current state is ", current_state)
+		return
+		
 	# Prevent double-click by immediately changing state
 	current_state = BattleState.ENEMY_TURN
 	
@@ -549,8 +553,14 @@ func _show_card_unlock_popup(card_id: String):
 func execute_player_action(success):
 	if success:
 		if pending_skill:
-			battle_log.text = "สำเร็จ! ใช้สกิล " + pending_skill.name
-			await play_anim(hero_sprite_ui, "attack")
+			battle_log.text = "สำเร็จ! " + ("คู่หูใช้" if pending_skill.get("is_companion", false) else "ใช้สกิล ") + pending_skill.name
+			
+			# Animate the correct sprite
+			var anim_target = hero_sprite_ui
+			if pending_skill.get("is_companion", false) and is_instance_valid(companion_sprite_ui) and companion_sprite_ui.visible:
+				anim_target = companion_sprite_ui
+			
+			await play_anim(anim_target, "attack")
 			
 			# --- Skill Handling by Type ---
 			var skill_type = pending_skill.get("type", "active")
@@ -610,7 +620,9 @@ func execute_player_action(success):
 					enemy_hp = min(enemy_hp + 20, enemy_max_hp) # Heal Enemy
 					BattleEffectManager.show_damage_number($UI, "+Instability", monster_sprite_ui.position + Vector2(0, -80), Color.PURPLE)
 					await get_tree().create_timer(1.0).timeout
-				# -------------------------------------------
+				
+				# Add monster damage anim for skills too
+				await play_anim(monster_sprite_ui, "damage")
 			# ------------------------------
 			
 			player_mp -= pending_skill.cost
@@ -855,7 +867,8 @@ func _on_companion_btn_pressed():
 	var data = comp_db.get_companion(comp_id, Global.companion_bond)
 	
 	if data and "skill" in data:
-		pending_skill = data.skill 
+		pending_skill = data.skill.duplicate()
+		pending_skill["is_companion"] = true # Mark it for animation logic
 		var evo_prefix = "🌟 [EVOLVED] " if data.get("is_evolved", false) else ""
 		battle_log.text = evo_prefix + data.name + " เตรียมร่าย " + data.skill.name + "!"
 		show_question()

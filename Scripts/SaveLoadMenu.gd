@@ -103,7 +103,10 @@ func load_from_slot(slot_num):
 		# Change to saved scene
 		var target_scene = Global.current_scene
 		if target_scene == "" or target_scene == "res://Scenes/MainMenu.tscn":
-			target_scene = "res://Scenes/Crossroads.tscn"
+			if Global.is_part2_story:
+				target_scene = "res://Scenes/Part2/WorldMap.tscn"
+			else:
+				target_scene = "res://Scenes/Crossroads.tscn"
 		get_tree().change_scene_to_file(target_scene)
 		return true
 	return false

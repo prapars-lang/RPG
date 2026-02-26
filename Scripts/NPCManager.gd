@@ -186,6 +186,21 @@ var npcs: Dictionary = {
 		],
 		"environmental_quests": true,
 		"relationship_bonus": 7
+	},
+	
+	"merchant_maya": {
+		"name": "Merchant Maya",
+		"type": NPCType.MERCHANT,
+		"title": "แม่ค้าแห่ง Terra Nova",
+		"description": "ผู้รวบรวมไอเทมหายากจากทั่วทุกมุมโลก",
+		"location": "World Map",
+		"sprite": "res://Assets/Part2/NPC_Merchant.png",
+		"dialogue": [
+			"พรแห่ง Terra Nova สถิตอยู่กับเจ้า...",
+			"ยินดีต้อนรับสู่ร้านค้าแห่งการวิวัฒนาการ!",
+			"เลือกชมสินค้าพรีเมียมจากเราได้เลย!"
+		],
+		"relationship_bonus": 5
 	}
 }
 

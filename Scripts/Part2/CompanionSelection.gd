@@ -11,6 +11,9 @@ var com_db = CompanionData.new()
 var options = ["ignis_pup", "aqua_slime", "terra_golem"]
 
 func _ready():
+	# Track current scene
+	Global.current_scene = "res://Scenes/Part2/CompanionSelection.tscn"
+	
 	_setup_option(option1_ui, options[0])
 	_setup_option(option2_ui, options[1])
 	_setup_option(option3_ui, options[2])

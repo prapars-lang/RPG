@@ -124,8 +124,13 @@ func load_chunk():
 				current_chunk_data = null
 		
 		if current_chunk_data == null:
+			if idx == 0 and key == "":
+				push_error("[StoryScene] ERROR: Could not find START of chapter %d. Data might be missing." % Global.current_chapter)
+				get_tree().call_deferred("change_scene_to_file", "res://Scenes/Part2/WorldMap.tscn")
+				return
+
 			print("End of dialogue chain for key: ", key)
-			if Global.current_chapter < Global.max_chapters:
+			if Global.current_chapter < 30: 
 				var next_ch = Global.current_chapter + 1
 				if not next_ch in Global.unlocked_chapters:
 					Global.unlocked_chapters.append(next_ch)
@@ -134,8 +139,8 @@ func load_chunk():
 				print("[Part2] Chapter Complete. Moving to World Map. Next unlocked: ", next_ch)
 				get_tree().call_deferred("change_scene_to_file", "res://Scenes/Part2/WorldMap.tscn")
 			else:
-				print("[Part2] Final Chapter Complete!")
-				get_tree().call_deferred("change_scene_to_file", "res://Scenes/MainMenu.tscn")
+				print("[Part2] Final Chapter Complete! Moving to Ending Scene.")
+				get_tree().call_deferred("change_scene_to_file", "res://Scenes/Part2/EndingScenePart2.tscn")
 			return
 	# --------------------
 	else:
@@ -389,7 +394,10 @@ func start_battle_transition():
 	Global.queued_story_enemy_id = enemy_id
 	Global.queued_battle_background = bg_path
 	
-	get_tree().change_scene_to_file("res://Scenes/Battle.tscn")
+	if get_tree():
+		get_tree().call_deferred("change_scene_to_file", "res://Scenes/Battle.tscn")
+	else:
+		push_error("[StoryScene] Error: SceneTree is null, cannot change scene to Battle.")
 
 func end_chapter():
 	# Mark Quest as Complete

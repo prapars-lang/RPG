@@ -1,0 +1,205 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://Scripts/CertificateScreen.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://Assets/life_core.png" id="2_logo"]
+
+[node name="CertificateScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.6)
+
+[node name="CertPanel" type="Panel" parent="."]
+custom_minimum_size = Vector2(960, 640)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -480.0
+offset_top = -340.0
+offset_right = 480.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Margin" type="MarginContainer" parent="CertPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 40
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 40
+
+[node name="MainVBox" type="VBoxContainer" parent="CertPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="Title" type="Label" parent="CertPanel/Margin/MainVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.1, 0.2, 1)
+theme_override_font_sizes/font_size = 42
+text = "ใบประกาศเกียรติบัตร"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="CertPanel/Margin/MainVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.3, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "นวัตกรรมการเรียนรู้แบบเกมเป็นฐาน (Game-Based Learning)..."
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="CertPanel/Margin/MainVBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="AwardLabel" type="Label" parent="CertPanel/Margin/MainVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.2, 0.2, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+text = "มอบให้แก่"
+horizontal_alignment = 1
+
+[node name="PlayerName" type="Label" parent="CertPanel/Margin/MainVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.1, 0.3, 0.6, 1)
+theme_override_font_sizes/font_size = 48
+text = "[ PLAYER NAME ]"
+horizontal_alignment = 1
+
+[node name="PlayerClass" type="Label" parent="CertPanel/Margin/MainVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.4, 0.4, 1)
+theme_override_font_sizes/font_size = 20
+text = "อาชีพ: อัศวิน (Level 10)"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="CertPanel/Margin/MainVBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="ContentHBox" type="HBoxContainer" parent="CertPanel/Margin/MainVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 30
+
+[node name="HeroPortrait" type="TextureRect" parent="CertPanel/Margin/MainVBox/ContentHBox"]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Details" type="Label" parent="CertPanel/Margin/MainVBox/ContentHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.15, 0.15, 0.15, 1)
+theme_override_constants/line_spacing = 5
+theme_override_font_sizes/font_size = 18
+text = "รายละเอียดความสำเร็จ..."
+autowrap_mode = 3
+
+[node name="Footer" type="Control" parent="CertPanel/Margin/MainVBox"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+
+[node name="Seal" type="TextureRect" parent="CertPanel/Margin/MainVBox/Footer"]
+modulate = Color(1, 1, 1, 0.7)
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -220.0
+offset_top = -50.0
+offset_right = -120.0
+offset_bottom = 50.0
+grow_horizontal = 0
+grow_vertical = 2
+texture = ExtResource("2_logo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Date" type="Label" parent="CertPanel/Margin/MainVBox/Footer"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -11.5
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.3, 0.3, 0.3, 1)
+theme_override_font_sizes/font_size = 18
+text = "ให้ไว้ ณ วันที่..."
+horizontal_alignment = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="VBox" type="HBoxContainer" parent="CenterContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StatusLbl" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -130.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(1, 1, 0, 1)
+horizontal_alignment = 1
+
+[node name="SaveBtn" type="Button" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+text = "📸 บันทึกภาพเกียรติบัตร"
+
+[node name="BackBtn" type="Button" parent="CenterContainer/VBox"]
+custom_minimum_size = Vector2(250, 60)
+layout_mode = 2
+text = "กลับหน้าหลัก"
+
+[connection signal="pressed" from="CenterContainer/VBox/SaveBtn" to="." method="_on_save_pressed"]
+[connection signal="pressed" from="CenterContainer/VBox/BackBtn" to="." method="_on_back_pressed"]

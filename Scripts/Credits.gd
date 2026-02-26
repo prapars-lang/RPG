@@ -8,6 +8,36 @@ var scroll_speed = 50.0
 func _ready():
 	_apply_theme()
 	scroll_container.get_v_scroll_bar().modulate.a = 0 # Hide scrollbar
+	_setup_credits_text()
+
+func _setup_credits_text():
+	var credits = [
+		"PROJECT: HEALTH RPG - TERRA NOVA",
+		"นวัตกรรมเกมสวมบทบาทดิจิทัลตามแนวคิด Game-Based Learning",
+		"เพื่อพัฒนาทักษะการคิดวิเคราะห์และผลสัมฤทธิ์ทางการเรียน",
+		"ด้านสุขศึกษาในระดับประถมศึกษา",
+		"",
+		"ผู้กำกับและออกแบบ: KRUKAI",
+		"",
+		"เนื้อหาการศึกษา: THAI HEALTH CURRICULUM (P.1 - P.6)",
+		"",
+		"ออกแบบมอนสเตอร์และโลก: KRUKAI & ANTIGRAVITY AI",
+		"",
+		"ศิลปกรรมและฉากหลัง: KRUKAI & AI ENHANCED ASSETS",
+		"",
+		"ดนตรีและเสียงประกอบ: KRUKAI & ADVENTURE AUDIO PACK",
+		"",
+		"ขอบคุณพิเศษ:",
+		"ALL THE STUDENTS WHO LEARN AND PLAY",
+		"(นักเรียนทุกคนที่เรียนรู้และเล่นเกมนี้)",
+		"",
+		"BE HEALTHY, BE HAPPY!",
+		"(ขอให้มีสุขภาพดีและมีความสุข)",
+		"",
+		"THANK YOU FOR PLAYING",
+		"(ขอบคุณที่ร่วมสนุก)"
+	]
+	credits_label.text = "\n".join(credits)
 
 func _apply_theme():
 	"""Apply premium UI theme to credits"""

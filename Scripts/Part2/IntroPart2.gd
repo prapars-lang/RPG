@@ -23,6 +23,9 @@ var narration_lines = [
 var is_animating = false
 
 func _ready():
+	# Track current scene
+	Global.current_scene = "res://Scenes/Part2/IntroPart2.tscn"
+	
 	# Play atmospheric BGM
 	if AudioManager.has_method("play_bgm"):
 		AudioManager.play_bgm("story")

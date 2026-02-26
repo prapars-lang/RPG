@@ -41,6 +41,7 @@ var sfx_paths = {
 	"hit": "res://Audio/sfx_hit.ogg",
 	"heal": "res://Audio/sfx_heal.ogg",
 	"levelup": "res://Audio/sfx_levelup.ogg",
+	"level_up": "res://Audio/sfx_levelup.ogg",
 	"victory": "res://Audio/sfx_victory.ogg",
 	"defeat": "res://Audio/sfx_defeat.ogg",
 	"menu_open": "res://Audio/sfx_menu_open.ogg",

@@ -9,6 +9,9 @@ extends Control
 @onready var continue_btn = $Panel/VBox/ContinueBtn
 
 func _ready():
+	# Track current scene for Save/Load
+	Global.current_scene = "res://Scenes/Part2/ChapterSummary.tscn"
+	
 	_apply_theme()
 	_populate_data()
 	

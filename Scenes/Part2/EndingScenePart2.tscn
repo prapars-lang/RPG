@@ -1,0 +1,102 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://Scripts/Part2/EndingScenePart2.gd" id="1_r4x5t"]
+[ext_resource type="Texture2D" path="res://Assets/Part2/bg_ch30_holy_library.png" id="2_h8w2k"]
+
+[node name="EndingScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_r4x5t")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_h8w2k")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Overlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.470588)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 50
+theme_override_constants/margin_bottom = 50
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Title" type="Label" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.811765, 0.301961, 1)
+theme_override_colors/font_outline_color = Color(0.380392, 0.231373, 0.054902, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 72
+text = "THE GUARDIAN OF TERRA NOVA"
+horizontal_alignment = 1
+
+[node name="Summary" type="Label" parent="Margin/VBox"]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "ยินดีด้วยผู้กล้า! เจ้าได้พิชิตภัยร้ายแห่งความไม่รู้..."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="CreditsContainer" type="Control" parent="Margin/VBox"]
+clip_contents = true
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CreditsLabel" type="Label" parent="Margin/VBox/CreditsContainer"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_constants/line_spacing = 15
+theme_override_font_sizes/font_size = 24
+text = "CREDITS LIST..."
+horizontal_alignment = 1
+
+[node name="CertBtn" type="Button" parent="Margin/VBox"]
+custom_minimum_size = Vector2(350, 80)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 0.9, 0.4, 1)
+theme_override_font_sizes/font_size = 32
+text = "📜 รับใบประกาศเกียรติบัตร"
+
+[node name="MainMenuBtn" type="Button" parent="Margin/VBox"]
+custom_minimum_size = Vector2(250, 70)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 24
+text = "กลับสู่หน้าจอหลัก"
+
+[connection signal="pressed" from="Margin/VBox/CertBtn" to="." method="_on_cert_pressed"]
+[connection signal="pressed" from="Margin/VBox/MainMenuBtn" to="." method="_on_main_menu_pressed"]

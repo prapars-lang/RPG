@@ -1,0 +1,181 @@
+[gd_scene load_steps=3 format=3 uid="uid://shoppart2_scene"]
+
+[ext_resource type="Script" path="res://Scripts/Part2/ShopPart2.gd" id="1_shopp2"]
+[ext_resource type="Texture2D" path="res://Assets/Part2/bg_ch25_clean_village.png" id="2_bg"]
+
+[node name="ShopPart2" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_shopp2")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="DarkOverlay" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.75)
+
+[node name="TopBar" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 30.0
+offset_top = 15.0
+offset_right = -30.0
+offset_bottom = 75.0
+grow_horizontal = 2
+
+[node name="GoldLabel" type="Label" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+theme_override_font_sizes/font_size = 28
+text = "💰 ทอง: 0 G"
+
+[node name="Spacer" type="Control" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 36
+text = "🏛️ ร้านค้าแห่ง Terra Nova (Maya)"
+horizontal_alignment = 1
+
+[node name="Spacer2" type="Control" parent="TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ExitButton" type="Button" parent="TopBar"]
+custom_minimum_size = Vector2(160, 50)
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_font_sizes/font_size = 22
+text = "❌ กลับแผ่นดินใหญ่"
+
+[node name="MainHBox" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 85.0
+offset_right = -20.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="CategoryPanel" type="PanelContainer" parent="MainHBox"]
+visible = false
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+
+[node name="ItemScrollContainer" type="ScrollContainer" parent="MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ItemGrid" type="GridContainer" parent="MainHBox/ItemScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 3
+
+[node name="DetailPanel" type="PanelContainer" parent="MainHBox"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+
+[node name="DetailVBox" type="VBoxContainer" parent="MainHBox/DetailPanel"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DetailTitle" type="Label" parent="MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(1, 0.85, 0.3, 1)
+text = "📖 ข้อมูลสินค้า"
+horizontal_alignment = 1
+
+[node name="Sep" type="HSeparator" parent="MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+
+[node name="PreviewIcon" type="TextureRect" parent="MainHBox/DetailPanel/DetailVBox"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemName" type="Label" parent="MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "เลือกไอเทม"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ItemStats" type="Label" parent="MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = ""
+autowrap_mode = 2
+
+[node name="ItemDesc" type="Label" parent="MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.75, 0.75, 0.75, 1)
+text = ""
+autowrap_mode = 2
+
+[node name="ItemPrice" type="Label" parent="MainHBox/DetailPanel/DetailVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(1, 0.85, 0, 1)
+text = ""
+horizontal_alignment = 1
+
+[node name="BuyButton" type="Button" parent="MainHBox/DetailPanel/DetailVBox"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "🛒 ซื้อ"
+
+[node name="FeedbackLabel" type="Label" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -60.0
+offset_right = 300.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_size = 24
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+text = "ซื้อสำเร็จ!"
+horizontal_alignment = 1
+
+[connection signal="pressed" from="TopBar/ExitButton" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="MainHBox/DetailPanel/DetailVBox/BuyButton" to="." method="_on_buy_pressed"]

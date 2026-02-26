@@ -72,11 +72,15 @@ var is_story_mode = false # If true, Battle returns to StoryScene
 var queued_story_enemy_id = "" # Override enemy for story battles
 var queued_battle_background = "" # Override background for story battles
 var current_story_key = "" # Key for Part 2 dialogue (e.g., "meet_aetherion")
-var is_part2_story = false # Flag to switch StoryScene to Part 2 mode
+var is_part2_story = false: # Flag to switch StoryScene to Part 2 mode
+	set(value):
+		is_part2_story = value
+		if value:
+			initialize_part2_items()
 var current_chapter = 1 # Track progress through Part 2 (1-20)
 var unlocked_chapters = [1] # IDs of chapters the player can access
 var current_companion_id = "" # Selected companion in Part 2
-var max_chapters = 21
+var max_chapters = 30 # Official 30 chapters for Part 2
 var used_questions = [] # Track IDs of questions already asked this session
 var current_scene = "res://Scenes/MainMenu.tscn" # Track where player is for save/load
 
@@ -228,6 +232,12 @@ const ENHANCE_SUCCESS = ItemDB.ENHANCE_SUCCESS
 
 var item_db = ItemDB.ITEMS.duplicate(true)
 
+func initialize_part2_items():
+	var p2_items = ItemDB_Part2.ITEMS
+	for key in p2_items:
+		item_db[key] = p2_items[key]
+	print("[Global] Part 2 items merged into database.")
+
 var stats = SkillDB.STATS.duplicate(true)
 var skills = SkillDB.SKILLS.duplicate(true)
 
@@ -275,14 +285,32 @@ func is_codex_complete() -> bool:
 	return true
 
 func _ready():
+	print("--- Global initialization ---")
 	# Load Config
 	var config = ConfigManager.load_config()
 	if config:
 		AudioServer.set_bus_volume_db(AudioServer.get_bus_index("Master"), linear_to_db(config.master_volume))
 	
 	load_questions()
-	load_game() # Load data first!
-	check_login_streak()
+	
+	# Attempt to load the default save
+	var loaded = load_game() 
+	
+	# Only check login streak and auto-save if we have a valid save state
+	# or if it's explicitly a new session setup.
+	# This prevents overwriting a corrupted/missing save with defaults immediately.
+	if loaded:
+		check_login_streak()
+		print("[Global] Game loaded successfully at startup. Current Chapter: ", current_chapter)
+	else:
+		print("[Global] No save file found or load failed. Starting fresh state.")
+		# Initialize default login data if needed
+		var current_date = Time.get_date_string_from_system()
+		if last_login_date == "":
+			last_login_date = current_date
+			login_streak = 1
+	
+	print("Global Ready")
 
 # --- Gamification Logic ---
 
@@ -766,6 +794,15 @@ func save_game(path: String = "user://savegame.save"):
 	if file:
 		file.store_line(JSON.stringify(save_data))
 		print("Game Saved to: ", path)
+		
+		# Sync with ProfileManager
+		if ProfileManager.active_profile_name != "":
+			ProfileManager.update_profile_stats(
+				ProfileManager.active_profile_name,
+				learning_points,
+				player_level,
+				current_chapter
+			)
 	else:
 		push_error("Failed to save game to: " + path)
 
@@ -781,6 +818,10 @@ func load_game(path: String = "user://savegame.save"):
 	if parse_result == OK:
 		var data = json.data
 		player_name = data.get("name", "ผู้กล้า")
+		
+		# Auto-set active profile if name matches
+		if player_name != "ผู้กล้า":
+			ProfileManager.set_active_profile(player_name)
 		player_gender = data.get("gender", "เด็กชาย")
 		player_class = data.get("class", "อัศวิน")
 		player_level = int(data.get("level", 1))
@@ -795,10 +836,27 @@ func load_game(path: String = "user://savegame.save"):
 		if "current_path" in data: current_path = data["current_path"]
 		if "current_scene" in data: current_scene = data["current_scene"]
 		if "used_questions" in data: used_questions = data["used_questions"]
-		if "is_part2_story" in data: is_part2_story = data["is_part2_story"]
-		if "current_chapter" in data: current_chapter = int(data["current_chapter"])
-		if "unlocked_chapters" in data: unlocked_chapters = data["unlocked_chapters"]
-		if "current_story_key" in data: current_story_key = data["current_story_key"]
+		if "is_part2_story" in data: 
+			is_part2_story = data["is_part2_story"]
+			# Explicitly ensure items are initialized if loading Part 2
+			if is_part2_story:
+				initialize_part2_items()
+				
+		if "current_chapter" in data: 
+			current_chapter = int(data["current_chapter"])
+			print("[Load] Restored Chapter: ", current_chapter)
+			
+		if "unlocked_chapters" in data: 
+			# Ensure we store them as integers
+			var raw_unlocked = data["unlocked_chapters"]
+			unlocked_chapters = []
+			for val in raw_unlocked:
+				unlocked_chapters.append(int(val))
+			print("[Load] Unlocked Chapters: ", unlocked_chapters)
+			
+		if "current_story_key" in data: 
+			current_story_key = data["current_story_key"]
+			print("[Load] Story Key: ", current_story_key)
 		if "current_companion_id" in data: current_companion_id = data["current_companion_id"]
 		if "companion_level" in data: companion_level = int(data["companion_level"])
 		if "companion_exp" in data: companion_exp = int(data["companion_exp"])
@@ -822,6 +880,10 @@ func load_game(path: String = "user://savegame.save"):
 		if "quest_progress" in data: quest_progress = data["quest_progress"]
 		if "achievements" in data: achievements = data["achievements"]
 		if "last_login_date" in data: last_login_date = data["last_login_date"]
+		
+		# Proactively initialize Part 2 items if needed
+		if is_part2_story:
+			initialize_part2_items()
 		if "login_streak" in data: login_streak = int(data["login_streak"])
 		if "learning_points" in data: learning_points = int(data["learning_points"])
 		if "unlocked_cards" in data: unlocked_cards = data["unlocked_cards"]
@@ -839,7 +901,10 @@ func load_and_start():
 		# Change to the saved scene
 		var target_scene = current_scene
 		if target_scene == "" or target_scene == "res://Scenes/MainMenu.tscn":
-			target_scene = "res://Scenes/Crossroads.tscn" # Default to Crossroads if invalid
+			if is_part2_story:
+				target_scene = "res://Scenes/Part2/WorldMap.tscn"
+			else:
+				target_scene = "res://Scenes/Crossroads.tscn" # Default to Crossroads if invalid
 		get_tree().change_scene_to_file(target_scene)
 		return true
 	return false

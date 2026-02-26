@@ -36,56 +36,19 @@ vertical_scroll_mode = 3
 [node name="VBox" type="VBoxContainer" parent="ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 100
+theme_override_constants/separation = 50
 alignment = 1
 
 [node name="TopSpacer" type="Control" parent="ScrollContainer/VBox"]
 custom_minimum_size = Vector2(0, 500)
 layout_mode = 2
 
-[node name="Title" type="Label" parent="ScrollContainer/VBox"]
+[node name="CreditsLabel" type="Label" parent="ScrollContainer/VBox"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 64
-text = "VITA-FOREST"
-horizontal_alignment = 1
-
-[node name="TeamSection" type="VBoxContainer" parent="ScrollContainer/VBox"]
-layout_mode = 2
-
-[node name="Role" type="Label" parent="ScrollContainer/VBox/TeamSection"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.180392, 0.8, 0.443137, 1)
 theme_override_font_sizes/font_size = 32
-text = "Game Developer"
+text = "LOADING CREDITS..."
 horizontal_alignment = 1
-
-[node name="Name" type="Label" parent="ScrollContainer/VBox/TeamSection"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Antigravity AI & You"
-horizontal_alignment = 1
-
-[node name="AssetSection" type="VBoxContainer" parent="ScrollContainer/VBox"]
-layout_mode = 2
-
-[node name="Role" type="Label" parent="ScrollContainer/VBox/TeamSection"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.180392, 0.8, 0.443137, 1)
-theme_override_font_sizes/font_size = 32
-text = "Educational Content"
-horizontal_alignment = 1
-
-[node name="Name" type="Label" parent="ScrollContainer/VBox/TeamSection"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "Health Intelligence Team"
-horizontal_alignment = 1
-
-[node name="SpecialThanks" type="Label" parent="ScrollContainer/VBox"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 28
-text = "ขอบคุณสำหรับการร่วมปกป้องป่าแห่งชีวิต!"
-horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="BottomSpacer" type="Control" parent="ScrollContainer/VBox"]
 custom_minimum_size = Vector2(0, 800)
