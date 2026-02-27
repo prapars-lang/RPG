@@ -29,7 +29,6 @@ node_modules/
 *.pdf
 Backups/
 Builds/
-web/
 newdata/
 
 # Environment variables and secrets (DO NOT COMMIT)
