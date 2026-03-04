@@ -43,3 +43,7 @@ window/stretch/mode="canvas_items"
 [gui]
 
 theme/custom="res://Assets/MainTheme.tres"
+
+[rendering]
+
+textures/vram_compression/import_etc2_astc=true

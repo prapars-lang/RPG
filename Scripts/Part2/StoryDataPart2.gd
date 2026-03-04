@@ -12,29 +12,35 @@ const CHAPTERS = {
 			"type": "dialogue", "background": "res://Assets/Part2/bg_ch1_senses.png", "npc_sprite": "res://Assets/Part2/NPC_Elder_Arin.png",
 			"dialogue": [
 				{"name": "Elder Arin", "text": "ยินดีต้อนรับผู้สืบทอด! ตาและหูของเจ้าคือหน้าต่างบานแรกสู่โลกกว้าง", "focus": "other"},
-				{"name": "Hero", "text": "ท่านผู้เฒ่า! ข้าสัมผัสได้ถึงพลังงานที่แปรปรวนในป่าแห่งนี้!", "focus": "hero"}
-			], "next_scene": "continue"
+				{"name": "Elder Arin", "text": "ก่อนที่เจ้าจะเริ่มการเดินทาง จงเลือกคู่หูที่จะช่วยเหลือเจ้าเสียก่อน", "focus": "other"}
+			], "next_scene": "companion_select"
 		},
 		"1": {
+			"type": "dialogue", "background": "res://Assets/Part2/bg_ch1_senses.png", "npc_sprite": "res://Assets/Part2/NPC_Elder_Arin.png",
+			"dialogue": [
+				{"name": "Hero", "text": "ช่างเป็นคู่หูที่วิเศษมาก! ท่านผู้เฒ่า! ข้าสัมผัสได้ถึงพลังงานที่แปรปรวนในป่าแห่งนี้!", "focus": "hero"}
+			], "next_scene": "continue"
+		},
+		"2": {
 			"type": "dialogue", "background": "res://Assets/Part2/bg_ch1_senses.png", "npc_sprite": "res://Assets/Part2/NPC_Elder_Arin.png",
 			"dialogue": [{"name": "Aetherion", "text": "นั่นไง! Optic Wisp มันกำลังรบกวนการมองเห็นของเจ้า!", "focus": "guide"}],
 			"next_scene": "battle", "enemy_id": "optic_wisp"
 		},
-		"2": {
+		"3": {
 			"type": "dialogue", "background": "res://Assets/Part2/bg_ch1_senses.png", "npc_sprite": "res://Assets/Part2/NPC_Elder_Arin.png",
 			"dialogue": [
 				{"name": "Hero", "text": "ตามองเห็นชัดขึ้นแล้ว... แต่หูของข้าเริ่มอื้อ!", "focus": "hero"},
 				{"name": "Elder Arin", "text": "ระวัง! Echo Bat กำลังจู่โจมด้วยคลื่นเสียง! จงปกป้องหูของเจ้า!", "focus": "other"}
 			], "next_scene": "continue"
 		},
-		"3": {
+		"4": {
 			"type": "dialogue", "background": "res://Assets/Part2/bg_ch1_senses.png",
 			"dialogue": [{"name": "Aetherion", "text": "จงใช้ความรู้เรื่องการปกป้องหูเพื่อเอาชนะมัน!", "focus": "guide"}],
 			"next_scene": "battle", "enemy_id": "echo_bat"
 		},
-		"4": {
+		"5": {
 			"type": "dialogue", "background": "res://Assets/Part2/bg_ch1_senses.png",
-			"dialogue": [{"name": "Hero", "text": "ร่างก่ายของข้าพร้อมสำหรับการเดินทางที่ยิ่งใหญ่กว่านี้แล้ว!", "focus": "hero"}],
+			"dialogue": [{"name": "Hero", "text": "ร่างกายของข้าพร้อมสำหรับการเดินทางที่ยิ่งใหญ่กว่านี้แล้ว!", "focus": "hero"}],
 			"next_scene": "end"
 		}
 	},

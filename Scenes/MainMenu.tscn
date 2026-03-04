@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://ghvi5pwcpegb"]
 
 [ext_resource type="Script" uid="uid://ddvst2jitvti4" path="res://Scripts/MainMenu.gd" id="1_menu"]
-[ext_resource type="FontFile" uid="uid://1mo72lc7h3wm" path="res://Assets/NotoSansThai_Regular.woff2" id="2_font"]
-[ext_resource type="FontFile" uid="uid://xnarrpgm2y4y" path="res://Assets/NotoSansThai_Bold.woff2" id="3_font_bold"]
+[ext_resource type="FontFile" uid="uid://x1f2ambry51l" path="res://font/Prompt-Regular.ttf" id="2_font"]
+[ext_resource type="FontFile" uid="uid://cpovdqvkodxim" path="res://font/Prompt-Bold.ttf" id="3_font_bold"]
 [ext_resource type="Texture2D" uid="uid://b1v356n2hw3xs" path="res://Assets/vita_forest_bg.png" id="4_bg"]
 [ext_resource type="Texture2D" uid="uid://bhfwo3tdjgufn" path="res://Assets/npc_storyteller.png" id="5_elder"]
 [ext_resource type="Texture2D" uid="uid://denaqcmutx6ms" path="res://Assets/npc_healer.png" id="6_healer"]

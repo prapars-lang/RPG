@@ -24,6 +24,12 @@ func load_config():
 	var content = file.get_as_text().strip_edges()
 	file.close()
 	
+	# Strip UTF-8 BOM if present (common when edited on Windows/Notepad)
+	if content.begins_with("\ufeff"):
+		content = content.substr(1)
+	elif content.begins_with("﻿"):
+		content = content.substr(1)
+	
 	# ConfigFile expects INI format starting with [section]
 	# If it doesn't start with '[', it's not valid INI (e.g. raw API key)
 	if content.is_empty() or not content.begins_with("["):
@@ -31,7 +37,7 @@ func load_config():
 		return
 	
 	# Step 3: Now safe to parse
-	var error = config.load(config_path)
+	var error = config.parse(content)
 	if error != OK:
 		return
 	

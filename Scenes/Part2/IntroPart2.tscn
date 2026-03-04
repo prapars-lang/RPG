@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dj3i0tcymsv32" path="res://Scripts/Part2/IntroPart2.gd" id="1_intro2"]
 [ext_resource type="Texture2D" uid="uid://bhpvdh83fkh0r" path="res://Assets/Part2/BG_Verdant_Start.png" id="2_bg"]
-[ext_resource type="FontFile" uid="uid://xnarrpgm2y4y" path="res://Assets/NotoSansThai_Bold.woff2" id="3_font_bold"]
+[ext_resource type="FontFile" uid="uid://cpovdqvkodxim" path="res://font/Prompt-Bold.ttf" id="3_font_bold"]
 
 [node name="IntroPart2" type="Control"]
 layout_mode = 3

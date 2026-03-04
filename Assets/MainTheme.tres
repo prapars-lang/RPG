@@ -1,7 +1,7 @@
 [gd_resource type="Theme" load_steps=3 format=3 uid="uid://dlpkb4mip233b"]
 
-[ext_resource type="FontFile" uid="uid://xnarrpgm2y4y" path="res://Assets/NotoSansThai_Bold.woff2" id="1_bold"]
-[ext_resource type="FontFile" uid="uid://1mo72lc7h3wm" path="res://Assets/NotoSansThai_Regular.woff2" id="2_reg"]
+[ext_resource type="FontFile" uid="uid://cpovdqvkodxim" path="res://font/Prompt-Bold.ttf" id="1_bold"]
+[ext_resource type="FontFile" uid="uid://x1f2ambry51l" path="res://font/Prompt-Regular.ttf" id="2_reg"]
 
 [resource]
 default_font = ExtResource("2_reg")
@@ -11,3 +11,4 @@ Label/fonts/font = ExtResource("2_reg")
 LineEdit/fonts/font = ExtResource("2_reg")
 RichTextLabel/fonts/bold_font = ExtResource("1_bold")
 RichTextLabel/fonts/normal_font = ExtResource("2_reg")
+
